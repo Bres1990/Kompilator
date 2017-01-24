@@ -4,7 +4,8 @@
 
 FIXIT
 1. dość brzydko zrealizowane dzielenie
-!! 2. zapisywac co jest aktualnie w rejestrze zeby wiedziec ktore sa wolne / do zwolnienia !!
+2. zapisywac co jest aktualnie w rejestrze zeby wiedziec ktore sa wolne / do zwolnienia 
+// poprawic store w obliczeniach
 */
 
 #ifndef TRANSLATE_GUARD
@@ -71,6 +72,8 @@ class MemoryManager {
 		vec<stri> memoryVector;
 		vec<stri> memoryValues;
 	public:
+		// pr_0 <- r_i
+		// jakie ma byc ograniczenie na liczbe komorek pamieci?
 		int storeInMemory(stri variable) {
 			memoryVector.push_back(variable);
 			memoryValues.push_back("");
@@ -142,14 +145,19 @@ class VariableManager {
 	private:
 		vec<stri> variableVector;
 		vec<stri> valueVector;
+		vec<numu> memoryVector;
 	public:
-		int addVariable(stri varName) {
+		int addVariable(stri varName, int valInAcc) {
 			if (getItemIndex(varName) > -1) {
 				if (ERR) printf("*******ZMIENNA JUZ ISTNIEJE");
 				return 1; // juz istnieje
 			}
 			variableVector.push_back(varName);
 			valueVector.push_back("");
+
+			int memoryAddress = valInAcc;
+
+			memoryVector.push_back(memoryAddress);
 			return 0; // sukces
 		}
 		
@@ -442,11 +450,12 @@ int generateP_AB(stri a, stri b) {
 
 int declareVariable(stri varName) {
 	if (DEBUG) printf("\tDeklaracja zmiennej <%s>\n", varName.c_str());
+	int valInAcc = registerManager.getValueFromRegister(0);
 	int result = variableManager.addVariable(varName);
 	if (registerManager.findFreeRegister() != -1) {
 			registerManager.populateRegister(varName);
 		} else {
-			// nadpisz ktorys z rejestrow
+			// obsluga zwalniania pamieci zalatwia ten problem
 	}
 	return result;
 }
