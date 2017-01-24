@@ -1,0 +1,10 @@
+VAR
+	a b
+BEGIN
+READ a;
+	a := 100-1;
+	b := 22+57;
+	a := a - b;
+	{IF a < b THEN WRITE b;}
+	{ELSE WRITE a;}
+END

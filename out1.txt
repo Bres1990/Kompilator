@@ -1,0 +1,42 @@
+
+
+****** BLOK DEKLARACJI ZMIENNYCH ******
+
+
+	Deklaracja zmiennej <a>
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 1
+	Deklaracja zmiennej <b>
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 2
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje read
+Generuje while w linii 3
+Tymczasowy label w linii 3
+Obsluga while
+Operacja boolowska a > 0
+
+
+****** BLOK KOMENDY ******
+
+
+Operacja arytmetyczna a / 2
+	Przypisuje zmiennej <b> wartosc <0>
+Indeks zmiennej to 6
+	Udane przypisanie do zmiennej
+Operacja arytmetyczna 2 * b
+	Przypisuje zmiennej <b> wartosc <0>
+Indeks zmiennej to 6
+	Udane przypisanie do zmiennej
+Generuje if w linii 30
+Operacja boolowska a > b
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje write
