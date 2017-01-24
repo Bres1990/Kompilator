@@ -20,6 +20,7 @@ FIXIT
 #define longlong unsigned long long int
 
 #include <math.h>
+#include <string.h>
 
 vec<stri> outputSource;
 
@@ -85,21 +86,21 @@ class RegisterManager {
 
 	private:
 		vec<stri> registerVector;
-		vec<stri> regValVector;
+		vec<int> regValVector;
 	public:
 		int initializeAccumulator() {
 			registerVector.push_back("");
-			regValVector.push_back("");
+			regValVector.push_back(-1);
 		}
 
-		stri getValueFromRegister(int regnum) {
-			if (regValVector.at(regnum) != "") {
+		int getValueFromRegister(int regnum) {
+			if (regValVector.at(regnum) != -1) {
 				return regValVector.at(regnum);
-			} else return "";
+			} else return -1;
 		}
 
 		int setValueToRegister(stri value, int regnum) {
-			regValVector.at(regnum) = value;
+			regValVector.at(regnum) = atoi(value.c_str());
 		}
 
 		int findFreeRegister() {
@@ -115,7 +116,7 @@ class RegisterManager {
 
 		int populateRegister(stri variable) {
 			registerVector.push_back(variable);
-			regValVector.push_back("");
+			regValVector.push_back(-1);
 		}
 
 		int getVariableRegister(stri varName) {
@@ -145,7 +146,7 @@ class VariableManager {
 	private:
 		vec<stri> variableVector;
 		vec<stri> valueVector;
-		vec<numu> memoryVector;
+		vec<int> memoryVector;
 	public:
 		int addVariable(stri varName, int valInAcc) {
 			if (getItemIndex(varName) > -1) {
@@ -449,15 +450,19 @@ int generateP_AB(stri a, stri b) {
 }
 
 int declareVariable(stri varName) {
+	std::stringstream ss;
+
 	if (DEBUG) printf("\tDeklaracja zmiennej <%s>\n", varName.c_str());
 	if (varName == "") return -1;
-	int valInAcc = registerManager.getValueFromRegister(0);
-	int result = variableManager.addVariable(varName);
+	int valInAcc = registerManager.getValueFromRegister(0); // ustawiac te wartosc przez bison.y
+	ss << variableManager.addVariable(varName, valInAcc);
+	stri addingVariable = ss.str();
+	int result = atoi(addingVariable.c_str());
 	if (registerManager.findFreeRegister() != -1) {
-			registerManager.populateRegister(varName);
+		registerManager.populateRegister(varName);
 		} else {
 			// obsluga zwalniania pamieci zalatwia ten problem
-	}
+		}
 	return result;
 }
 

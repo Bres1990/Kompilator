@@ -52,7 +52,7 @@ program : 	|
 vdeclarations : vdeclarations PIDENTIFIER
 		{
 		    int result = declareVariable($<stru>2);
-			switch (result) {
+			switch (result) {   
 				case 1:
 					{
 					stri err = "Redeklaracja zmiennej ";
@@ -64,13 +64,13 @@ vdeclarations : vdeclarations PIDENTIFIER
 					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");
 					if (DEBUG) printf("\tZmienna przypisana do rejestru %d\n", registerManager.findFreeRegister()-1);
 					break;
-			}
 				case -1:
 					stri err = "Zmienna ";
 					err += $<stru>2;
 					err += " musi miec nazwe\n";
 					catch_error(yylineno, err.c_str());
 					break;
+			}
 		} 
 		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET
 		{ 
