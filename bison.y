@@ -65,6 +65,12 @@ vdeclarations : vdeclarations PIDENTIFIER
 					if (DEBUG) printf("\tZmienna przypisana do rejestru %d\n", registerManager.findFreeRegister()-1);
 					break;
 			}
+				case -1:
+					stri err = "Zmienna ";
+					err += $<stru>2;
+					err += " musi miec nazwe\n";
+					catch_error(yylineno, err.c_str());
+					break;
 		} 
 		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET
 		{ 
@@ -79,6 +85,12 @@ vdeclarations : vdeclarations PIDENTIFIER
 					break;
 				case 0:
 					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");  
+					break;
+				case -1:
+					stri err = "Zmienna ";
+					err += $<stru>2;
+					err += " musi miec nazwe\n";
+					catch_error(yylineno, err.c_str());
 					break;
 			}
 		}  

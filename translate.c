@@ -95,7 +95,7 @@ class RegisterManager {
 		stri getValueFromRegister(int regnum) {
 			if (regValVector.at(regnum) != "") {
 				return regValVector.at(regnum);
-			} else return "null";
+			} else return "";
 		}
 
 		int setValueToRegister(stri value, int regnum) {
@@ -450,6 +450,7 @@ int generateP_AB(stri a, stri b) {
 
 int declareVariable(stri varName) {
 	if (DEBUG) printf("\tDeklaracja zmiennej <%s>\n", varName.c_str());
+	if (varName == "") return -1;
 	int valInAcc = registerManager.getValueFromRegister(0);
 	int result = variableManager.addVariable(varName);
 	if (registerManager.findFreeRegister() != -1) {
