@@ -206,8 +206,8 @@ class VariableManager {
 				int index = getItemIndex(varName);
 				memoryVector.at(index) = address;
 			} else {
-				printf("*******przypisanie adresu do nieistniejacej zmiennej\n");
-				return -1;
+				printf("*******tworze zmienna %s\n", varName.c_str());
+				addVariable(varName);
 			}
 		}
 
