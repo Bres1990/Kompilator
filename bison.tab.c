@@ -1351,7 +1351,7 @@ yyreduce:
 		    int result = declareVariable((yyvsp[0].stru));
 			switch (result) {   
 				case 1:
-					{
+					{ 
 					stri err = "Redeklaracja zmiennej ";
 					err += (yyvsp[0].stru);
 					catch_error(yylineno, err.c_str());

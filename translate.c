@@ -4,8 +4,8 @@
 
 FIXIT
 1. dość brzydko zrealizowane dzielenie
-2. zapisywac co jest aktualnie w rejestrze zeby wiedziec ktore sa wolne / do zwolnienia 
-// poprawic store w obliczeniach
+2. co z adresami liczb w pamieci?
+3. poprawic store, load, add, sub w obliczeniach
 */
 
 #ifndef TRANSLATE_GUARD
@@ -65,22 +65,6 @@ int isNumber(stri name) {
    return 1;
 }
 
-/*
-*	Register 0 memory manager
-*/
-class MemoryManager {
-	private:
-		vec<stri> memoryVector;
-		vec<stri> memoryValues;
-	public:
-		// pr_0 <- r_i
-		// jakie ma byc ograniczenie na liczbe komorek pamieci?
-		int storeInMemory(stri variable) {
-			memoryVector.push_back(variable);
-			memoryValues.push_back("");
-			return memoryVector.size() - 1 + reserved_registers_number;
-		}
-};
 
 class RegisterManager {
 
@@ -108,7 +92,7 @@ class RegisterManager {
 			int fullRegisters = registerVector.size();
 			if (fullRegisters == 5) {
 				if (ERR) printf("*******WSZYSTKIE REJESTRY ZAJETE");
-				return -1;  // setValueToRegister(xxx, 0);
+				return -1;
 			} else {
 				return fullRegisters;
 			}
@@ -139,6 +123,10 @@ class RegisterManager {
 			regValVector.pop_back();
 		}
 
+		int getAccumulatorValue() {
+			return registerManager.getValueFromRegister(0);
+		}
+
 };
 
 
@@ -165,11 +153,19 @@ class VariableManager {
 		int getItemIndex(stri varName) {
 			for (int i = 0; i < variableVector.size(); i++) {
 				if (varName == variableVector.at(i)) {
-					return i + reserved_registers_number;
+					return i;
 				}
 			}
 			if (ERR) printf("*******nie ma takiej zmiennej\n");
 			return -1;
+		}
+
+		int getAddressIndex(int address) {
+			for (int i = 0; i < memoryVector.size() i++) {
+				if (address == memoryVector.at(i)) {
+					return i;
+				}
+			}
 		}
 
 		stri getItem(int itemIndex) {
@@ -177,12 +173,12 @@ class VariableManager {
 		}
 
 		int setValueToVariable(stri varName, stri varVal) {
-			if (getItemIndex(varName) != -1){
-				int index = getItemIndex(varName) - reserved_registers_number;
-				// czy ustawiana wartosc jest liczba?
-				if (isNumber(varVal)) { // tak
+			if (getItemIndex(varName) != -1) {
+				int index = getItemIndex(varName);
+
+				if (isNumber(varVal)) {
 					valueVector.at(index) = varVal;
-				} else { // nie, jest zmienna
+				} else {
 					// sprawdz, czy zmienna jest zainicjalizowana
 					if (getValueOfVariable(varVal) != "") {
 						valueVector.at(index) = getValueOfVariable(varVal);
@@ -198,10 +194,48 @@ class VariableManager {
 		}
 
 		stri getValueOfVariable(stri varName) {
-			if (valueVector.at(getItemIndex(varName) - reserved_registers_number) != ""){
-				return valueVector.at(getItemIndex(varName) - reserved_registers_number);
+			stri varVal = valueVector.at(getItemIndex(varName));
+			if (varVal != "") {
+				return varVal;
 			}
 			return "null";
+		}
+
+		int setAddressOfVariable(stri varName, int address) {
+			if (getItemIndex(varName) != -1) {
+				int index = getItemIndex(varName);
+				memoryVector.at(index) = address;
+			} else {
+				printf("*******przypisanie adresu do nieistniejacej zmiennej\n");
+				return -1;
+			}
+		}
+
+		int getAddressOfVariable(stri varName) { 
+			int varAddress = memoryVector.at(getItemIndex(varName));
+			if (varAddress != -1) {
+				return varAddress;
+			}
+		}
+
+		stri getVariableAtAddress(int address) {
+			return variableVector.at(getAddressIndex(address));
+		}
+};
+
+/*
+*	Register 0 memory manager
+*/
+class MemoryManager {
+	private:
+		vec<stri> memoryVariables;
+		vec<stri> memoryValues;
+	public:
+		// pr_0 <- r_i
+		int storeInMemory(stri variable) {
+			memoryVariables.push_back(variable);
+			memoryValues.push_back("");
+			return memoryVariables.size() - 1;
 		}
 };
 
@@ -366,7 +400,8 @@ void binaryNumberToCode(stri bin) {
     }
 
 	registerManager.populateRegister(bin);
-	v.push_back("STORE " + regnum);
+	v.push_back("STORE " + regnum); // umiesc zawartosc r_regnum w Pr_0
+	variableManager.setAddressOfVariable(bin, registerManager.getAccumulatorValue());
     
 
     for (int i = v.size() - 1; i >= 0; i--) {
@@ -383,7 +418,7 @@ stri divideByTwo(stri dec) {
         dec.at(i) = (rem + a) / 2 + 48;
         if (a % 2) { rem=10; } else {rem = 0;}
     }
-    //printf("DZIEL %s\n", dec.c_str());
+    printf("DZIEL %s\n", dec.c_str());
     return dec;
 }
 
@@ -427,6 +462,12 @@ int generateP_A(stri a) {
 	}
 	return 0;
 }
+
+	// LOAD i		r_i <- pr_0
+	// STORE i 		pr_0 <- r_i     <=======>    COPY i 	r_0 <- r_i
+	// ZERO i 		r_i <- 0
+	// ADD i 		r_i <- r_i + pr_0
+	// SUB i 		r_i <- r_i - pr_0
  
  /** Funkcja ktora
 	1. Sprawdza czy VALUE jest liczba- jesli tak- generuj w rejestrze a
@@ -435,16 +476,11 @@ int generateP_A(stri a) {
 	*/
 int generateP_AB(stri a, stri b) {
 	int ret = generateP_A(a);
-
-	
+	if (ret != 0) return ret;
 	addCodeLine("LOAD " + op_temp_a);
 	
-	if (ret != 0) return ret;
-	
 	ret = generateP_A(b);
-	
 	if (ret != 0) return ret;
-	
 	addCodeLine("LOAD " + op_temp_b);
 	return 0;
 }
@@ -454,7 +490,7 @@ int declareVariable(stri varName) {
 
 	if (DEBUG) printf("\tDeklaracja zmiennej <%s>\n", varName.c_str());
 	if (varName == "") return -1;
-	int valInAcc = registerManager.getValueFromRegister(0); // ustawiac te wartosc przez bison.y
+	int valInAcc = registerManager.getAccumulatorValue();
 	ss << variableManager.addVariable(varName, valInAcc);
 	stri addingVariable = ss.str();
 	int result = atoi(addingVariable.c_str());
@@ -480,15 +516,6 @@ int generateVariableAssign(stri varName, stri varVal) {
 	addCodeLine(temp);
 	return 0;
 }
-
-/** generuje wartosc w rejestra a **/
-/* void generateValue1(unsigned long long int a){
-	if(DEBUG)printf("Generuje wartosc %llu\n", a);
-	addCodeLine("ZERO");
-	for(int i=0; i<a; i++){
-		addCodeLine("INC");
-	}
-}*/
 
 int getVariableRegister(stri variable) {
 	if (registerManager.getVariableRegister(variable) == -1) 

@@ -54,7 +54,7 @@ vdeclarations : vdeclarations PIDENTIFIER
 		    int result = declareVariable($<stru>2);
 			switch (result) {   
 				case 1:
-					{
+					{ 
 					stri err = "Redeklaracja zmiennej ";
 					err += $<stru>2;
 					catch_error(yylineno, err.c_str());
