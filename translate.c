@@ -124,7 +124,7 @@ class RegisterManager {
 		}
 
 		int getAccumulatorValue() {
-			return registerManager.getValueFromRegister(0);
+			return getValueFromRegister(0);
 		}
 
 };
@@ -161,7 +161,7 @@ class VariableManager {
 		}
 
 		int getAddressIndex(int address) {
-			for (int i = 0; i < memoryVector.size() i++) {
+			for (int i = 0; i < memoryVector.size(); i++) {
 				if (address == memoryVector.at(i)) {
 					return i;
 				}
@@ -207,7 +207,7 @@ class VariableManager {
 				memoryVector.at(index) = address;
 			} else {
 				printf("*******tworze zmienna %s\n", varName.c_str());
-				addVariable(varName);
+				addVariable(varName, address);
 			}
 		}
 
