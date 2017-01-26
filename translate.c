@@ -548,7 +548,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		if (DEBUG) addCodeLine("-----------POCZATEK MNOZENIA");
 		if (b == "2") {
 			if (DEBUG) addCodeLine("b rowne 2");
-			addCodeLine("SHR " + op_temp_a);
+			addCodeLine("SHR " + reg_of_a);
 
 			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
 			registerManager.removeLastVariable();
@@ -557,7 +557,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 		else if (a == "2") {
 			if (DEBUG) addCodeLine("a rowne 2");
-			addCodeLine("SHR " + op_temp_b);
+			addCodeLine("SHR " + reg_of_b);
 
 			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
 			registerManager.removeLastVariable();
@@ -565,8 +565,8 @@ int generateArithOp(stri op, stri a, stri b) {
 			return 2 * b_val;
 		}
 		else {
-			
-			
+			// zwykłe mnożenie
+
 			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
@@ -574,7 +574,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		if (DEBUG) addCodeLine("-----------KONIEC MNOZENIA");
 		return a_val * b_val;
 		
-	} else if (op == S_DIV){
+	} else if (op == S_DIV) {
 
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
@@ -585,7 +585,7 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		if (b == "2") {
 			if (DEBUG) addCodeLine("b rowne 2");
-			addCodeLine("SHL " + op_temp_a);
+			addCodeLine("SHL " + reg_of_a);
 
 			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
 			registerManager.removeLastVariable();
@@ -594,7 +594,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 		else if (a == "2") {
 			if (DEBUG) addCodeLine("a rowne 2");
-			addCodeLine("SHL " + op_temp_b);
+			addCodeLine("SHL " + reg_of_b);
 
 			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
 			registerManager.removeLastVariable();
@@ -621,8 +621,8 @@ int generateArithOp(stri op, stri a, stri b) {
 			reg_of_b = memoryManager.storeInMemory(b);
 
 		generateDivision();
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("LOAD " + op_temp_a);
+		//addCodeLine("STORE " + reg_of_b);
+		//addCodeLine("LOAD " + reg_of_a);
 
 		// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
 		registerManager.removeLastVariable();
@@ -653,16 +653,18 @@ int generateBoolOp(stri op, stri a, stri b) {
 	}
 
 	//////////////////////////////////////////////////////////////////
-
-	int reg_of_a = getVariableRegister(a);
-	int reg_of_b = getVariableRegister(b);
-
 	char temp[50];
 
 	
 	//w tym miejscu w REJ_A jest 'b', pierwszy w p_666
 	
 	if (op == S_GET) {
+		int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_a = memoryManager.storeInMemory(a);
+		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_b = memoryManager.storeInMemory(b);
 
 		/*
 		addCodeLine("SUB " + op_temp_b); // REJ_A=b-a  -- OK
@@ -677,6 +679,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 		registerManager.removeLastVariable();
 
 	} else if (op == S_EQ) {
+		int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_a = memoryManager.storeInMemory(a);
+		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_b = memoryManager.storeInMemory(b);
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -696,6 +704,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 		registerManager.removeLastVariable();
 
 	} else if (op == S_NEQ) {
+		int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_a = memoryManager.storeInMemory(a);
+		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_b = memoryManager.storeInMemory(b);
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -715,6 +729,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 		registerManager.removeLastVariable();
 
 	} else if (op == S_GT) {
+		int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_a = memoryManager.storeInMemory(a);
+		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_b = memoryManager.storeInMemory(b);
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -734,6 +754,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 		registerManager.removeLastVariable();
 
 	} else if (op == S_LET) {
+		int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_a = memoryManager.storeInMemory(a);
+		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_b = memoryManager.storeInMemory(b);
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -755,6 +781,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 	
 
 	} else if (op == S_LT) {
+		int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_a = memoryManager.storeInMemory(a);
+		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
+			reg_of_b = memoryManager.storeInMemory(b);
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
