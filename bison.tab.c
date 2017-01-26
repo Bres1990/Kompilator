@@ -69,7 +69,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <cstdlib>
+#include <cstdlib> 
 #include <sstream>
 
 int yylex(void);
@@ -81,9 +81,9 @@ int yyerror(const char *error)
 }   
 
 void catch_error(int line, const char* err);
-void err(int line, int no);
+void err(int line, int no); 
 
-#include "translate.c"
+#include "translate.c" 
 
 
 #line 90 "bison.tab.c" /* yacc.c:339  */
@@ -1339,7 +1339,7 @@ yyreduce:
     {
         case 3:
 #line 47 "bison.y" /* yacc.c:1646  */
-    {
+    { 
 		    endOfProgram();  
 		}
 #line 1346 "bison.tab.c" /* yacc.c:1646  */
@@ -1348,21 +1348,21 @@ yyreduce:
   case 4:
 #line 53 "bison.y" /* yacc.c:1646  */
     {
-		    int result = declareVariable((yyvsp[0].stru));
+		    int result = declareVariable((yyvsp[0].stru)); 
 			switch (result) {   
 				case 1:
-					{ 
+					{  
 					stri err = "Redeklaracja zmiennej ";
 					err += (yyvsp[0].stru);
 					catch_error(yylineno, err.c_str());
 					}
-					break;      
+					break;       
 				case 0: 
 					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");
 					if (DEBUG) printf("\tZmienna przypisana do rejestru %d\n", registerManager.findFreeRegister()-1);
 					break;
 				case -1:
-					stri err = "Zmienna ";
+					stri err = "Zmienna "; 
 					err += (yyvsp[0].stru);
 					err += " musi miec nazwe\n";
 					catch_error(yylineno, err.c_str());
@@ -1417,14 +1417,14 @@ yyreduce:
 		switch (result) {
 			case 1: 
 				{
-				stri err = "Niezadeklarowana zmienna ";
+				stri err = "Niezadeklarowana zmienna "; 
 				err += (yyvsp[-6].stru);
 				catch_error(yylineno, err.c_str());
 				}
 				break;
 			case 0:
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
-				break;
+				break; 
 		}
 	}
 #line 1431 "bison.tab.c" /* yacc.c:1646  */
@@ -1434,10 +1434,10 @@ yyreduce:
 #line 122 "bison.y" /* yacc.c:1646  */
     {
 	    int result = generateVariableAssign((yyvsp[-6].stru), (yyvsp[-4].stru));    
-		switch (result) {
+		switch (result) { 
 			case 1:
-				{
-				stri err = "Niezadeklarowana zmienna ";
+				{ 
+				stri err = "Niezadeklarowana zmienna ";  
 				err += (yyvsp[-6].stru);
 				catch_error(yylineno, err.c_str());
 				}

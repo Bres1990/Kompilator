@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <cstdlib>
+#include <cstdlib> 
 #include <sstream>
 
 int yylex(void);
@@ -16,9 +16,9 @@ int yyerror(const char *error)
 }   
 
 void catch_error(int line, const char* err);
-void err(int line, int no);
+void err(int line, int no); 
 
-#include "translate.c"
+#include "translate.c" 
 
 %}
 
@@ -27,52 +27,52 @@ void err(int line, int no);
 %token <stru> START END /* blok kodu */
 %token <stru> LBRACKET RBRACKET
 %token <stru> LCOMMENT RCOMMENT
-%token <stru> IF THEN ELSE ENDIF
+%token <stru> IF THEN ELSE ENDIF 
 %token <stru> WHILE DO ENDWHILE
-%token <stru> FOR FROM DOWNTO TO ENDFOR
+%token <stru> FOR FROM DOWNTO TO ENDFOR  
 %token <stru> READ WRITE
 %token <stru> SKIP
 %token <stru> ASSIGN
 %token <stru> PLUS MINUS MULT DIV MOD
-%token <stru> EQ LT LET GT GET NEQ 
-%token <numu> NUM
+%token <stru> EQ LT LET GT GET NEQ  
+%token <numu> NUM 
 %token <stru> PIDENTIFIER IDENTIFIER
 %token <stru> SEMICOLON
 
-%type<numu> expression condition
+%type<numu> expression condition   
 
 %%
 program : 	| 
-		VAR vdeclarations START commands END
-		{
+		VAR vdeclarations START commands END     
+		{ 
 		    endOfProgram();  
 		} 
 ;
 
 vdeclarations : vdeclarations PIDENTIFIER
 		{
-		    int result = declareVariable($<stru>2);
+		    int result = declareVariable($<stru>2); 
 			switch (result) {   
 				case 1:
-					{ 
+					{  
 					stri err = "Redeklaracja zmiennej ";
 					err += $<stru>2;
 					catch_error(yylineno, err.c_str());
 					}
-					break;      
+					break;       
 				case 0: 
 					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");
 					if (DEBUG) printf("\tZmienna przypisana do rejestru %d\n", registerManager.findFreeRegister()-1);
 					break;
 				case -1:
-					stri err = "Zmienna ";
+					stri err = "Zmienna "; 
 					err += $<stru>2;
 					err += " musi miec nazwe\n";
 					catch_error(yylineno, err.c_str());
 					break;
 			}
 		} 
-		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET
+		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET 
 		{ 
 		    int result = declareVariable($<stru>2);
 			switch (result) {
@@ -107,24 +107,24 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		switch (result) {
 			case 1: 
 				{
-				stri err = "Niezadeklarowana zmienna ";
+				stri err = "Niezadeklarowana zmienna "; 
 				err += $<stru>1;
 				catch_error(yylineno, err.c_str());
 				}
 				break;
 			case 0:
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
-				break;
+				break; 
 		}
-	}
+	} 
 
 	| PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression SEMICOLON
 	{
 	    int result = generateVariableAssign($<stru>1, $<stru>3);    
-		switch (result) {
+		switch (result) { 
 			case 1:
-				{
-				stri err = "Niezadeklarowana zmienna ";
+				{ 
+				stri err = "Niezadeklarowana zmienna ";   
 				err += $<stru>1;
 				catch_error(yylineno, err.c_str());
 				}

@@ -14,76 +14,47 @@
 ****** BLOK KOMENDY ******
 
 
-Generuje read
-Operacja arytmetyczna 100 - 1
-	Przypisuje zmiennej <a> wartosc <99>
-Indeks zmiennej to 5
+Operacja arytmetyczna 2 + 1
+		*******tworze zmienna 0
+		*******tworze zmienna 2
+		*******tworze zmienna 1
+yolo2
+yolo2
+	Przypisuje zmiennej <a> wartosc <3>
+Indeks zmiennej to 0
 	Udane przypisanie do zmiennej
-Operacja arytmetyczna 22 + 57
-	Przypisuje zmiennej <b> wartosc <79>
-Indeks zmiennej to 6
-	Udane przypisanie do zmiennej
-Operacja arytmetyczna a - b
-	Przypisuje zmiennej <a> wartosc <20>
-Indeks zmiennej to 5
+Operacja arytmetyczna a + 4
+		*******tworze zmienna 4
+yolo2
+yolo2
+	Przypisuje zmiennej <b> wartosc <7>
+Indeks zmiennej to 1
 	Udane przypisanie do zmiennej
 Koniec programu, zwracam HALT
 KOD:
-0. ZERO 0
-1. GET 5
-2. STORE 5
-3. STORE 3
-4. INC 3
-5. SHL3
-6. INC 3
-7. SHL3
-8. SHL3
-9. SHL3
-10. INC 3
-11. SHL3
-12. SHL3
-13. ZERO 3
-14. LOAD 0
-15. STORE 4
-16. INC 4
-17. ZERO 4
-18. LOAD 1
-19. STORE 6
-20. SUB 5
-21. COPY 5
-22. LOAD 5
-23. STORE 3
-24. INC 3
-25. SHL3
-26. SHL3
-27. INC 3
-28. SHL3
-29. INC 3
-30. SHL3
-31. ZERO 3
-32. LOAD 0
-33. STORE 4
-34. INC 4
-35. SHL4
-36. INC 4
-37. SHL4
-38. INC 4
-39. SHL4
-40. SHL4
-41. SHL4
-42. INC 4
-43. ZERO 4
-44. LOAD 1
-45. STORE 7
-46. ADD 8
-47. COPY 8
-48. LOAD 6
-49. STORE 5
-50. LOAD 0
-51. STORE 6
-52. LOAD 1
-53. STORE 2
-54. SUB 1
-55. COPY 1
-56. LOAD 5
-57. HALT
+0. STORE 3
+1. INC 3
+2. SHL 3
+3. ZERO 3
+4. LOAD 3
+5. STORE 2
+6. INC 2
+7. ZERO 2
+8. LOAD 2
+9. STORE 1
+10. ADD 3
+11. COPY 3
+12. LOAD 0
+13. STORE 0
+14. LOAD 3
+15. STORE 2
+16. INC 2
+17. SHL 2
+18. SHL 2
+19. ZERO 2
+20. LOAD 2
+21. STORE 1
+22. ADD 3
+23. COPY 3
+24. LOAD 1
+25. HALT

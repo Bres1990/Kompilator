@@ -65,7 +65,10 @@ int isNumber(stri name) {
    return 1;
 }
 
-
+// 0 - akumulator
+// 1, 2 - zmienne
+// 3 - wynik
+// 4 - iterator petli
 class RegisterManager {
 
 	private:
@@ -91,9 +94,15 @@ class RegisterManager {
 			// zwroc indeks pierwszego pustego rejestru
 			int fullRegisters = registerVector.size();
 			if (fullRegisters == 5) {
-				if (ERR) printf("*******WSZYSTKIE REJESTRY ZAJETE");
+				if (ERR) printf("*******WSZYSTKIE REJESTRY ZAJETE\n");
+				printf("w rejestrze 0 jest: %s\n", registerVector.at(0).c_str());
+				printf("w rejestrze 1 jest: %s\n", registerVector.at(1).c_str());
+				printf("w rejestrze 2 jest: %s\n", registerVector.at(2).c_str());
+				printf("w rejestrze 3 jest: %s\n", registerVector.at(3).c_str());
+				printf("w rejestrze 4 jest: %s\n", registerVector.at(4).c_str());
 				return -1;
 			} else {
+				//printf("FREE REGISTER: %d\n", fullRegisters);
 				return fullRegisters;
 			}
 		}
@@ -103,15 +112,12 @@ class RegisterManager {
 			regValVector.push_back(-1);
 		}
 
-		int getVariableRegister(stri varName) {
-			for (int i = 0; i < registerVector.size(); i++) {
-				if (varName == registerVector.at(i)) {
-					return i;
-				}
-			}
+		int getRegisterOfVariable(stri varName) {
+			searchRegisterVector(varName);
 			if (findFreeRegister() != -1) {
 				populateRegister(varName);
-				return getVariableRegister(varName);
+				int result = searchRegisterVector(varName);
+				return result;
 			} else {
 				return -5; // zrob STORE w pamieci zamiast COPY w rejestrze
 			}
@@ -125,6 +131,14 @@ class RegisterManager {
 
 		int getAccumulatorValue() {
 			return getValueFromRegister(0);
+		}
+
+		int searchRegisterVector(stri varName) {
+			for (int i = 0; i < registerVector.size(); i++) {
+				if (varName == registerVector.at(i)) {
+					return i;
+				}
+			}
 		}
 
 };
@@ -206,7 +220,7 @@ class VariableManager {
 				int index = getItemIndex(varName);
 				memoryVector.at(index) = address;
 			} else {
-				printf("*******tworze zmienna %s\n", varName.c_str());
+				printf("\t\t*******tworze zmienna %s\n", varName.c_str());
 				addVariable(varName, address);
 			}
 		}
@@ -250,123 +264,7 @@ void addCodeLine(stri line) {
 
 void generateDivision() {
 	char temp[50];
-		int mod=0;
-
-		/*
-		//c=0, d=1
-		addCodeLine("STORE " + op_temp_b); // r_a <- r_b (z pamieci)
-		addCodeLine("LOAD " + op_temp_c); // r_c <- r_a
-		//jezeli r_a == 0 to skaczemy 
-		sprintf(temp, "JZERO 0 %d", tempCode.size() + mod + 66); addCodeLine(temp);
-		addCodeLine("ZERO " + op_temp_a); // r_a <- 0
-		addCodeLine("LOAD " + op_temp_c); // r_c <- r_a
-		addCodeLine("INC " + op_temp_a); // r_a <- r_a + 1
-		addCodeLine("LOAD " + op_temp_d); // r_d <- r_a
-		
-		//jesli b parzyste -> skacz (czyt. jezeli b+1 nieparzyste -> skacz)
-		// ********** 0 *********
-		int label[7];
-		label[0] = tempCode.size();
-		// jesli b jest nieparzyste -> 2
-		addCodeLine("STORE " + op_temp_b); // r_a <- r_b (z pamięci)
-		sprintf(temp, "JODD 0 %d", tempCode.size() + mod + 4); addCodeLine(temp);
-		// dopoki b+1 jest nieparzyste (b jest parzyste)
-		addCodeLine("INC " + op_temp_a); // r_a++
-		sprintf(temp, "JODD 0 %d", tempCode.size() + mod + 17); addCodeLine(temp);
-		// zaladuj r_a do r_e
-		addCodeLine("ZERO " + op_temp_e); // r_e <- 0
-		addCodeLine("ADD " + op_temp_e); // r_e <- r_e + r_a
-		addCodeLine("STORE " + op_temp_d); // r_a <- r_d
-		addCodeLine("SHL " + op_temp_a); // r_a < r_a * 2
-		addCodeLine("LOAD " + op_temp_d); // r_d <- r_a
-		
-		//jezeli a+1 nieparzyste -> 2
-		addCodeLine("STORE " + op_temp_e); // r_a <- r_e
-		addCodeLine("INC " + op_temp_a); // r_a++
-		sprintf(temp, "JODD 0 %d", tempCode.size() + mod + 4); addCodeLine(temp);
-		addCodeLine("STORE " + op_temp_d); // r_a <- r_d
-		addCodeLine("INC " + op_temp_a); // r_a++
-		addCodeLine("LOAD " + op_temp_d); // r_d <- r_a
-		// ************ 2 **********
-		
-		addCodeLine("STORE " + op_temp_e); // r_a <- r_e
-		addCodeLine("SHR " + op_temp_a); // r_a = r_a / 2
-		addCodeLine("LOAD " + op_temp_e); // r_e <- r_a
-		addCodeLine("STORE " + op_temp_b); // r_a <- r_b
-		addCodeLine("SHR " + op_temp_a); // r_a <- r_a / 2
-		addCodeLine("LOAD " + op_temp_b); // r_b <- r_a
-		sprintf(temp, "JUMP %d", label[0]); addCodeLine(temp);
-		
-
-		// **************** 1
-		label[1] = tempCode.size();
-		// r_b <- r_b - r_a !
-		// r_e ma byc w akumulatorze
-		addCodeLine("STORE " + op_temp_e); 
-		addCodeLine("SUB " + op_temp_b); // OK
-		// if r_a - r_e > 0    <==> if r_a - r_e - 1 == 0
-		addCodeLine("DEC " + op_temp_a); // r_a--
-		sprintf(temp, "JZERO 0 %d", tempCode.size() + mod + 5); addCodeLine(temp); //3
-		addCodeLine("STORE " + op_temp_b); // r_a <- r_b
-		addCodeLine("SHL " + op_temp_a); // r_a <- r_a * 2
-		addCodeLine("LOAD " + op_temp_b); // r_b <- r_a
-		sprintf(temp, "JUMP %d", label[1]); addCodeLine(temp); //1
-		
-		// ************* 3
-		label[3] = tempCode.size();
-		addCodeLine("STORE " + op_temp_b); // r_a <- r_b
-		sprintf(temp, "JODD 0 %d", tempCode.size() + mod + 16); addCodeLine(temp); //4
-		addCodeLine("STORE " + op_temp_c); // r_a <- r_c
-		addCodeLine("SHL " + op_temp_a); // r_a <- r_a * 2
-		addCodeLine("LOAD " + op_temp_c); // r_c <- r_a
-		addCodeLine("STORE " + op_temp_b); // r_a <- r_b
-		addCodeLine("SHR " + op_temp_a); // r_a <- r_a / 2
-		addCodeLine("LOAD " + op_temp_b); // r_b <- r_a
-		// r_b <- r_b - r_a !
-		// r_e musi byc w akumulatorze
-		addCodeLine("STORE " + op_temp_e);
-		addCodeLine("SUB " + op_temp_b); // OK
-		// if r_a - r_e > 0   <==>   if r_a - r_e - 1 == 0
-		addCodeLine("DEC " + op_temp_a); // r_a--
-		sprintf(temp, "JZERO 0 %d", tempCode.size() + mod + 7); addCodeLine(temp); // -> 5
-		addCodeLine("STORE " + op_temp_c); // r_a <- r_c
-		addCodeLine("INC " + op_temp_a); // r_a++
-		addCodeLine("LOAD " + op_temp_c); // r_c <- r_a
-		// r_c <- r_c - r_a !
-		// r_b musi byc w akumulatorze
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("SUB " + op_temp_c); // OK
-		addCodeLine("LOAD " + op_temp_e); // r_e <- r_a
-		// ****************** 5
-		sprintf(temp, "JUMP %d", label[3]); addCodeLine(temp); // ->3
-		// ***************** 4
-		label[4] = tempCode.size();
-		addCodeLine("STORE " + op_temp_d); // r_a <- r_d
-		sprintf(temp, "JZERO 0 %d", tempCode.size() + mod + 14); addCodeLine(temp); // -> 6
-		addCodeLine("STORE " + op_temp_e); // r_a <- r_e
-		addCodeLine("SHL " + op_temp_a); // r_a <- r_a * 2
-		addCodeLine("LOAD " + op_temp_e); // r_e <- r_a
-		addCodeLine("STORE " + op_temp_d); // r_a <- r_d
-		addCodeLine("INC " + op_temp_a); // r_a++
-		sprintf(temp, "JODD 0 %d", tempCode.size() + mod + 4); addCodeLine(temp); // -> 7
-		addCodeLine("STORE " + op_temp_e); // r_a <- r_e
-		addCodeLine("INC " + op_temp_a); // r_a++
-		addCodeLine("LOAD " + op_temp_e); // r_e <- r_a
-		// ************* 7
-		addCodeLine("STORE " + op_temp_d); // r_a <- r_d
-		addCodeLine("SHR " + op_temp_a); // r_a <- r_a / 2
-		addCodeLine("LOAD " + op_temp_d); // r_d <- r_a
-		sprintf(temp, "JUMP %d", label[4]); addCodeLine(temp); // -> 4
-		// **************** 6
-		addCodeLine("STORE " + op_temp_e); // r_a <- r_e
-		addCodeLine("SHR " + op_temp_a); // r_a <- r_a / 2
-		addCodeLine("LOAD " + op_temp_e); // r_e <- r_a
-		addCodeLine("LOAD " + op_temp_b); // r_b <- r_a
-		// przepisac wynik z c do e
-		addCodeLine("STORE " + op_temp_c); // r_a <- r_c 
-		addCodeLine("LOAD " + op_temp_e); // r_e <- r_a
-
-		*/
+	int mod=0;
 }
 
 /**
@@ -384,7 +282,7 @@ void binaryNumberToCode(stri bin) {
 
 	stri zero = "ZERO " + regnum;
 	stri inc = "INC " + regnum;
-	stri shl = "SHL" + regnum;
+	stri shl = "SHL " + regnum;
 
     v.push_back(zero);
     while (bin != "0") {
@@ -399,7 +297,7 @@ void binaryNumberToCode(stri bin) {
         }
     }
 
-	registerManager.populateRegister(bin);
+	//registerManager.populateRegister(bin);
 	v.push_back("STORE " + regnum); // umiesc zawartosc r_regnum w Pr_0
 	variableManager.setAddressOfVariable(bin, registerManager.getAccumulatorValue());
     
@@ -418,7 +316,7 @@ stri divideByTwo(stri dec) {
         dec.at(i) = (rem + a) / 2 + 48;
         if (a % 2) { rem=10; } else {rem = 0;}
     }
-    printf("DZIEL %s\n", dec.c_str());
+    // printf("DZIEL %s\n", dec.c_str());
     return dec;
 }
 
@@ -448,7 +346,7 @@ void generateValue(stri a) {
 
 int generateP_A(stri a) {
 	if (isNumber(a)) {
-		generateValue(a);
+		generateValue(a); // STORE w binaryNumberToCode();
 	} else {
 		int AvarIndex = variableManager.getItemIndex(a);
 		if (AvarIndex == -1) { 
@@ -456,10 +354,12 @@ int generateP_A(stri a) {
 				return -1;
 		} else { // jezeli istnieje zmienna
 			char temp[50];
-			sprintf(temp, "STORE %d", AvarIndex);
+			variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
+			sprintf(temp, "STORE %d", AvarIndex); // setAddressOfVariable() ?
 			addCodeLine(temp);
 		}
 	}
+
 	return 0;
 }
 
@@ -475,13 +375,22 @@ int generateP_A(stri a) {
 	Po wykonaniu tej funkcji rejestr pomocniczy op_temp_a zawiera a, op_temp_b zawiera b
 	*/
 int generateP_AB(stri a, stri b) {
+	char temp[50];
 	int ret = generateP_A(a);
 	if (ret != 0) return ret;
-	addCodeLine("LOAD " + op_temp_a);
+	int reg = registerManager.findFreeRegister();
+	sprintf(temp, "LOAD %d", reg);
+	addCodeLine(temp); // r_i <- pr_0 
+	variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
+	registerManager.removeLastVariable();
 	
 	ret = generateP_A(b);
 	if (ret != 0) return ret;
-	addCodeLine("LOAD " + op_temp_b);
+	reg = registerManager.findFreeRegister();
+	sprintf(temp, "LOAD %d", reg);
+	addCodeLine(temp);
+	variableManager.setAddressOfVariable(b, registerManager.getAccumulatorValue());
+	registerManager.removeLastVariable();
 	return 0;
 }
 
@@ -504,7 +413,7 @@ int declareVariable(stri varName) {
 
 int generateVariableAssign(stri varName, stri varVal) {
 	int varIndex = variableManager.getItemIndex(varName);
-	if (varIndex == -1){ // jeśli nie istnieje zmienna
+	if (varIndex == -1) { // jeśli nie istnieje zmienna
 		return 1;
 	}
 	// istnieje indeks zmiennej
@@ -518,14 +427,15 @@ int generateVariableAssign(stri varName, stri varVal) {
 }
 
 int getVariableRegister(stri variable) {
-	if (registerManager.getVariableRegister(variable) == -1) 
+	if (registerManager.getRegisterOfVariable(variable) == -1) 
 	{
 		if (registerManager.findFreeRegister() != -1) 
 		{
+			printf("yolo1\n");
 			registerManager.populateRegister(variable);
-			return registerManager.getVariableRegister(variable);
+			return registerManager.getRegisterOfVariable(variable);
 		} else { printf("nie ma wolnego rejestru dla %s\n", variable.c_str()); return -1; }
-	} else return registerManager.getVariableRegister(variable);
+	} else { printf("yolo2\n"); return registerManager.getRegisterOfVariable(variable); }
 }
 
 void jumper() {
@@ -655,47 +565,11 @@ int generateArithOp(stri op, stri a, stri b) {
 			return 2 * b_val;
 		}
 		else {
-			// if (DEBUG) addCodeLine("a i b nierowne 2");
-			// addCodeLine("ZERO " + op_temp_c); // r_c <- 0
 			
-			// int startLineNumber=tempCode.size(); 
-			// // ETYKIETA START
 			
-			// addCodeLine("STORE " + op_temp_b); // r_a <- r_b
-			
-			// sprintf(temp, "JZERO %d", tempCode.size() + 19);
-			// addCodeLine(temp);
-			// sprintf(temp, "JODD %d", tempCode.size() + 8);
-			// addCodeLine(temp);
-			
-			// addCodeLine("LOAD " + op_temp_a);
-			// addCodeLine("SHL");
-			// addCodeLine("STORE " + op_temp_a);
-			// addCodeLine("LOAD " + op_temp_b);
-			// addCodeLine("SHR");
-			// addCodeLine("STORE " + op_temp_b);
-		
-			// sprintf(temp, "JUMP %d", startLineNumber);
-			// addCodeLine(temp);
-			
-			// //KONIEC DLA PARZYSTEGO
-			
-			// addCodeLine("LOAD " + op_temp_c);
-			// addCodeLine("ADD " + op_temp_a);
-			// addCodeLine("STORE " + op_temp_c);
-			
-			// addCodeLine("LOAD " + op_temp_a);
-			// addCodeLine("SHL");
-			// addCodeLine("STORE " + op_temp_a);
-			// addCodeLine("LOAD " + op_temp_b);
-			// addCodeLine("SHR");
-			// addCodeLine("STORE " + op_temp_b);
-			// sprintf(temp, "JUMP %d", startLineNumber);
-			// addCodeLine(temp);
-			
-			// addCodeLine("LOAD " + op_temp_c);
-			// //addCodeLine("DEC");
-			// addCodeLine("STORE " + op_temp_a); // reg_a=a
+			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 		}	
 		if (DEBUG) addCodeLine("-----------KONIEC MNOZENIA");
 		return a_val * b_val;
