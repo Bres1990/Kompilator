@@ -4,8 +4,8 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <cstdlib> 
-#include <sstream>
+#include <cstdlib>  
+#include <sstream> 
 
 int yylex(void);
 extern int yylineno; 
@@ -15,7 +15,7 @@ int yyerror(const char *error)
     printf("ERROR: Line %d - %s\n", yylineno, error ); 
 }   
 
-void catch_error(int line, const char* err);    
+void catch_error(int line, const char* err);     
 void err(int line, int no); 
 
 #include "translate.c" 
@@ -74,7 +74,7 @@ vdeclarations : vdeclarations PIDENTIFIER
 		} 
 		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET 
 		{ 
-		    int result = declareVariable($<stru>2);
+		    int result = declareVariable($<stru>2); 
 			switch (result) {
 				case 1: 
 					{

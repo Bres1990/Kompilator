@@ -69,8 +69,8 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <cstdlib> 
-#include <sstream>
+#include <cstdlib>  
+#include <sstream> 
 
 int yylex(void);
 extern int yylineno; 
@@ -80,7 +80,7 @@ int yyerror(const char *error)
     printf("ERROR: Line %d - %s\n", yylineno, error ); 
 }   
 
-void catch_error(int line, const char* err);   
+void catch_error(int line, const char* err);     
 void err(int line, int no); 
 
 #include "translate.c" 
@@ -1375,7 +1375,7 @@ yyreduce:
   case 5:
 #line 76 "bison.y" /* yacc.c:1646  */
     { 
-		    int result = declareVariable((yyvsp[-3].stru));
+		    int result = declareVariable((yyvsp[-3].stru)); 
 			switch (result) {
 				case 1: 
 					{

@@ -49,11 +49,11 @@ Koniec programu, zwracam HALT
 ******** KOD ********
 
 
-0. ZERO 3
+0. ZERO 3 ** binaryNumberToCode **
 1. INC 3
 2. SHL 3
 3. LOAD 3
-4. ZERO 2
+4. ZERO 2 ** binaryNumberToCode **
 5. INC 2
 6. LOAD 2
 7. INC 1
@@ -61,7 +61,7 @@ Koniec programu, zwracam HALT
 9. LOAD 0
 10. STORE 0
 11. LOAD -1
-12. ZERO 4
+12. ZERO 4 ** binaryNumberToCode **
 13. INC 4
 14. SHL 4
 15. SHL 4

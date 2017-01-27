@@ -303,14 +303,6 @@ void binaryNumberToCode(stri bin) {
         }
     }
     v.push_back(zero + " ** binaryNumberToCode **");
-
-    /* -- [NIEPOTRZEBNE?]
-    registerManager.setValueToRegister(bin, 0); // umiesc liczbe w akumulatorze
-    printf("setValueToRegister: %s to %d", bin.c_str(), 0);
-	//registerManager.populateRegister(bin);
-	v.push_back("STORE 0 **binaryNumberToCode**"); // umiesc zawartosc r0 w Pr_0
-	variableManager.setAddressOfVariable(bin, registerManager.getAccumulatorValue());  // nie ma nic w r0
-	*/
     
 
     for (int i = v.size() - 1; i >= 0; i--) {
@@ -390,8 +382,8 @@ int generateP_AB(stri a, stri b) {
 	int ret = generateP_A(a);
 	if (ret != 0) return ret;
 	int reg = registerManager.findFreeRegister();
-	sprintf(temp, "STORE %d", reg);
-	addCodeLine(temp); // pr0 <- r_i
+	sprintf(temp, "LOAD %d", reg);
+	addCodeLine(temp); // r_i <- pr_0 
 	variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
 	printf("zmiennej %s przypisano adres %d\n", a.c_str(), variableManager.getAddressOfVariable(a));
 	registerManager.removeLastVariable();
@@ -399,8 +391,8 @@ int generateP_AB(stri a, stri b) {
 	ret = generateP_A(b);
 	if (ret != 0) return ret;
 	reg = registerManager.findFreeRegister();
-	sprintf(temp, "STORE %d", reg);
-	addCodeLine(temp); // pr0 < r_i
+	sprintf(temp, "LOAD %d", reg);
+	addCodeLine(temp);
 	variableManager.setAddressOfVariable(b, registerManager.getAccumulatorValue());
 	printf("zmiennej %s przypisano adres %d\n", a.c_str(), variableManager.getAddressOfVariable(a));
 	registerManager.removeLastVariable();
@@ -527,8 +519,6 @@ int generateArithOp(stri op, stri a, stri b) {
 
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 		}
 
 		return a_val + b_val;
@@ -560,8 +550,6 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
 		int result = a_val - b_val;
 
@@ -588,8 +576,6 @@ int generateArithOp(stri op, stri a, stri b) {
 
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			return a_val * 2;
 		}
 		else if (a == "2") {
@@ -598,15 +584,11 @@ int generateArithOp(stri op, stri a, stri b) {
 
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			return 2 * b_val;
 		}
 		else {
 			// zwykłe mnożenie
 
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 		}	
@@ -630,8 +612,6 @@ int generateArithOp(stri op, stri a, stri b) {
 
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			return floor(a_val / 2);
 		}
 		else if (a == "2") {
@@ -640,15 +620,11 @@ int generateArithOp(stri op, stri a, stri b) {
 
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			return floor(2 / b_val);
 		}
 		else {
 			generateDivision();
 
-			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			return floor(a_val / b_val);
@@ -670,8 +646,6 @@ int generateArithOp(stri op, stri a, stri b) {
 		//addCodeLine("STORE " + reg_of_b);
 		//addCodeLine("LOAD " + reg_of_a);
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		return a_val % b_val;
@@ -723,8 +697,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
 	} else if (op == S_EQ) {
 		int reg_of_a = getVariableRegister(a);
@@ -750,8 +722,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 
@@ -781,8 +751,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
 	} else if (op == S_GT) {
 		int reg_of_a = getVariableRegister(a);
@@ -808,8 +776,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 
@@ -839,8 +805,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
 	
 
@@ -868,8 +832,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 
