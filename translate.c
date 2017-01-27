@@ -82,8 +82,11 @@ class RegisterManager {
 
 		int getValueFromRegister(int regnum) {
 			if (regValVector.at(regnum) != -1) {
+				printf("value at %d is %d", regnum, regValVector.at(regnum));
 				return regValVector.at(regnum);
-			} else return -1;
+			} else if (regnum == 0) {
+				printf("accumulator is empty\n");
+			} return -1;
 		}
 
 		int setValueToRegister(stri value, int regnum) {
@@ -94,12 +97,12 @@ class RegisterManager {
 			// zwroc indeks pierwszego pustego rejestru
 			int fullRegisters = registerVector.size();
 			if (fullRegisters == 5) {
-				if (ERR) printf("*******WSZYSTKIE REJESTRY ZAJETE\n");
-				printf("w rejestrze 0 jest: %s\n", registerVector.at(0).c_str());
-				printf("w rejestrze 1 jest: %s\n", registerVector.at(1).c_str());
-				printf("w rejestrze 2 jest: %s\n", registerVector.at(2).c_str());
-				printf("w rejestrze 3 jest: %s\n", registerVector.at(3).c_str());
-				printf("w rejestrze 4 jest: %s\n", registerVector.at(4).c_str());
+				//if (DEBUG) printf("*******WSZYSTKIE REJESTRY ZAJETE\n");
+				/*printf("w rejestrze 0 jest: %s\n", getValueFromRegister(0));
+				printf("w rejestrze 1 jest: %s\n", getValueFromRegister(1));
+				printf("w rejestrze 2 jest: %s\n", getValueFromRegister(2));
+				printf("w rejestrze 3 jest: %s\n", getValueFromRegister(3));
+				printf("w rejestrze 4 jest: %s\n", getValueFromRegister(4));*/
 				return -1;
 			} else {
 				//printf("FREE REGISTER: %d\n", fullRegisters);
@@ -138,7 +141,7 @@ class RegisterManager {
 				if (varName == registerVector.at(i)) {
 					return i;
 				}
-			}
+			} return -1;
 		}
 
 };
@@ -152,14 +155,13 @@ class VariableManager {
 	public:
 		int addVariable(stri varName, int valInAcc) {
 			if (getItemIndex(varName) > -1) {
-				if (ERR) printf("*******ZMIENNA JUZ ISTNIEJE");
+				if (DEBUG) printf("*******ZMIENNA %s JUZ ISTNIEJE", varName.c_str());
 				return 1; // juz istnieje
 			}
 			variableVector.push_back(varName);
 			valueVector.push_back("");
 
 			int memoryAddress = valInAcc;
-
 			memoryVector.push_back(memoryAddress);
 			return 0; // sukces
 		}
@@ -225,12 +227,17 @@ class VariableManager {
 			}
 		}
 
+		///////////////////////////////////////////////////////////////
+
 		int getAddressOfVariable(stri varName) { 
 			int varAddress = memoryVector.at(getItemIndex(varName));
 			if (varAddress != -1) {
 				return varAddress;
 			}
+			return -1;
 		}
+
+		///////////////////////////////////////////////////////////////
 
 		stri getVariableAtAddress(int address) {
 			return variableVector.at(getAddressIndex(address));
@@ -243,13 +250,13 @@ class VariableManager {
 class MemoryManager {
 	private:
 		vec<stri> memoryVariables;
-		vec<stri> memoryValues;
+		vec<int> memoryValues;
 	public:
 		// pr_0 <- r_i
-		int storeInMemory(stri variable) {
+		int storeInMemory(stri variable, int address) {
 			memoryVariables.push_back(variable);
-			memoryValues.push_back("");
-			return memoryVariables.size() - 1;
+			memoryValues.push_back(address);
+			return memoryVariables.size() - 1 + reserved_registers_number; //  
 		}
 };
 
@@ -284,7 +291,6 @@ void binaryNumberToCode(stri bin) {
 	stri inc = "INC " + regnum;
 	stri shl = "SHL " + regnum;
 
-    v.push_back(zero);
     while (bin != "0") {
         //printf("BIN %s\n", bin.c_str());
         char l = bin.at(bin.size() - 1);
@@ -296,10 +302,15 @@ void binaryNumberToCode(stri bin) {
             bin.erase(bin.size() - 1, 1);
         }
     }
+    v.push_back(zero + " ** binaryNumberToCode **");
 
+    /* -- [NIEPOTRZEBNE?]
+    registerManager.setValueToRegister(bin, 0); // umiesc liczbe w akumulatorze
+    printf("setValueToRegister: %s to %d", bin.c_str(), 0);
 	//registerManager.populateRegister(bin);
-	v.push_back("STORE " + regnum); // umiesc zawartosc r_regnum w Pr_0
-	variableManager.setAddressOfVariable(bin, registerManager.getAccumulatorValue());
+	v.push_back("STORE 0 **binaryNumberToCode**"); // umiesc zawartosc r0 w Pr_0
+	variableManager.setAddressOfVariable(bin, registerManager.getAccumulatorValue());  // nie ma nic w r0
+	*/
     
 
     for (int i = v.size() - 1; i >= 0; i--) {
@@ -354,8 +365,8 @@ int generateP_A(stri a) {
 				return -1;
 		} else { // jezeli istnieje zmienna
 			char temp[50];
-			variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
-			sprintf(temp, "STORE %d", AvarIndex); // setAddressOfVariable() ?
+			//variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
+			sprintf(temp, "STORE %d", AvarIndex);
 			addCodeLine(temp);
 		}
 	}
@@ -379,17 +390,19 @@ int generateP_AB(stri a, stri b) {
 	int ret = generateP_A(a);
 	if (ret != 0) return ret;
 	int reg = registerManager.findFreeRegister();
-	sprintf(temp, "LOAD %d", reg);
-	addCodeLine(temp); // r_i <- pr_0 
+	sprintf(temp, "STORE %d", reg);
+	addCodeLine(temp); // pr0 <- r_i
 	variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
+	printf("zmiennej %s przypisano adres %d\n", a.c_str(), variableManager.getAddressOfVariable(a));
 	registerManager.removeLastVariable();
 	
 	ret = generateP_A(b);
 	if (ret != 0) return ret;
 	reg = registerManager.findFreeRegister();
-	sprintf(temp, "LOAD %d", reg);
-	addCodeLine(temp);
+	sprintf(temp, "STORE %d", reg);
+	addCodeLine(temp); // pr0 < r_i
 	variableManager.setAddressOfVariable(b, registerManager.getAccumulatorValue());
+	printf("zmiennej %s przypisano adres %d\n", a.c_str(), variableManager.getAddressOfVariable(a));
 	registerManager.removeLastVariable();
 	return 0;
 }
@@ -431,11 +444,15 @@ int getVariableRegister(stri variable) {
 	{
 		if (registerManager.findFreeRegister() != -1) 
 		{
-			printf("yolo1\n");
+			printf("rejestr zmiennej %s nie istnieje, tworze \n", variable.c_str());
 			registerManager.populateRegister(variable);
+			printf("stworzony rejestr to %d\n", registerManager.getRegisterOfVariable(variable));
 			return registerManager.getRegisterOfVariable(variable);
 		} else { printf("nie ma wolnego rejestru dla %s\n", variable.c_str()); return -1; }
-	} else { printf("yolo2\n"); return registerManager.getRegisterOfVariable(variable); }
+	} else { 
+		printf("rejestr zmiennej %s istnieje, jest to %d\n", variable.c_str(), registerManager.getRegisterOfVariable(variable)); 
+		return registerManager.getRegisterOfVariable(variable); 
+	}
 }
 
 void jumper() {
@@ -481,51 +498,68 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	if (op == S_PLUS) {
 
-		int reg_of_a = getVariableRegister(a); // if -5 store in memory
-		int reg_of_b = getVariableRegister(b); // if -5 store in memory
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
-		// sprawdz, w ktorym rejestrze jest a i zaladuj ten rejestr (do komorki pamieci w r_0)
-		// potem dodaj b i zapisz w wolnym rejestrze
+		int reg_of_a = getVariableRegister(a); 
+		int reg_of_b = getVariableRegister(b); 
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a)); // miejsce w pamieci zalezy od wartosci w akumulatorze
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5)
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b)); // miejsce w pamieci zalezy od wartosci w akumulatorze
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
-		// jesli a lub b rowne jeden - uzyc INC
+		if (a == "1") {
+			sprintf(temp, "INC %d", reg_of_b);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_b);
+			addCodeLine(temp);
+		} else if (b == "1") {
+			sprintf(temp, "INC %d", reg_of_a);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_a);
+			addCodeLine(temp);
+		} else {
+			sprintf(temp, "STORE %d", reg_of_a); 
+			addCodeLine(temp); // pr_0 = reg_a
+			sprintf(temp, "ADD %d", reg_of_b);
+			addCodeLine(temp); // reg_b = reg_b + reg_a
+			sprintf(temp, "COPY %d", reg_of_b);				
+			addCodeLine(temp); // r_0 = reg_b
 
-		sprintf(temp, "STORE %d", reg_of_a); 
-		addCodeLine(temp); // pr_0 = reg_a
-		sprintf(temp, "ADD %d", reg_of_b);
-		addCodeLine(temp); // reg_b = reg_b + reg_a
-		sprintf(temp, "COPY %d", reg_of_b);				// opcjonalne
-		addCodeLine(temp); // r_0 = reg_b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
+		}
 
-		// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
-		// POPRAWIC ZWALNIANIE REJESTROW GDY ZAPISUJE W PAMIECI r_0
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable(); // ewentualnie zapisuj w rejestrach tylko zmienne
 		return a_val + b_val;
 
 	} else if (op == S_MINUS) {
 
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
-		// sprawdz, w ktorym rejestrze jest a i zaladuj ten rejestr (do komorki pamieci r_0)
-		// potem odejmij b i zapisz w wolnym rejestrze
+		if (reg_of_a == -5) 
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5)
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
-		// jesli a lub b rowne 1 - uzyc DEC
+		if (b == "1") {
+			sprintf(temp, "DEC %d", reg_of_a);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_a);
+			addCodeLine(temp);
+		}
 
 		sprintf(temp, "STORE %d", reg_of_b); 
 		addCodeLine(temp); // pr_0 = reg_b
 		sprintf(temp, "SUB %d", reg_of_a);
 		addCodeLine(temp); // reg_a = reg_a - reg_b
-		sprintf(temp, "COPY %d", reg_of_a);				// opcjonalne
-		addCodeLine(temp); // pr_0 = reg_a
+		sprintf(temp, "COPY %d", reg_of_a);				
+		addCodeLine(temp); // r_0 = reg_a
 
-		// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 
@@ -540,17 +574,20 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		if (DEBUG) addCodeLine("-----------POCZATEK MNOZENIA");
 		if (b == "2") {
 			if (DEBUG) addCodeLine("b rowne 2");
 			addCodeLine("SHR " + reg_of_a);
 
-			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			return a_val * 2;
@@ -559,7 +596,8 @@ int generateArithOp(stri op, stri a, stri b) {
 			if (DEBUG) addCodeLine("a rowne 2");
 			addCodeLine("SHR " + reg_of_b);
 
-			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			return 2 * b_val;
@@ -567,7 +605,8 @@ int generateArithOp(stri op, stri a, stri b) {
 		else {
 			// zwykłe mnożenie
 
-			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 		}	
@@ -578,16 +617,19 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5) 
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		if (b == "2") {
 			if (DEBUG) addCodeLine("b rowne 2");
 			addCodeLine("SHL " + reg_of_a);
 
-			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			return floor(a_val / 2);
@@ -596,7 +638,8 @@ int generateArithOp(stri op, stri a, stri b) {
 			if (DEBUG) addCodeLine("a rowne 2");
 			addCodeLine("SHL " + reg_of_b);
 
-			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			return floor(2 / b_val);
@@ -604,7 +647,8 @@ int generateArithOp(stri op, stri a, stri b) {
 		else {
 			generateDivision();
 
-			// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+			registerManager.removeLastVariable();
+			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 			return floor(a_val / b_val);
@@ -615,16 +659,19 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		generateDivision();
 		//addCodeLine("STORE " + reg_of_b);
 		//addCodeLine("LOAD " + reg_of_a);
 
-		// wynik jest w r_0, wiec moge zwolnic pamiec zmiennych a i b
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		return a_val % b_val;
@@ -638,21 +685,18 @@ int generateArithOp(stri op, stri a, stri b) {
 int generateBoolOp(stri op, stri a, stri b) {
 	generateP_AB(a, b);
 
-	// sprawdz czy a jest liczba
 	int a_val, b_val = 0;
 	if (isNumber(a)) {
 		a_val = atoi(a.c_str());
 	} else {
 		a_val = atoi(variableManager.getValueOfVariable(a).c_str());
 	}
-	// sprawdz czy b jest liczba
 	if (isNumber(b)) {
 		b_val = atoi(b.c_str());
 	} else {
 		b_val = atoi(variableManager.getValueOfVariable(b).c_str());
 	}
 
-	//////////////////////////////////////////////////////////////////
 	char temp[50];
 
 	
@@ -661,10 +705,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 	if (op == S_GET) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5)
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		/*
 		addCodeLine("SUB " + op_temp_b); // REJ_A=b-a  -- OK
@@ -677,14 +723,18 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 
 	} else if (op == S_EQ) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5) 
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -702,14 +752,18 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 
 	} else if (op == S_NEQ) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5) 
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -727,14 +781,18 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 
 	} else if (op == S_GT) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5)
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -752,14 +810,18 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 
 	} else if (op == S_LET) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -777,16 +839,20 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 
 	
 
 	} else if (op == S_LT) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_a = memoryManager.storeInMemory(a);
-		if (reg_of_b == -5) // zajmij miejsce w pamieci (MemoryManager)
-			reg_of_b = memoryManager.storeInMemory(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		/*
 		addCodeLine("STORE " + op_temp_b);
@@ -802,6 +868,8 @@ int generateBoolOp(stri op, stri a, stri b) {
 			return 1;
 		} else return 0;
 
+		registerManager.removeLastVariable();
+		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 		registerManager.removeLastVariable();
 
@@ -964,11 +1032,12 @@ int generateRead(stri a) {
 			return -1;
 		} else { // jezeli istnieje zmienna
 			char temp[50];
+			addCodeLine("GET 0");
+			sprintf(temp, "STORE 0", AvarIndex);
+			variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
+			addCodeLine(temp);
 			addCodeLine("ZERO 0");
-			sprintf(temp, "GET %d", AvarIndex);
-			addCodeLine(temp);
-			sprintf(temp, "STORE %d", AvarIndex);
-			addCodeLine(temp);
+			// zwolnij akumulator
 		}
 	}
 	return 0;
@@ -976,7 +1045,7 @@ int generateRead(stri a) {
 
 
 void endOfProgram() {
-	if (DEBUG) printf("Koniec programu, zwracam HALT\nKOD:\n");
+	if (DEBUG) printf("Koniec programu, zwracam HALT\n\n\n******** KOD ********\n\n\n");
 	addCodeLine("HALT");
 	for (int i = 0; i < tempCode.size(); i++) { 
 		if (DEBUG || LINECODE) printf("%d. ", i);

@@ -4,9 +4,11 @@
 
 
 	Deklaracja zmiennej <a>
+accumulator is empty
 	Udana deklaracja zmiennej
 	Zmienna przypisana do rejestru 1
 	Deklaracja zmiennej <b>
+accumulator is empty
 	Udana deklaracja zmiennej
 	Zmienna przypisana do rejestru 2
 
@@ -15,46 +17,57 @@
 
 
 Operacja arytmetyczna 2 + 1
-		*******tworze zmienna 0
+accumulator is empty
 		*******tworze zmienna 2
+zmiennej 2 przypisano adres -1
+accumulator is empty
 		*******tworze zmienna 1
-yolo2
-yolo2
+zmiennej 2 przypisano adres -1
+rejestr zmiennej 2 istnieje, jest to 1
+rejestr zmiennej 1 istnieje, jest to -5
+memoryManager: storeInMemory(2, -1)
+memoryManager: storeInMemory(1, -1)
 	Przypisuje zmiennej <a> wartosc <3>
 Indeks zmiennej to 0
 	Udane przypisanie do zmiennej
 Operacja arytmetyczna a + 4
+accumulator is empty
+zmiennej a przypisano adres -1
+accumulator is empty
 		*******tworze zmienna 4
-yolo2
-yolo2
+zmiennej a przypisano adres -1
+rejestr zmiennej a istnieje, jest to 3
+rejestr zmiennej 4 istnieje, jest to -5
+memoryManager: storeInMemory(a, -1)
+memoryManager: storeInMemory(4, -1)
 	Przypisuje zmiennej <b> wartosc <7>
 Indeks zmiennej to 1
 	Udane przypisanie do zmiennej
 Koniec programu, zwracam HALT
-KOD:
-0. STORE 3
+
+
+******** KOD ********
+
+
+0. ZERO 3
 1. INC 3
 2. SHL 3
-3. ZERO 3
-4. LOAD 3
-5. STORE 2
-6. INC 2
-7. ZERO 2
-8. LOAD 2
-9. STORE 1
-10. ADD 3
-11. COPY 3
-12. LOAD 0
-13. STORE 0
-14. LOAD 3
-15. STORE 2
-16. INC 2
-17. SHL 2
-18. SHL 2
-19. ZERO 2
-20. LOAD 2
-21. STORE 1
-22. ADD 3
-23. COPY 3
-24. LOAD 1
-25. HALT
+3. LOAD 3
+4. ZERO 2
+5. INC 2
+6. LOAD 2
+7. INC 1
+8. COPY 1
+9. LOAD 0
+10. STORE 0
+11. LOAD -1
+12. ZERO 4
+13. INC 4
+14. SHL 4
+15. SHL 4
+16. LOAD 4
+17. STORE 6
+18. ADD 7
+19. COPY 7
+20. LOAD 1
+21. HALT

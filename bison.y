@@ -15,17 +15,17 @@ int yyerror(const char *error)
     printf("ERROR: Line %d - %s\n", yylineno, error ); 
 }   
 
-void catch_error(int line, const char* err);
+void catch_error(int line, const char* err);    
 void err(int line, int no); 
 
 #include "translate.c" 
 
 %}
-
-%union{ char *stru; char *numu; }
+ 
+%union{ char *stru; char *numu; } 
 %token <stru> VAR /* blok deklaracji zmiennych */
 %token <stru> START END /* blok kodu */
-%token <stru> LBRACKET RBRACKET
+%token <stru> LBRACKET RBRACKET 
 %token <stru> LCOMMENT RCOMMENT
 %token <stru> IF THEN ELSE ENDIF 
 %token <stru> WHILE DO ENDWHILE
@@ -53,7 +53,7 @@ vdeclarations : vdeclarations PIDENTIFIER
 		{
 		    int result = declareVariable($<stru>2); 
 			switch (result) {   
-				case 1:
+				case 1: 
 					{  
 					stri err = "Redeklaracja zmiennej ";
 					err += $<stru>2;
@@ -80,7 +80,7 @@ vdeclarations : vdeclarations PIDENTIFIER
 					{
 					stri err = "Redeklaracja zmiennej ";
 					err += $<stru>2;
-					catch_error(yylineno, err.c_str());
+					catch_error(yylineno, err.c_str()); 
 					}
 					break;
 				case 0:
@@ -107,12 +107,12 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		switch (result) {
 			case 1: 
 				{
-				stri err = "Niezadeklarowana zmienna "; 
+				stri err = "Niezadeklarowana zmienna ";  
 				err += $<stru>1;
 				catch_error(yylineno, err.c_str());
 				}
 				break;
-			case 0:
+			case 0: 
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
 				break; 
 		}
@@ -158,8 +158,8 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	}
 	condition THEN commands
 	{
-		if (DEBUG)printf("Warunki then ...\n");
-		generateThen(); 
+		if (DEBUG)printf("Warunki then ...\n");          
+		generateThen();  
 	}	
 	ELSE commands ENDIF
 	{
@@ -182,7 +182,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 		generateFor();
 		if (DEBUG) printf("Obsluga for\n");
-	} 
+	}  
 	PIDENTIFIER FROM VALUE
 	{
 		generateFrom();
@@ -220,7 +220,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	| READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
 	{ 
 	    int result = generateRead($<stru>2);
-		if (result != 0) { 
+		if (result != 0) {   
 			err(yylineno, result);
 		} 
 	}    
@@ -250,9 +250,9 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		}  
 	}
 
-	| SKIP {}
+	| SKIP {} 
 ;
-	
+	 
 expression: VALUE
 			{	
 				if (DEBUG) printf("Generuje wartosc %s\n", $<stru>1);
@@ -265,7 +265,7 @@ expression: VALUE
 				if (DEBUG) printf("Operacja arytmetyczna %s + %s\n", $<stru>1, $<stru>3);
 				int result = generateArithOp("+", $<stru>1, $<stru>3); 
 				if (result == -1) { err(yylineno, result); } 
-
+ 
 				std::ostringstream os;
 				os << result;
 				$$ = strdup(os.str().c_str());
@@ -398,10 +398,10 @@ void err(int line, int no) {
 			sprintf(txt, "Niezadeklarowana zmienna");
 			break;
 		case(-5):
-			sprintf(txt, "Niezainicjalizowana zmienna");
+			sprintf(txt, "Niezainicjalizowana zmienna"); 
 			break;
-		default:
-			sprintf(txt, "BLAD NUMER %d", no);
+		default:  
+			sprintf(txt, "BLAD NUMER %d", no); 
 			break;
 	}
 	

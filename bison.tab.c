@@ -80,7 +80,7 @@ int yyerror(const char *error)
     printf("ERROR: Line %d - %s\n", yylineno, error ); 
 }   
 
-void catch_error(int line, const char* err);
+void catch_error(int line, const char* err);   
 void err(int line, int no); 
 
 #include "translate.c" 
@@ -1350,7 +1350,7 @@ yyreduce:
     {
 		    int result = declareVariable((yyvsp[0].stru)); 
 			switch (result) {   
-				case 1:
+				case 1: 
 					{  
 					stri err = "Redeklaracja zmiennej ";
 					err += (yyvsp[0].stru);
@@ -1381,7 +1381,7 @@ yyreduce:
 					{
 					stri err = "Redeklaracja zmiennej ";
 					err += (yyvsp[-3].stru);
-					catch_error(yylineno, err.c_str());
+					catch_error(yylineno, err.c_str()); 
 					}
 					break;
 				case 0:
@@ -1417,12 +1417,12 @@ yyreduce:
 		switch (result) {
 			case 1: 
 				{
-				stri err = "Niezadeklarowana zmienna "; 
+				stri err = "Niezadeklarowana zmienna ";  
 				err += (yyvsp[-6].stru);
 				catch_error(yylineno, err.c_str());
 				}
 				break;
-			case 0:
+			case 0: 
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
 				break; 
 		}
@@ -1437,7 +1437,7 @@ yyreduce:
 		switch (result) { 
 			case 1:
 				{ 
-				stri err = "Niezadeklarowana zmienna ";  
+				stri err = "Niezadeklarowana zmienna ";   
 				err += (yyvsp[-6].stru);
 				catch_error(yylineno, err.c_str());
 				}
@@ -1481,8 +1481,8 @@ yyreduce:
   case 13:
 #line 160 "bison.y" /* yacc.c:1646  */
     {
-		if (DEBUG)printf("Warunki then ...\n");
-		generateThen(); 
+		if (DEBUG)printf("Warunki then ...\n");          
+		generateThen();  
 	}
 #line 1488 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1583,7 +1583,7 @@ yyreduce:
 #line 221 "bison.y" /* yacc.c:1646  */
     { 
 	    int result = generateRead((yyvsp[-4].stru));
-		if (result != 0) { 
+		if (result != 0) {   
 			err(yylineno, result);
 		} 
 	}
@@ -1644,7 +1644,7 @@ yyreduce:
 				if (DEBUG) printf("Operacja arytmetyczna %s + %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp("+", (yyvsp[-2].stru), (yyvsp[0].stru)); 
 				if (result == -1) { err(yylineno, result); } 
-
+ 
 				std::ostringstream os;
 				os << result;
 				(yyval.numu) = strdup(os.str().c_str());
@@ -2040,10 +2040,10 @@ void err(int line, int no) {
 			sprintf(txt, "Niezadeklarowana zmienna");
 			break;
 		case(-5):
-			sprintf(txt, "Niezainicjalizowana zmienna");
+			sprintf(txt, "Niezainicjalizowana zmienna"); 
 			break;
-		default:
-			sprintf(txt, "BLAD NUMER %d", no);
+		default:  
+			sprintf(txt, "BLAD NUMER %d", no); 
 			break;
 	}
 	

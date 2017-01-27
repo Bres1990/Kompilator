@@ -6,5 +6,5 @@ BEGIN
 	b := a+4;
 	{a := a - b;}
 	{IF a < b THEN WRITE b;}
-	{ELSE WRITE a;}
+	{ELSE WRITE a;} 
 END
