@@ -82,7 +82,7 @@ class RegisterManager {
 
 		int getValueFromRegister(int regnum) {
 			if (regValVector.at(regnum) != -1) {
-				printf("value at %d is %d", regnum, regValVector.at(regnum));
+				printf("value at %d is %d\n", regnum, regValVector.at(regnum));
 				return regValVector.at(regnum);
 			} else if (regnum == 0) {
 				printf("accumulator is empty\n");
@@ -279,7 +279,7 @@ void generateDivision() {
  */
 
 
-void binaryNumberToCode(stri bin) {
+void binaryNumberToCode(stri bin, stri dec) {
     vec<stri> v;
     int numreg = registerManager.findFreeRegister();
     
@@ -302,12 +302,14 @@ void binaryNumberToCode(stri bin) {
             bin.erase(bin.size() - 1, 1);
         }
     }
-    v.push_back(zero + " ** binaryNumberToCode **");
+    v.push_back(zero + "\t ** binaryNumberToCode: " + dec.c_str() +" **");
     
 
     for (int i = v.size() - 1; i >= 0; i--) {
         addCodeLine(v.at(i));
 	}
+	addCodeLine("COPY " + regnum + "\t ** copy " + dec.c_str() + " to register 0 **");
+	registerManager.setValueToRegister(dec, 0);
 
 }
 
@@ -342,7 +344,7 @@ stri strDecToStrBin(stri dec) {
 
 void generateValue(stri a) {
     stri binary = strDecToStrBin(a);
-    binaryNumberToCode(binary);
+    binaryNumberToCode(binary, a);
 }
 
 
@@ -426,7 +428,7 @@ int generateVariableAssign(stri varName, stri varVal) {
 	if (DEBUG) printf("\tPrzypisuje zmiennej <%s> wartosc <%s>\n", varName.c_str(), variableManager.getValueOfVariable(varName).c_str());
 	if (DEBUG) printf("Indeks zmiennej to %d\n", varIndex);
 	char temp[50];
-	sprintf(temp, "LOAD %d", varIndex);
+	sprintf(temp, "STORE %d", varIndex);
 	addCodeLine(temp);
 	return 0;
 }
@@ -434,15 +436,16 @@ int generateVariableAssign(stri varName, stri varVal) {
 int getVariableRegister(stri variable) {
 	if (registerManager.getRegisterOfVariable(variable) == -1) 
 	{
-		if (registerManager.findFreeRegister() != -1) 
-		{
-			printf("rejestr zmiennej %s nie istnieje, tworze \n", variable.c_str());
-			registerManager.populateRegister(variable);
-			printf("stworzony rejestr to %d\n", registerManager.getRegisterOfVariable(variable));
-			return registerManager.getRegisterOfVariable(variable);
-		} else { printf("nie ma wolnego rejestru dla %s\n", variable.c_str()); return -1; }
+		return -5;
+		// if (registerManager.findFreeRegister() != -1) 
+		// {
+		// 	printf("rejestr zmiennej %s nie istnieje, tworze \n", variable.c_str());
+		// 	registerManager.populateRegister(variable);
+		// 	printf("stworzony rejestr to %d\n", registerManager.getRegisterOfVariable(variable));
+		// 	return registerManager.getRegisterOfVariable(variable);
+		// } else { printf("nie ma wolnego rejestru dla %s\n", variable.c_str()); return -1; }
 	} else { 
-		printf("rejestr zmiennej %s istnieje, jest to %d\n", variable.c_str(), registerManager.getRegisterOfVariable(variable)); 
+		//printf("rejestr zmiennej %s istnieje, jest to %d\n", variable.c_str(), registerManager.getRegisterOfVariable(variable)); 
 		return registerManager.getRegisterOfVariable(variable); 
 	}
 }
@@ -493,10 +496,10 @@ int generateArithOp(stri op, stri a, stri b) {
 		int reg_of_a = getVariableRegister(a); 
 		int reg_of_b = getVariableRegister(b); 
 		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a)); // miejsce w pamieci zalezy od wartosci w akumulatorze
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
 		printf("memoryManager: storeInMemory(%s, %d)\n", a.c_str(), variableManager.getAddressOfVariable(a));
 		if (reg_of_b == -5)
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b)); // miejsce w pamieci zalezy od wartosci w akumulatorze
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		if (a == "1") {
@@ -514,10 +517,10 @@ int generateArithOp(stri op, stri a, stri b) {
 
 			registerManager.removeLastVariable();
 		} else {
-			sprintf(temp, "STORE %d", reg_of_a); 
-			addCodeLine(temp); // pr_0 = reg_a
+			sprintf(temp, "STORE %d", reg_of_a);  // niepotrzebne? powtorzenie
+			addCodeLine(temp); // pr_0 = reg_a -- akumulator  dalej pusty, co tam wlozyc?
 			sprintf(temp, "ADD %d", reg_of_b);
-			addCodeLine(temp); // reg_b = reg_b + reg_a
+			addCodeLine(temp); // reg_b = reg_b + pr0
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
 
@@ -538,7 +541,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		if (b == "1") {
-			
+
 			sprintf(temp, "DEC %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
@@ -550,7 +553,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		sprintf(temp, "STORE %d", reg_of_b); 
 		addCodeLine(temp); // pr_0 = reg_b
 		sprintf(temp, "SUB %d", reg_of_a);
-		addCodeLine(temp); // reg_a = reg_a - reg_b
+		addCodeLine(temp); // reg_a = reg_a - pr0
 		sprintf(temp, "COPY %d", reg_of_a);				
 		addCodeLine(temp); // r_0 = reg_a
 

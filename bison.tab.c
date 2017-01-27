@@ -1374,14 +1374,14 @@ yyreduce:
 
   case 5:
 #line 76 "bison.y" /* yacc.c:1646  */
-    { 
+    {  
 		    int result = declareVariable((yyvsp[-3].stru));  
 			switch (result) {
 				case 1: 
 					{
 					stri err = "Redeklaracja zmiennej ";
 					err += (yyvsp[-3].stru);
-					catch_error(yylineno, err.c_str()); 
+					catch_error(yylineno, err.c_str());   
 					}
 					break;
 				case 0:
@@ -1782,7 +1782,7 @@ yyreduce:
 
 		std::ostringstream os;
 		os << result;
-		(yyval.numu) = strdup(os.str().c_str());
+		(yyval.numu) = strdup(os.str().c_str());   
 	}
 #line 1788 "bison.tab.c" /* yacc.c:1646  */
     break;

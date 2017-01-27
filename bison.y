@@ -71,16 +71,16 @@ vdeclarations : vdeclarations PIDENTIFIER
 					catch_error(yylineno, err.c_str());
 					break;
 			}
-		} 
-		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET 
-		{ 
+		}  
+		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET  
+		{  
 		    int result = declareVariable($<stru>2);  
 			switch (result) {
 				case 1: 
 					{
 					stri err = "Redeklaracja zmiennej ";
 					err += $<stru>2;
-					catch_error(yylineno, err.c_str()); 
+					catch_error(yylineno, err.c_str());   
 					}
 					break;
 				case 0:
@@ -368,7 +368,7 @@ condition :  VALUE
 
 		std::ostringstream os;
 		os << result;
-		$$ = strdup(os.str().c_str());
+		$$ = strdup(os.str().c_str());   
 	}
 	| VALUE LET VALUE
 	{
