@@ -36,7 +36,7 @@ zmiennej a przypisano adres -1
 accumulator is empty
 		*******tworze zmienna 4
 zmiennej a przypisano adres -1
-rejestr zmiennej a istnieje, jest to 3
+rejestr zmiennej a istnieje, jest to 2
 rejestr zmiennej 4 istnieje, jest to -5
 memoryManager: storeInMemory(a, -1)
 memoryManager: storeInMemory(4, -1)
@@ -52,22 +52,22 @@ Koniec programu, zwracam HALT
 0. ZERO 3 ** binaryNumberToCode **
 1. INC 3
 2. SHL 3
-3. LOAD 3
+3. STORE 3
 4. ZERO 2 ** binaryNumberToCode **
 5. INC 2
-6. LOAD 2
+6. STORE 2
 7. INC 1
 8. COPY 1
 9. LOAD 0
 10. STORE 0
-11. LOAD -1
-12. ZERO 4 ** binaryNumberToCode **
-13. INC 4
-14. SHL 4
-15. SHL 4
-16. LOAD 4
-17. STORE 6
-18. ADD 7
-19. COPY 7
+11. STORE 4
+12. ZERO 3 ** binaryNumberToCode **
+13. INC 3
+14. SHL 3
+15. SHL 3
+16. STORE 3
+17. STORE 2
+18. ADD 6
+19. COPY 6
 20. LOAD 1
 21. HALT

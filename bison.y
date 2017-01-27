@@ -67,14 +67,14 @@ vdeclarations : vdeclarations PIDENTIFIER
 				case -1:
 					stri err = "Zmienna "; 
 					err += $<stru>2;
-					err += " musi miec nazwe\n";
+					err += " musi miec nazwe\n"; 
 					catch_error(yylineno, err.c_str());
 					break;
 			}
 		} 
 		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET 
 		{ 
-		    int result = declareVariable($<stru>2); 
+		    int result = declareVariable($<stru>2);  
 			switch (result) {
 				case 1: 
 					{

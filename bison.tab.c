@@ -1364,7 +1364,7 @@ yyreduce:
 				case -1:
 					stri err = "Zmienna "; 
 					err += (yyvsp[0].stru);
-					err += " musi miec nazwe\n";
+					err += " musi miec nazwe\n"; 
 					catch_error(yylineno, err.c_str());
 					break;
 			}
@@ -1375,7 +1375,7 @@ yyreduce:
   case 5:
 #line 76 "bison.y" /* yacc.c:1646  */
     { 
-		    int result = declareVariable((yyvsp[-3].stru)); 
+		    int result = declareVariable((yyvsp[-3].stru));  
 			switch (result) {
 				case 1: 
 					{

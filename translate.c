@@ -504,11 +504,15 @@ int generateArithOp(stri op, stri a, stri b) {
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);
 			addCodeLine(temp);
+
+			registerManager.removeLastVariable();
 		} else if (b == "1") {
 			sprintf(temp, "INC %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
 			addCodeLine(temp);
+
+			registerManager.removeLastVariable();
 		} else {
 			sprintf(temp, "STORE %d", reg_of_a); 
 			addCodeLine(temp); // pr_0 = reg_a
@@ -517,7 +521,6 @@ int generateArithOp(stri op, stri a, stri b) {
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
 
-			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 		}
 
@@ -535,11 +538,14 @@ int generateArithOp(stri op, stri a, stri b) {
 		printf("memoryManager: storeInMemory(%s, %d)\n", b.c_str(), variableManager.getAddressOfVariable(b));
 
 		if (b == "1") {
+			
 			sprintf(temp, "DEC %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
 			addCodeLine(temp);
-		}
+
+			registerManager.removeLastVariable();
+		} else {
 
 		sprintf(temp, "STORE %d", reg_of_b); 
 		addCodeLine(temp); // pr_0 = reg_b
@@ -549,7 +555,8 @@ int generateArithOp(stri op, stri a, stri b) {
 		addCodeLine(temp); // r_0 = reg_a
 
 		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
+
+		}
 
 		int result = a_val - b_val;
 
@@ -575,7 +582,6 @@ int generateArithOp(stri op, stri a, stri b) {
 			addCodeLine("SHR " + reg_of_a);
 
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			return a_val * 2;
 		}
 		else if (a == "2") {
@@ -583,13 +589,11 @@ int generateArithOp(stri op, stri a, stri b) {
 			addCodeLine("SHR " + reg_of_b);
 
 			registerManager.removeLastVariable();
-			registerManager.removeLastVariable();
 			return 2 * b_val;
 		}
 		else {
 			// zwykłe mnożenie
 
-			registerManager.removeLastVariable();
 			registerManager.removeLastVariable();
 		}	
 		if (DEBUG) addCodeLine("-----------KONIEC MNOZENIA");
