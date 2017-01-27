@@ -382,7 +382,7 @@ int generateP_AB(stri a, stri b) {
 	int ret = generateP_A(a);
 	if (ret != 0) return ret;
 	int reg = registerManager.findFreeRegister();
-	sprintf(temp, "LOAD %d", reg);
+	sprintf(temp, "STORE %d", reg);
 	addCodeLine(temp); // r_i <- pr_0 
 	variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
 	printf("zmiennej %s przypisano adres %d\n", a.c_str(), variableManager.getAddressOfVariable(a));
@@ -391,7 +391,7 @@ int generateP_AB(stri a, stri b) {
 	ret = generateP_A(b);
 	if (ret != 0) return ret;
 	reg = registerManager.findFreeRegister();
-	sprintf(temp, "LOAD %d", reg);
+	sprintf(temp, "STORE %d", reg);
 	addCodeLine(temp);
 	variableManager.setAddressOfVariable(b, registerManager.getAccumulatorValue());
 	printf("zmiennej %s przypisano adres %d\n", a.c_str(), variableManager.getAddressOfVariable(a));
