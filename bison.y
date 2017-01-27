@@ -367,18 +367,18 @@ condition :  VALUE
 		if (result == -1) { err(yylineno, result); }
 
 		std::ostringstream os;
-		os << result;
-		$$ = strdup(os.str().c_str());   
-	}
-	| VALUE LET VALUE
-	{
+		os << result;  
+		$$ = strdup(os.str().c_str());     
+	}  
+	| VALUE LET VALUE 
+	{  
 		if (DEBUG) printf("Operacja boolowska %s <= %s\n", $<stru>1, $<stru>3);
 		int result = generateBoolOp(S_GET, $<stru>3, $<stru>1); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
-		if (result == -1) { err(yylineno, result); }
-
+		if (result == -1) { err(yylineno, result); }      
+ 
 		std::ostringstream os;
-		os << result;
-		$$ = strdup(os.str().c_str());
+		os << result; 
+		$$ = strdup(os.str().c_str()); 
 	}
 	
 ;

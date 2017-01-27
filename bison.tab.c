@@ -1781,22 +1781,22 @@ yyreduce:
 		if (result == -1) { err(yylineno, result); }
 
 		std::ostringstream os;
-		os << result;
-		(yyval.numu) = strdup(os.str().c_str());   
+		os << result;  
+		(yyval.numu) = strdup(os.str().c_str());     
 	}
 #line 1788 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
 #line 374 "bison.y" /* yacc.c:1646  */
-    {
+    {  
 		if (DEBUG) printf("Operacja boolowska %s <= %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_GET, (yyvsp[0].stru), (yyvsp[-2].stru)); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
-		if (result == -1) { err(yylineno, result); }
-
+		if (result == -1) { err(yylineno, result); }      
+ 
 		std::ostringstream os;
-		os << result;
-		(yyval.numu) = strdup(os.str().c_str());
+		os << result; 
+		(yyval.numu) = strdup(os.str().c_str()); 
 	}
 #line 1802 "bison.tab.c" /* yacc.c:1646  */
     break;
