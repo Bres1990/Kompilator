@@ -517,23 +517,21 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		if (b == "1") {
 
-			sprintf(temp, "DEC %d", reg_of_a);
+			sprintf(temp, "DEC %d \t** ODEJMOWANIE, b = 1 **", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
 			addCodeLine(temp);
 
 			registerManager.removeLastVariable();
 		} else {
+			sprintf(temp, "STORE %d \t** ODEJMOWANIE (pr_0 = reg_b) **", reg_of_b); 
+			addCodeLine(temp); // pr_0 = reg_b
+			sprintf(temp, "SUB %d", reg_of_a);
+			addCodeLine(temp); // reg_a = reg_a - pr0
+			sprintf(temp, "COPY %d", reg_of_a);				
+			addCodeLine(temp); // r_0 = reg_a
 
-		sprintf(temp, "STORE %d", reg_of_b); 
-		addCodeLine(temp); // pr_0 = reg_b
-		sprintf(temp, "SUB %d", reg_of_a);
-		addCodeLine(temp); // reg_a = reg_a - pr0
-		sprintf(temp, "COPY %d", reg_of_a);				
-		addCodeLine(temp); // r_0 = reg_a
-
-		registerManager.removeLastVariable();
-
+			registerManager.removeLastVariable();
 		}
 
 		int result = a_val - b_val;
@@ -549,11 +547,9 @@ int generateArithOp(stri op, stri a, stri b) {
 		int reg_of_b = getVariableRegister(b);
 		if (reg_of_a == -5)
 			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		
 		if (reg_of_b == -5) 
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
-
 		if (DEBUG) addCodeLine("-----------POCZATEK MNOZENIA");
 		if (b == "2") {
 			if (DEBUG) addCodeLine("b rowne 2");

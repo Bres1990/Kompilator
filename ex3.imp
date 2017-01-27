@@ -3,7 +3,7 @@ VAR
 BEGIN
 {READ a;}
 	a := 2+1;
-	b := a+4;
+	b := a-4;
 	{a := a - b;}
 	{IF a < b THEN WRITE b;}
 	{ELSE WRITE a;} 

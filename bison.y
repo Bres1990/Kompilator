@@ -368,7 +368,7 @@ condition :  VALUE
 
 		std::ostringstream os;
 		os << result;  
-		$$ = strdup(os.str().c_str());     
+		$$ = strdup(os.str().c_str());      
 	}  
 	| VALUE LET VALUE 
 	{  

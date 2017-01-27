@@ -20,9 +20,9 @@ Operacja arytmetyczna 2 + 1
 	Przypisuje zmiennej <a> wartosc <3>
 Indeks zmiennej to 0
 	Udane przypisanie do zmiennej
-Operacja arytmetyczna a + 4
+Operacja arytmetyczna a - 4
 		*******tworze zmienna 4
-	Przypisuje zmiennej <b> wartosc <7>
+	Przypisuje zmiennej <b> wartosc <0>
 Indeks zmiennej to 1
 	Udane przypisanie do zmiennej
 Koniec programu, zwracam HALT
@@ -51,8 +51,8 @@ Koniec programu, zwracam HALT
 17. SHL 3
 18. COPY 3	 ** copy 4 to register 0 **
 19. STORE 3 	** umieszczam 4 w komorce pamieci 4
-20. STORE 2 	** DODAWANIE (pr_0 = reg_a) **
-21. ADD 5
-22. COPY 5
+20. STORE 5 	** ODEJMOWANIE (pr_0 = reg_b) **
+21. SUB 2
+22. COPY 2
 23. STORE 1 	** // umieszczam b w komorce pamieci 4 // **
 24. HALT

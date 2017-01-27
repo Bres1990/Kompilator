@@ -1782,7 +1782,7 @@ yyreduce:
 
 		std::ostringstream os;
 		os << result;  
-		(yyval.numu) = strdup(os.str().c_str());     
+		(yyval.numu) = strdup(os.str().c_str());      
 	}
 #line 1788 "bison.tab.c" /* yacc.c:1646  */
     break;
