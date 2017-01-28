@@ -1710,9 +1710,9 @@ yyreduce:
 
   case 34:
 #line 319 "bison.y" /* yacc.c:1646  */
-    {
-		int result = generateP_A((yyvsp[0].stru));
-		if (result) { err(yylineno, result); }
+    { 
+		int result = generateP_A((yyvsp[0].stru)); 
+		if (result) { err(yylineno, result); } 
 	}
 #line 1718 "bison.tab.c" /* yacc.c:1646  */
     break;

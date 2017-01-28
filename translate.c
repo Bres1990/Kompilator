@@ -518,6 +518,13 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	char temp[50];
 
+	int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+
 	// LOAD i		r_i <- pr_0
 	// STORE i 		pr_0 <- r_i     <=======>    COPY i 	r_0 <- r_i
 	// ZERO i 		r_i <- 0
@@ -526,12 +533,12 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	if (op == S_PLUS) {
 
-		int reg_of_a = getVariableRegister(a); 
-		int reg_of_b = getVariableRegister(b); 
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		if (reg_of_b == -5)
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		// int reg_of_a = getVariableRegister(a); 
+		// int reg_of_b = getVariableRegister(b); 
+		// if (reg_of_a == -5)
+		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		// if (reg_of_b == -5)
+		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 
 		if (a == "1") {
 			sprintf(temp, "INC %d \t** DODAWANIE, a = 1 **", reg_of_b);
@@ -558,13 +565,13 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	} else if (op == S_MINUS) {
 
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) 
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		// int reg_of_a = getVariableRegister(a);
+		// int reg_of_b = getVariableRegister(b);
+		// if (reg_of_a == -5) 
+		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
 		
-		if (reg_of_b == -5)
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		// if (reg_of_b == -5)
+		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 
 		if (b == "1") {
@@ -591,12 +598,12 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	} else if (op == S_MULT) {
 
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		// int reg_of_a = getVariableRegister(a);
+		// int reg_of_b = getVariableRegister(b);
+		// if (reg_of_a == -5)
+		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		// if (reg_of_b == -5) 
+		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 
 		if (a == "0" || b == "0") {
 			sprintf(temp, "ZERO 0 \t** MNOŻENIE PRZEZ ZERO **");
@@ -633,12 +640,12 @@ int generateArithOp(stri op, stri a, stri b) {
 		
 	} else if (op == S_DIV) {
 
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) 
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));	
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		// int reg_of_a = getVariableRegister(a);
+		// int reg_of_b = getVariableRegister(b);
+		// if (reg_of_a == -5) 
+		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));	
+		// if (reg_of_b == -5) 
+		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 		if (a == "0" || b == "0") {
 			sprintf(temp, "ZERO 0 \t** DZIELENIE PRZEZ ZERO **");
@@ -658,7 +665,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return floor(a_val / 2);
 		}
 		else if (a == "2") {
-			addCodeLine("SHL %d \t** DZIELENIE (a = 2) **", reg_of_b);
+			sprintf(temp, "SHL %d \t** DZIELENIE (a = 2) **", reg_of_b);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
@@ -676,12 +683,12 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	} else if (op == S_MOD){
 
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		// int reg_of_a = getVariableRegister(a);
+		// int reg_of_b = getVariableRegister(b);
+		// if (reg_of_a == -5)
+		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		// if (reg_of_b == -5) 
+		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 		generateDivision();
 		
