@@ -259,6 +259,10 @@ void generateDivision() {
 	int mod=0;
 }
 
+void generateMultiplication() {
+	char temp[50];
+}
+
 /**
  * ZARZADZANIE PAMIECIA
  */
@@ -546,27 +550,36 @@ int generateArithOp(stri op, stri a, stri b) {
 			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
 		if (reg_of_b == -5) 
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+
+		if (a == "0" || b == "0") {
+			sprintf(temp, "ZERO 0 \t** MNOŻENIE PRZEZ ZERO **");
+			addCodeLine(temp);
+
+			registerManager.removeLastVariable();
+			return 0;
+		}
 		
-		if (DEBUG) addCodeLine("-----------POCZATEK MNOZENIA");
 		if (b == "2") {
-			addCodeLine("SHR " + reg_of_a);
+			sprintf(temp, "SHR %d", reg_of_a);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_a);				
+			addCodeLine(temp); // r_0 = reg_a
+
+			registerManager.removeLastVariable();
 			return a_val * 2;
 		}
 		else if (a == "2") {
-			addCodeLine("SHR " + reg_of_b);
+			sprintf(temp, "SHR %d", reg_of_b);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_b);				
+			addCodeLine(temp); // r_0 = reg_b
+
+			registerManager.removeLastVariable();
 			return 2 * b_val;
 		}
-		else if (a == "1") 
-		{
-			return b_val;
-		}
-		else if (b == "1") {
-			return a_val;
-		} 
 		else {
-			// zwykłe mnożenie
+			generateMultiplication();
 		}
-		if (DEBUG) addCodeLine("-----------KONIEC MNOZENIA");
 		registerManager.removeLastVariable();
 		return a_val * b_val;
 		
@@ -575,21 +588,32 @@ int generateArithOp(stri op, stri a, stri b) {
 		int reg_of_a = getVariableRegister(a);
 		int reg_of_b = getVariableRegister(b);
 		if (reg_of_a == -5) 
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));	
 		if (reg_of_b == -5) 
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
+		if (a == "0" || b == "0") {
+			sprintf(temp, "ZERO 0 \t** DZIELENIE PRZEZ ZERO **");
+			addCodeLine(temp);
+
+			registerManager.removeLastVariable();
+			return 0;
+		}
 
 		if (b == "2") {
-			addCodeLine("SHL " + reg_of_a);
+			sprintf(temp, "SHL %d", reg_of_a);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_a);				
+			addCodeLine(temp); // r_0 = reg_a
 
 			registerManager.removeLastVariable();
 			return floor(a_val / 2);
 		}
 		else if (a == "2") {
-			if (DEBUG) addCodeLine("a rowne 2");
 			addCodeLine("SHL " + reg_of_b);
+			addCodeLine(temp);
+			sprintf(temp, "COPY %d", reg_of_b);				
+			addCodeLine(temp); // r_0 = reg_b
 
 			registerManager.removeLastVariable();
 			return floor(2 / b_val);
@@ -608,11 +632,9 @@ int generateArithOp(stri op, stri a, stri b) {
 		int reg_of_b = getVariableRegister(b);
 		if (reg_of_a == -5)
 			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		
 		if (reg_of_b == -5) 
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
-
 		generateDivision();
 		//addCodeLine("STORE " + reg_of_b);
 		//addCodeLine("LOAD " + reg_of_a);

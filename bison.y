@@ -280,7 +280,7 @@ expression: VALUE
 				os << result;
 				$$ = strdup(os.str().c_str());
 			}
-			| VALUE MULT VALUE 
+			| VALUE MULT VALUE  
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s * %s\n", $<stru>1, $<stru>3);
 				int result = generateArithOp(S_MULT, $<stru>1, $<stru>3);

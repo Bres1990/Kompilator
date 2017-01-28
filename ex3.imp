@@ -1,8 +1,9 @@
 VAR
 	a b
 BEGIN
-	b := 1;
-WRITE 1;
+	a := 1*2;
+	b := a+4;
+	b := 2*b;
 	{a := a - b;}
 	{IF a < b THEN WRITE b;}
 	{ELSE WRITE a;} 
