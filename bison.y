@@ -316,7 +316,7 @@ expression: VALUE
 
 	
 condition :  VALUE
-	{
+	{ 
 		int result = generateP_A($<stru>1);
 		if (result) { err(yylineno, result); }
 	}

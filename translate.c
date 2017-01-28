@@ -257,10 +257,57 @@ void addCodeLine(stri line) {
 void generateDivision() {
 	char temp[50];
 	int mod=0;
+
+ // 	int a=42;
+ //    int b=7;
+ //    int result = 0;
+ //    int k=0;
+    /** ustawiamy liczby jak w dzieleniu pisemnym
+    *
+    *   ____            
+    *   1100                
+    *   110                  
+    *
+    *   k = 1 : jedno przesuniecie bylo potrzebne, zeby ustawic liczby dobrze
+    *
+    *   ______
+    *   101010
+    *    110
+    *  
+    *   k = 2 : dwa przsuniecia byly potrzebne, zeby ustawic liczby dobrze
+    */
+  //   while(b<=a){
+  //     b = b<<1;
+  //     k++;
+  //   }
+  //   while(k>0){   
+  //     k--;
+  //     b=b>>1;
+  //     result = result<<1;
+  //     if(a>=b) {      
+  //         result=result+1;
+  //         a=a-b;
+  //     }
+  //   }
+  //   System.out.println("Result "+result+" remainder " + a);
+  // }
 }
 
 void generateMultiplication() {
 	char temp[50];
+ //    int a=10;
+ //    int b=3;
+ //    int result = 0;
+ //    while(b>0){      
+ //      if(b%2==1) {     
+ //        result = result+a;
+ //        System.out.println(b + " is odd");
+ //      }
+ //      a = a<<1;
+ //      b = b>>1;   
+ //      System.out.println("New b is "+b);
+ //    }     
+ //    System.out.println(result);
 }
 
 /**
@@ -560,7 +607,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 		
 		if (b == "2") {
-			sprintf(temp, "SHR %d", reg_of_a);
+			sprintf(temp, "SHR %d \t** MNOŻENIE (b = 2) **", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);				
 			addCodeLine(temp); // r_0 = reg_a
@@ -569,7 +616,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return a_val * 2;
 		}
 		else if (a == "2") {
-			sprintf(temp, "SHR %d", reg_of_b);
+			sprintf(temp, "SHR %d \t** MNOŻENIE (a = 2) **", reg_of_b);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
@@ -579,9 +626,10 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 		else {
 			generateMultiplication();
+
+			registerManager.removeLastVariable();
+			return a_val * b_val;
 		}
-		registerManager.removeLastVariable();
-		return a_val * b_val;
 		
 	} else if (op == S_DIV) {
 
@@ -601,7 +649,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 
 		if (b == "2") {
-			sprintf(temp, "SHL %d", reg_of_a);
+			sprintf(temp, "SHL %d \t** DZIELENIE (b = 2) **", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);				
 			addCodeLine(temp); // r_0 = reg_a
@@ -610,7 +658,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return floor(a_val / 2);
 		}
 		else if (a == "2") {
-			addCodeLine("SHL " + reg_of_b);
+			addCodeLine("SHL %d \t** DZIELENIE (a = 2) **", reg_of_b);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
@@ -636,8 +684,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 		generateDivision();
-		//addCodeLine("STORE " + reg_of_b);
-		//addCodeLine("LOAD " + reg_of_a);
+		
 		registerManager.removeLastVariable();
 		return a_val % b_val;
 	}
