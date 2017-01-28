@@ -217,7 +217,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		}
 	}
 
-	| READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
+	| READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON 
 	{ 
 	    int result = generateRead($<stru>2);
 		if (result != 0) {   
@@ -284,7 +284,7 @@ expression: VALUE
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s * %s\n", $<stru>1, $<stru>3);
 				int result = generateArithOp(S_MULT, $<stru>1, $<stru>3);
-				if (result == -1) { err(yylineno, result); }
+				if (result == -1) { err(yylineno, result); } 
 
 				std::ostringstream os;
 				os << result;
@@ -338,17 +338,17 @@ condition :  VALUE
 
 		std::ostringstream os;
 		os << result;
-		$$ = strdup(os.str().c_str());
-	}
-	| VALUE LT VALUE
-	{
+		$$ = strdup(os.str().c_str());    
+	} 
+	| VALUE LT VALUE  
+	{ 
 		if (DEBUG) printf("Operacja boolowska %s < %s\n", $<stru>1, $<stru>3);
 		int result = generateBoolOp(S_GT, $<stru>3, $<stru>1);
-		if (result == -1) { err(yylineno, result); }
-
-		std::ostringstream os;
-		os << result;
-		$$ = strdup(os.str().c_str());
+		if (result == -1) { err(yylineno, result); }       
+ 
+		std::ostringstream os;  
+		os << result;  
+		$$ = strdup(os.str().c_str()); 
 	} 
 	| VALUE GT VALUE 
 	{
@@ -368,7 +368,7 @@ condition :  VALUE
 
 		std::ostringstream os;
 		os << result;  
-		$$ = strdup(os.str().c_str());      
+		$$ = strdup(os.str().c_str());       
 	}  
 	| VALUE LET VALUE 
 	{  
@@ -376,7 +376,7 @@ condition :  VALUE
 		int result = generateBoolOp(S_GET, $<stru>3, $<stru>1); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
 		if (result == -1) { err(yylineno, result); }      
  
-		std::ostringstream os;
+		std::ostringstream os;  
 		os << result; 
 		$$ = strdup(os.str().c_str()); 
 	}
@@ -384,18 +384,21 @@ condition :  VALUE
 ;
 
 VALUE : NUM
-	| PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET 
-	| PIDENTIFIER LBRACKET NUM RBRACKET
-	| PIDENTIFIER      
-;
+	| PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET    
+	| PIDENTIFIER LBRACKET NUM RBRACKET   
+	| PIDENTIFIER        
+; 
 
 %%
-
-void err(int line, int no) {
+ 
+void err(int line, int no) { 
 	char txt[50];
 	switch(no) {
 		case(-1):
 			sprintf(txt, "Niezadeklarowana zmienna");
+			break;
+		case(-2):
+			sprintf(txt, "Wczytywany obiekt nie jest zmienna");
 			break;
 		case(-5):
 			sprintf(txt, "Niezainicjalizowana zmienna"); 

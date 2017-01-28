@@ -1671,7 +1671,7 @@ yyreduce:
     {
 				if (DEBUG) printf("Operacja arytmetyczna %s * %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp(S_MULT, (yyvsp[-2].stru), (yyvsp[0].stru));
-				if (result == -1) { err(yylineno, result); }
+				if (result == -1) { err(yylineno, result); } 
 
 				std::ostringstream os;
 				os << result;
@@ -1740,21 +1740,21 @@ yyreduce:
 
 		std::ostringstream os;
 		os << result;
-		(yyval.numu) = strdup(os.str().c_str());
+		(yyval.numu) = strdup(os.str().c_str());    
 	}
 #line 1746 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
 #line 344 "bison.y" /* yacc.c:1646  */
-    {
+    { 
 		if (DEBUG) printf("Operacja boolowska %s < %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_GT, (yyvsp[0].stru), (yyvsp[-2].stru));
-		if (result == -1) { err(yylineno, result); }
-
-		std::ostringstream os;
-		os << result;
-		(yyval.numu) = strdup(os.str().c_str());
+		if (result == -1) { err(yylineno, result); }       
+ 
+		std::ostringstream os;  
+		os << result;  
+		(yyval.numu) = strdup(os.str().c_str()); 
 	}
 #line 1760 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1782,7 +1782,7 @@ yyreduce:
 
 		std::ostringstream os;
 		os << result;  
-		(yyval.numu) = strdup(os.str().c_str());      
+		(yyval.numu) = strdup(os.str().c_str());       
 	}
 #line 1788 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1794,7 +1794,7 @@ yyreduce:
 		int result = generateBoolOp(S_GET, (yyvsp[0].stru), (yyvsp[-2].stru)); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
 		if (result == -1) { err(yylineno, result); }      
  
-		std::ostringstream os;
+		std::ostringstream os;  
 		os << result; 
 		(yyval.numu) = strdup(os.str().c_str()); 
 	}
@@ -2032,12 +2032,15 @@ yyreturn:
 }
 #line 392 "bison.y" /* yacc.c:1906  */
 
-
-void err(int line, int no) {
+ 
+void err(int line, int no) { 
 	char txt[50];
 	switch(no) {
 		case(-1):
 			sprintf(txt, "Niezadeklarowana zmienna");
+			break;
+		case(-2):
+			sprintf(txt, "Wczytywany obiekt nie jest zmienna");
 			break;
 		case(-5):
 			sprintf(txt, "Niezainicjalizowana zmienna"); 

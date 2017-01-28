@@ -1,9 +1,8 @@
 VAR
 	a b
 BEGIN
-{READ a;}
-	a := 2+1;
-	b := a-4;
+	b := 1;
+WRITE 1;
 	{a := a - b;}
 	{IF a < b THEN WRITE b;}
 	{ELSE WRITE a;} 

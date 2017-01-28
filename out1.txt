@@ -14,45 +14,24 @@
 ****** BLOK KOMENDY ******
 
 
-Operacja arytmetyczna 2 + 1
-		*******tworze zmienna 2
-		*******tworze zmienna 1
-	Przypisuje zmiennej <a> wartosc <3>
-Indeks zmiennej to 0
-	Udane przypisanie do zmiennej
-Operacja arytmetyczna a - 4
-		*******tworze zmienna 4
-	Przypisuje zmiennej <b> wartosc <0>
+Generuje wartosc 1
+	Przypisuje zmiennej <b> wartosc <1>
 Indeks zmiennej to 1
 	Udane przypisanie do zmiennej
+Generuje write
+	Udane wypisanie zmiennej
 Koniec programu, zwracam HALT
 
 
 ******** KOD ********
 
 
-0. ZERO 3	 ** binaryNumberToCode: 2 **
+0. ZERO 3	 ** binaryNumberToCode: 1 **
 1. INC 3
-2. SHL 3
-3. COPY 3	 ** copy 2 to register 0 **
-4. STORE 3 	** umieszczam 2 w komorce pamieci 2
-5. ZERO 2	 ** binaryNumberToCode: 1 **
-6. INC 2
-7. COPY 2	 ** copy 1 to register 0 **
-8. STORE 2 	** umieszczam 1 w komorce pamieci 1
-9. INC 1 	** DODAWANIE, b = 1 **
-10. COPY 1
-11. STORE 0 	** // umieszczam a w komorce pamieci 1 // **
-12. STORE 0 	** generateP_A(a) **
-13. STORE 4 	** umieszczam a w komorce pamieci 1
-14. ZERO 3	 ** binaryNumberToCode: 4 **
-15. INC 3
-16. SHL 3
-17. SHL 3
-18. COPY 3	 ** copy 4 to register 0 **
-19. STORE 3 	** umieszczam 4 w komorce pamieci 4
-20. STORE 5 	** ODEJMOWANIE (pr_0 = reg_b) **
-21. SUB 2
-22. COPY 2
-23. STORE 1 	** // umieszczam b w komorce pamieci 4 // **
-24. HALT
+2. COPY 3	 ** copy 1 to register 0 **
+3. STORE 1 	** // umieszczam b w komorce pamieci 1 // **
+4. ZERO 3	 ** binaryNumberToCode: 1 **
+5. INC 3
+6. COPY 3	 ** copy 1 to register 0 **
+7. PUT 0 	** Wyswietlam zawartosc rejestru 0 **
+8. HALT
