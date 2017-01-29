@@ -160,22 +160,23 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	THEN commands
 	{        
 		generateThen();
-	}
+	} 
 	ELSE commands 
 	{
 		generateElse();
 	} ENDIF
 
-    | WHILE 
+    | WHILE condition
 	{
-	    generateWhile();
+		int result = $<stru>2;
+	    generateWhile(result);
 		if (DEBUG)printf("Obsluga while\n");
 	}	
-	condition DO commands ENDWHILE
+	DO commands
 	{	
-		generateDo();
+		generateDo(-1);
 	    if (DEBUG)printf("Condition do while\n");
-	}	
+	} ENDWHILE
 
 	| FOR 
 	{
@@ -186,11 +187,11 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 		generateFrom();
 		if (DEBUG) printf("from\n");
-	} TO VALUE DO commands ENDFOR
+	} TO VALUE DO commands
 	{
 		generateToDo();
 		if (DEBUG) printf("Obsluga to-do\n"); 
-	}
+	} ENDFOR
 
 	| FOR 
 	{
@@ -201,11 +202,11 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 		generateFrom();
 		if (DEBUG) printf("from\n");
-	} DOWNTO VALUE DO commands ENDFOR
+	} DOWNTO VALUE DO commands
 	{ 
 		generateDowntoDo();
 		if (DEBUG) printf("Obsluga downto-do\n");
-	}
+	} ENDFOR
 
 
     | READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON

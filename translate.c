@@ -797,7 +797,7 @@ void generateIf(int result) {
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje if w linii %d\n", pl);
-	sprintf(temp, "JZERO %d %d", result, pl+1);
+	sprintf(temp, "JZERO %d %d", result, generateThen()+1); // goto ELSE
 	addCodeLine(temp);
 }
 
@@ -805,13 +805,17 @@ int generateThen() {
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje then w linii %d\n", pl);
-	sprintf(temp, "JUMP %d", pl+1);
+	sprintf(temp, "JUMP %d", generateElse()+1);
 	addCodeLine(temp);
 
-	return pl+1;
+	return pl;
 }
-void generateElse() {
+
+int generateElse() {
+	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje else w linii %d\n", pl);
+
+	return pl;
 }
 
 void generateFor() {
@@ -831,19 +835,25 @@ void generateDowntoDo() {
 	if (DEBUG) printf("Generuje downto-do w linii %d\n", pl);
 }
 
-void generateWhile() {
-	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
-
 	//if ( warunek_petli ) then cialo_petli; 
 	//jump_do_sprawdzania_warunku; 
 	//else jump_poza_petle
+void generateWhile(int result) {
+	char temp[50];
+	int pl = tempCode.size();
+	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
+	sprintf(temp, "JZERO %d %d", result, generateDo(pl)+1); // jump_poza_petle
+	addCodeLine(temp);
 }
 
-void generateDo() {
+int generateDo(int jumper) {
+	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje do w linii %d\n", pl);
+	sprintf(temp, "JUMP %d", jumper); // jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
 
+	return pl;
 }
 
 int generateWrite(stri a) {
