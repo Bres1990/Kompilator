@@ -1,13 +1,3 @@
-
-
-/*
-
-FIXIT
-1. dość brzydko zrealizowane dzielenie
-2. co z adresami liczb w pamieci?
-3. poprawic store, load, add, sub w obliczeniach
-*/
-
 #ifndef TRANSLATE_GUARD
 #define TRANSLATE_GUARD
 
@@ -818,26 +808,49 @@ int generateElse() {
 	return pl;
 }
 
-void generateFor() {
+int generateFor(stri pid, stri from, stri to, bool mode) {
+	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje for w linii %d\n", pl);
-}
-void generateFrom() {
-	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje from w linii %d\n", pl);
-}
-void generateToDo() {
-	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje to-do w linii %d\n", pl);
-}
-void generateDowntoDo() {
-	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje downto-do w linii %d\n", pl);
+
+	int freeReg = registerManager.findFreeRegister();
+	registerManager.setValueToRegister(from, freeReg);
+
+	sprintf(temp, "LOAD %d", freeReg);
+	addCodeLine(temp);
+
+	int result = generateBoolOp(S_GET, atoi(pid.c_str()), atoi(to.c_str()));
+	sprintf(temp, "JODD %d %d", result, pl+4); // warunek spelniony, wykonaj cialo petli
+	addCodeLine(temp);
+	if (mode == true) {
+		sprintf(temp, "INC %d", freeReg); // i++
+		addCodeLine(temp);
+	} else {
+		sprintf(temp, "DEC %d", freeReg); // i--
+		addCodeLine(temp);
+	}
+	sprintf(temp, "JUMP %d", pl+5); // koniec petli for
+	addCodeLine(temp);
+
+	return pl+1;
 }
 
-	//if ( warunek_petli ) then cialo_petli; 
-	//jump_do_sprawdzania_warunku; 
-	//else jump_poza_petle
+void generateToDo(int placeholder) {
+	int pl = tempCode.size();
+	if (DEBUG) printf("Generuje to-do w linii %d\n", pl);
+
+	sprintf(temp, "JUMP %d", placeholder);// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+}
+
+void generateDowntoDo(int placeholder) {
+	int pl = tempCode.size();
+	if (DEBUG) printf("Generuje downto-do w linii %d\n", pl);
+
+	sprintf(temp, "JUMP %d", placeholder);// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+}
+
 void generateWhile(int result) {
 	char temp[50];
 	int pl = tempCode.size();

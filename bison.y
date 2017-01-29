@@ -43,7 +43,7 @@ void err(int line, int no);
 
 %%
 program : 	| 
-		VAR vdeclarations START commands END     
+		VAR { int forPlaceholder = -1; } vdeclarations START commands END     
 		{ 
 		    endOfProgram();  
 		} 
@@ -178,33 +178,45 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	    if (DEBUG)printf("Condition do while\n");
 	} ENDWHILE
 
-	| FOR 
+	| FOR PIDENTIFIER FROM VALUE TO VALUE
 	{
-		generateFor();
-		if (DEBUG) printf("Obsluga for\n");
+		int result = variableManager.getItemIndex($<stru>2)
+		switch(result) {
+			case -1:
+				stri err = "Niezadeklarowana zmienna ";
+				err += $<stru>2;
+				catch_error(yylineno, err.c_str());
+				break;
+			default:
+				if (DEBUG) printf("Obsluga for\n");
+				forPlaceholder = generateFor($<stru>2, $<stru>4, $<stru>6, true);
+				break;
+		}
 	}  
-	PIDENTIFIER FROM VALUE
+	DO commands
 	{
-		generateFrom();
-		if (DEBUG) printf("from\n");
-	} TO VALUE DO commands
-	{
-		generateToDo();
+		generateToDo(forPlaceholder);
 		if (DEBUG) printf("Obsluga to-do\n"); 
 	} ENDFOR
 
-	| FOR 
+	| FOR PIDENTIFIER FROM VALUE DOWNTO VALUE
 	{
-		generateFor();
-		if (DEBUG) printf("Obsluga for\n");
+		int result = variableManager.getItemIndex($<stru>2)
+		switch(result) {
+			case -1:
+				stri err = "Niezadeklarowana zmienna ";
+				err += $<stru>2;
+				catch_error(yylineno, err.c_str());
+				break;
+			default:
+				if (DEBUG) printf("Obsluga for\n");
+				forPlaceholder = generateFor($<stru>2, $<stru>4, $<stru>6, false);
+				break;
+		}
 	} 
-	PIDENTIFIER FROM VALUE
-	{
-		generateFrom();
-		if (DEBUG) printf("from\n");
-	} DOWNTO VALUE DO commands
+	DO commands
 	{ 
-		generateDowntoDo();
+		generateDowntoDo(forPlaceholder);
 		if (DEBUG) printf("Obsluga downto-do\n");
 	} ENDFOR
 
