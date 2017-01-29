@@ -701,8 +701,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 		sprintf(temp, "ADD %d \t** ==\t r_i < r_i + p_r0", reg_of_c);
 		addCodeLine(temp);
 
-
-
 		registerManager.removeLastVariable();
 		
 		if (result1 == result2) {
@@ -713,21 +711,31 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_NEQ) { // a <> b
 		
+		int result1 = generateArithOp(S_MINUS, a, b);
+		int result2 = generateArithOp(S_MINUS, b, a);
+		int main_result; 
+		int reg_of_c = registerManager.findFreeRegister();
 
-		/*
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("SUB " + op_temp_a); // REJ_A=b-a
-		addCodeLine("STORE " + op_temp_c);
-		addCodeLine("LOAD " + op_temp_a);
-		addCodeLine("SUB " + op_temp_b); // REJ_A=a-b
-		addCodeLine("ADD " + op_temp_c); // w Z by sie to skrocilo; dla N wynik > 0 swiadczy o niezerowosci ktoregos ze 
-		addCodeLine("JZERO");
-		*/
+		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_b **", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "SUB %d \t** ==\t r_%d <- r_%d - p_%d", reg_of_a, reg_of_a, reg_of_a, registerManager.getAccumulatorValue());
+		addCodeLine(temp);
+		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_i **", reg_of_c);
+		addCodeLine(temp);
+		sprintf(temp, "LOAD %d \t** ==\t  reg_i <- p_r0 **", reg_of_a);
+		addCodeLine(temp);
+		sprintf(temp, "SUB %d \t** ==\t r_i <- r_i - p_r0", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "ADD %d \t** ==\t r_i < r_i + p_r0", reg_of_c);
+		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
-		if (a_val != b_val) {
-			return 1;
-		} else return 0;
+		
+		if (result1 == result2) {
+			main_result = 0;
+		} else main_result = 1;
+		printf("%d == %d ---> %d\n", a_val, b_val, main_result);
+		return main_result;
 
 	} else if (op == S_GT) { // a > b
 		
