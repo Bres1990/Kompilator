@@ -1,11 +1,9 @@
 VAR
 	a b
 BEGIN
-	a := 1*2;
-	b := a+4;
-	b := 2-b;
-	a := 2/0;
-	a := a - b;
-	{IF a < b THEN WRITE b;}
-	{ELSE WRITE a;} 
+	a := 0;
+	b := 0;
+	IF a == b THEN a := 0;
+		ELSE a := 1;
+	ENDIF
 END

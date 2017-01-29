@@ -450,11 +450,9 @@ int declareVariable(stri varName) {
 	ss << variableManager.addVariable(varName, valInAcc);
 	stri addingVariable = ss.str();
 	int result = atoi(addingVariable.c_str());
-	if (registerManager.findFreeRegister() != -1) {
+	if (registerManager.findFreeRegister() != -1)
 		registerManager.populateRegister(varName);
-		} else {
-			// obsluga zwalniania pamieci zalatwia ten problem
-		}
+
 	return result;
 }
 
@@ -525,20 +523,8 @@ int generateArithOp(stri op, stri a, stri b) {
 		if (reg_of_b == -5) 
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 
-	// LOAD i		r_i <- pr_0
-	// STORE i 		pr_0 <- r_i     <=======>    COPY i 	r_0 <- r_i
-	// ZERO i 		r_i <- 0
-	// ADD i 		r_i <- r_i + pr_0
-	// SUB i 		r_i <- r_i - pr_0
-
 	if (op == S_PLUS) {
 
-		// int reg_of_a = getVariableRegister(a); 
-		// int reg_of_b = getVariableRegister(b); 
-		// if (reg_of_a == -5)
-		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		// if (reg_of_b == -5)
-		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 
 		if (a == "1") {
 			sprintf(temp, "INC %d \t** DODAWANIE, a = 1 **", reg_of_b);
@@ -564,14 +550,6 @@ int generateArithOp(stri op, stri a, stri b) {
 		return a_val + b_val;
 
 	} else if (op == S_MINUS) {
-
-		// int reg_of_a = getVariableRegister(a);
-		// int reg_of_b = getVariableRegister(b);
-		// if (reg_of_a == -5) 
-		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		
-		// if (reg_of_b == -5)
-		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 
 		if (b == "1") {
@@ -598,12 +576,6 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	} else if (op == S_MULT) {
 
-		// int reg_of_a = getVariableRegister(a);
-		// int reg_of_b = getVariableRegister(b);
-		// if (reg_of_a == -5)
-		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		// if (reg_of_b == -5) 
-		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 
 		if (a == "0" || b == "0") {
 			sprintf(temp, "ZERO 0 \t** MNOŻENIE PRZEZ ZERO **");
@@ -640,12 +612,6 @@ int generateArithOp(stri op, stri a, stri b) {
 		
 	} else if (op == S_DIV) {
 
-		// int reg_of_a = getVariableRegister(a);
-		// int reg_of_b = getVariableRegister(b);
-		// if (reg_of_a == -5) 
-		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));	
-		// if (reg_of_b == -5) 
-		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 		if (a == "0" || b == "0") {
 			sprintf(temp, "ZERO 0 \t** DZIELENIE PRZEZ ZERO **");
@@ -683,12 +649,6 @@ int generateArithOp(stri op, stri a, stri b) {
 
 	} else if (op == S_MOD){
 
-		// int reg_of_a = getVariableRegister(a);
-		// int reg_of_b = getVariableRegister(b);
-		// if (reg_of_a == -5)
-		// 	reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
-		// if (reg_of_b == -5) 
-		// 	reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 		
 		generateDivision();
 		
@@ -719,66 +679,68 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	char temp[50];
 
+	int reg_of_a = getVariableRegister(a);
+	int reg_of_b = getVariableRegister(b);
+	if (reg_of_a == -5)
+		reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
 	
-	//w tym miejscu w REJ_A jest 'b', pierwszy w p_666
+	if (reg_of_b == -5)
+		reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+
 	
-	if (op == S_GET) {
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	if (op == S_GET) { // a >= b
 		
-		if (reg_of_b == -5)
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
-		
+		// a - b = 0  ==> return 1;
+		// a - b > 0  ==> return 0;
+		generateArithOp(S_MINUS, b, a);
+		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+1);	
+		addCodeLine(temp);
 
-		/*
-		addCodeLine("SUB " + op_temp_b); // REJ_A=b-a  -- OK
-		addCodeLine("JG"); // if b-a > 0 <=> b > a -> skacz
-		*/
-
+		registerManager.removeLastVariable();
 		if (a_val >= b_val) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
-	} else if (op == S_EQ) {
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) 
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	} else if (op == S_EQ) { // a == b
 		
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
-		
+		//JZERO i j 	<==>	 	r_i = 0 -> jump j
+		//JODD i j 		<==>		r_i nieparzyste -> jump j
+		// LOAD i		r_i <- p_r0
+		// STORE i 		p_r0 <- r_i     <=======>    COPY i 	r_0 <- r_i
+		// ZERO i 		r_i <- 0
+		// ADD i 		r_i <- r_i + p_r0
+		// SUB i 		r_i <- r_i - p_r0
+		// int result1 = generateArithOp(S_MINUS, a, b);
+		// int result2 = generateArithOp(S_MINUS, b, a);
+		int main_result; 
+		int reg_of_c = registerManager.findFreeRegister();
+		// generateArithOp(S_MINUS, a, b); 
+		// generateArithOp(S_MINUS, b, a);
 
-		/*
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("SUB " + op_temp_a); // REJ_A=b-a
-		addCodeLine("STORE " + op_temp_c);
-		addCodeLine("LOAD " + op_temp_a);
-		addCodeLine("SUB " + op_temp_b); // REJ_A=a-b
-		addCodeLine("ADD " + op_temp_c); // w Z by sie to skrocilo; dla N wynik > 0 swiadczy o niezerowosci ktoregos ze skladnikow
-		addCodeLine("JG"); //skaczemy gdy (b-a) + (a-b) > 0, wtedy sa nierowne
-		*/
+		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_b **", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "SUB %d \t** ==\t r_%d <- r_%d - p_%d", reg_of_a, reg_of_a, reg_of_a, registerManager.getAccumulatorValue());
+		addCodeLine(temp);
+		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_i **", reg_of_c);
+		addCodeLine(temp);
+		sprintf(temp, "LOAD %d \t** ==\t  reg_i <- p_r0 **", reg_of_a);
+		addCodeLine(temp);
+		sprintf(temp, "SUB %d \t** ==\t r_i <- r_i - p_r0", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "ADD %d \t** ==\t r_i < r_i + p_r0", reg_of_c);
+		addCodeLine(temp);
 
-		if (a_val == b_val) {
-			return 1;
-		} else return 0;
+
 
 		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-
-	} else if (op == S_NEQ) {
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5) 
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
 		
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+		// if (result1 == result2) {
+		// 	main_result = 1;
+		// } else main_result = 0;
+		// printf("%d == %d ---> %d\n", a_val, b_val, main_result);
+
+	} else if (op == S_NEQ) { // a <> b
 		
 
 		/*
@@ -791,154 +753,87 @@ int generateBoolOp(stri op, stri a, stri b) {
 		addCodeLine("JZERO");
 		*/
 
+		registerManager.removeLastVariable();
 		if (a_val != b_val) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-
-	} else if (op == S_GT) {
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	} else if (op == S_GT) { // a > b
 		
-		if (reg_of_b == -5)
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
-		
+		generateArithOp(S_MINUS, a, b);
+		int currentLine = tempCode.size() - 1;
+		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+4);
+		addCodeLine(temp);
+		addCodeLine("ZERO 0");
+		sprintf(temp, "JUMP %d", currentLine+5);
+		addCodeLine(temp);
+		sprintf(temp, "INC %d", registerManager.getAccumulatorValue());
+		addCodeLine(temp);
 
-		/*
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("SUB " + op_temp_a); // REJ_A = b-a
-		addCodeLine("STORE " + op_temp_c);
-		addCodeLine("LOAD " + op_temp_a); 
-		addCodeLine("SUB " + op_temp_b); // REJ_A = a-b
-		addCodeLine("SUB " + op_temp_c);
-		addCodeLine("JZERO");
-		*/
-
+		registerManager.removeLastVariable();
 		if (a_val > b_val) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
-
-	} else if (op == S_LET) {
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	} else if (op == S_LET) { // a <= b
 		
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
-		
+		// a - b = 0  ==> return 1;
+		// a - b > 0  ==> return 0;
+		generateArithOp(S_MINUS, a, b);
+		int currentLine = tempCode.size() - 1;
+		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+1);	
+		addCodeLine(temp);
 
-		/*
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("SUB " + op_temp_a); // REJ_A = b-a
-		addCodeLine("STORE " + op_temp_c);
-		addCodeLine("LOAD " + op_temp_a); 
-		addCodeLine("SUB " + op_temp_b); // REJ_A = a-b
-		addCodeLine("SUB " + op_temp_c);
-		addCodeLine("JZERO");
-		*/
-
+		registerManager.removeLastVariable();
 		if (a_val <= b_val) {
 			return 1;
 		} else return 0;
 
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
-	
-
-	} else if (op == S_LT) {
-		int reg_of_a = getVariableRegister(a);
-		int reg_of_b = getVariableRegister(b);
-		if (reg_of_a == -5)
-			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	} else if (op == S_LT) { // a < b
 		
-		if (reg_of_b == -5) 
-			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
-		
+		generateArithOp(S_MINUS, b, a);
+		int currentLine = tempCode.size() - 1;
+		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+4);
+		addCodeLine(temp);
+		addCodeLine("ZERO 0");
+		sprintf(temp, "JUMP %d", currentLine+5);
+		addCodeLine(temp);
+		sprintf(temp, "INC %d", registerManager.getAccumulatorValue());
+		addCodeLine(temp);
 
-		/*
-		addCodeLine("STORE " + op_temp_b);
-		addCodeLine("SUB " + op_temp_a); // REJ_A = b-a
-		addCodeLine("STORE " + op_temp_c);
-		addCodeLine("LOAD " + op_temp_a); 
-		addCodeLine("SUB " + op_temp_b); // REJ_A = a-b
-		addCodeLine("SUB " + op_temp_c);
-		addCodeLine("JZERO");
-		*/
-
+		registerManager.removeLastVariable();
 		if (a_val < b_val) {
 			return 1;
 		} else return 0;
-
-		registerManager.removeLastVariable();
-		registerManager.removeLastVariable();
 
 	} else {
 		return -1;
 		if (ERR) printf("Nieznany operator %s", op.c_str());
 	}
-	jumper();
+	// jumper();
 	return 0;
 }
 
-void fixIfLabels() { 
-	if (DEBUG) printf("Fixin'\n");
-	
-	for (int i = 0; i < 2; i++) {
-		int jumperLine = jumpStack.back();
-		if (DEBUG) printf("Skok z %d -> ", jumperLine);
-		stri jumper = tempCode.at(jumperLine);
-		
-		if (labelStack.size() == 0) {
-			if (DEBUG) printf("NO LABELS LEFT\n");
-			return;
-		}
-		jumpStack.pop_back();
-		
-		int labelLine = labelStack.back();
-		
-		labelStack.pop_back();
-		
-		char op[10];
-		char direction[50];
-		char lab[50];
-		sscanf(jumper.c_str(), "%s", op);
-		if (DEBUG) printf(" ---> %d\n", labelLine + 1);
-		sprintf(lab, "%s %d", op, labelLine + 1);
-		stri t = lab;
-		tempCode.at(jumperLine) = t;	
-	}
-}
-
-void generateIf() {
+void generateIf(int result) {
+	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje if w linii %d\n", pl);
+	sprintf(temp, "JZERO %d %d", result, pl+1);
+	addCodeLine(temp);
 }
 
-void generateThen() {
+int generateThen() {
+	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje then w linii %d\n", pl);
-	addCodeLine("JUMP");
-	jumper();
-	labeler();
+	sprintf(temp, "JUMP %d", pl+1);
+	addCodeLine(temp);
+
+	return pl+1;
 }
 void generateElse() {
-	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje else w linii %d\n", pl);
-	labeler();
-	
-	//char temp[30];
-	//sprintf(temp, "IKSDE %d", labelStack.size());
-	//addCodeLine(temp);
-	fixIfLabels();
 }
 
 void generateFor() {
@@ -958,54 +853,19 @@ void generateDowntoDo() {
 	if (DEBUG) printf("Generuje downto-do w linii %d\n", pl);
 }
 
-void fixWhileLabels() {
-	int label1 = labelStack.back();
-	labelStack.pop_back();
-	int label2 = labelStack.back();
-	labelStack.pop_back();
-	labelStack.push_back(label1);
-	labelStack.push_back(label2);
-	
-	if (DEBUG) printf("Zamieniam etykiety %d i %d\n", label1, label2);
-	
-	for (int i = 0; i < 2; i++) {
-		int jumperLine = jumpStack.back();
-		if (DEBUG) printf("Skok z %d -> ", jumperLine);
-		stri jumper = tempCode.at(jumperLine);
-		
-		if (labelStack.size() == 0) {
-			if (DEBUG) printf("NO LABELS LEFT\n");
-			return;
-		}
-		jumpStack.pop_back();
-		
-		int labelLine = labelStack.back();
-		labelStack.pop_back();
-		
-		char op[10];
-		char direction[50];
-		char lab[50];
-		sscanf(jumper.c_str(), "%s", op);
-		if (DEBUG) printf(" ---> %d\n", labelLine + 1);
-		sprintf(lab, "%s %d", op, labelLine + 1);
-		stri t = lab;
-		tempCode.at(jumperLine) = t;	
-	}
-}
-
 void generateWhile() {
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
-	labeler();
+
+	//if ( warunek_petli ) then cialo_petli; 
+	//jump_do_sprawdzania_warunku; 
+	//else jump_poza_petle
 }
 
 void generateDo() {
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje do w linii %d\n", pl);
-	addCodeLine("JUMP");
-	jumper();
-	labeler();
-	fixWhileLabels();
+
 }
 
 int generateWrite(stri a) {

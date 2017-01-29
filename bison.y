@@ -4,7 +4,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <cstdlib>  
+#include <cstdlib>
 #include <sstream> 
 
 int yylex(void);
@@ -79,21 +79,21 @@ vdeclarations : vdeclarations PIDENTIFIER
 				case 1: 
 					{
 					stri err = "Redeklaracja zmiennej ";
-					err += $<stru>2;
+					err += $<stru>2; 
 					catch_error(yylineno, err.c_str());   
-					}
-					break;
+					} 
+					break; 
 				case 0:
 					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");  
-					break;
-				case -1:
+					break; 
+				case -1: 
 					stri err = "Zmienna ";
 					err += $<stru>2;
 					err += " musi miec nazwe\n";
 					catch_error(yylineno, err.c_str());
 					break;
 			}
-		}  
+		}   
 		| { if (DEBUG) printf("\n\n****** BLOK DEKLARACJI ZMIENNYCH ******\n\n\n"); }
 ;
 
@@ -110,7 +110,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 				stri err = "Niezadeklarowana zmienna ";  
 				err += $<stru>1;
 				catch_error(yylineno, err.c_str());
-				}
+				} 
 				break;
 			case 0: 
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
@@ -148,24 +148,23 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 				break;
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
-				break;
+				break; 
 		}
 	}
   
-    | IF 
+    | IF condition
 	{ 
-		generateIf();
+		int result = $<stru>2;
+		generateIf(result);
 	}
-	condition THEN commands
-	{
-		if (DEBUG)printf("Warunki then ...\n");          
-		generateThen();  
-	}	
-	ELSE commands ENDIF
+	THEN commands
+	{        
+		generateThen();
+	}
+	ELSE commands 
 	{
 		generateElse();
-	    if (DEBUG)printf("ELSE!\n");
-	}
+	} ENDIF
 
     | WHILE 
 	{
@@ -297,28 +296,28 @@ expression: VALUE
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
-				os << result;
+				os << result; 
 				$$ = strdup(os.str().c_str());
 			}
-			| VALUE MOD VALUE
+			| VALUE MOD VALUE 
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s % %s\n", $<stru>1, $<stru>3);
 				int result = generateArithOp(S_MOD, $<stru>1, $<stru>3);
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
-				os << result;
+				os << result; 
 				$$ = strdup(os.str().c_str());
-			}
+			} 
 			
 	;
 
 
 	
 condition :  VALUE
-	{ 
+	{    
 		int result = generateP_A($<stru>1); 
-		if (result) { err(yylineno, result); } 
+		if (result) { err(yylineno, result); }     
 	}
 	| VALUE EQ VALUE
 	{
@@ -337,9 +336,9 @@ condition :  VALUE
 		if (result == -1) { err(yylineno, result); }
 
 		std::ostringstream os;
-		os << result;
+		os << result; 
 		$$ = strdup(os.str().c_str());    
-	} 
+	}  
 	| VALUE LT VALUE  
 	{ 
 		if (DEBUG) printf("Operacja boolowska %s < %s\n", $<stru>1, $<stru>3);
@@ -356,7 +355,7 @@ condition :  VALUE
 		int result = generateBoolOp(S_GT, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }
 
-		std::ostringstream os;
+		std::ostringstream os; 
 		os << result;
 		$$ = strdup(os.str().c_str());
 	}  

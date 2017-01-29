@@ -69,7 +69,7 @@
 #include <vector>
 #include <string>
 #include <cstring>
-#include <cstdlib>  
+#include <cstdlib>
 #include <sstream> 
 
 int yylex(void);
@@ -1380,14 +1380,14 @@ yyreduce:
 				case 1: 
 					{
 					stri err = "Redeklaracja zmiennej ";
-					err += (yyvsp[-3].stru);
+					err += (yyvsp[-3].stru); 
 					catch_error(yylineno, err.c_str());   
-					}
-					break;
+					} 
+					break; 
 				case 0:
 					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");  
-					break;
-				case -1:
+					break; 
+				case -1: 
 					stri err = "Zmienna ";
 					err += (yyvsp[-3].stru);
 					err += " musi miec nazwe\n";
@@ -1420,7 +1420,7 @@ yyreduce:
 				stri err = "Niezadeklarowana zmienna ";  
 				err += (yyvsp[-6].stru);
 				catch_error(yylineno, err.c_str());
-				}
+				} 
 				break;
 			case 0: 
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
@@ -1464,7 +1464,7 @@ yyreduce:
 				break;
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
-				break;
+				break; 
 		}
 	}
 #line 1471 "bison.tab.c" /* yacc.c:1646  */
@@ -1688,7 +1688,7 @@ yyreduce:
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
-				os << result;
+				os << result; 
 				(yyval.numu) = strdup(os.str().c_str());
 			}
 #line 1695 "bison.tab.c" /* yacc.c:1646  */
@@ -1702,7 +1702,7 @@ yyreduce:
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
-				os << result;
+				os << result; 
 				(yyval.numu) = strdup(os.str().c_str());
 			}
 #line 1709 "bison.tab.c" /* yacc.c:1646  */
@@ -1710,9 +1710,9 @@ yyreduce:
 
   case 34:
 #line 319 "bison.y" /* yacc.c:1646  */
-    { 
+    {    
 		int result = generateP_A((yyvsp[0].stru)); 
-		if (result) { err(yylineno, result); } 
+		if (result) { err(yylineno, result); }     
 	}
 #line 1718 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1739,7 +1739,7 @@ yyreduce:
 		if (result == -1) { err(yylineno, result); }
 
 		std::ostringstream os;
-		os << result;
+		os << result; 
 		(yyval.numu) = strdup(os.str().c_str());    
 	}
 #line 1746 "bison.tab.c" /* yacc.c:1646  */
@@ -1766,7 +1766,7 @@ yyreduce:
 		int result = generateBoolOp(S_GT, (yyvsp[-2].stru), (yyvsp[0].stru));
 		if (result == -1) { err(yylineno, result); }
 
-		std::ostringstream os;
+		std::ostringstream os; 
 		os << result;
 		(yyval.numu) = strdup(os.str().c_str());
 	}
