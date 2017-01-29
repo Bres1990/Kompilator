@@ -65,10 +65,6 @@ int isNumber(stri name) {
    return 1;
 }
 
-// 0 - akumulator
-// 1, 2 - zmienne
-// 3 - wynik
-// 4 - iterator petli
 class RegisterManager {
 
 	private:
@@ -382,7 +378,6 @@ void generateValue(stri a) {
 }
 
 
-
 int generateP_A(stri a) {
 	if (isNumber(a)) {
 		generateValue(a);
@@ -402,12 +397,6 @@ int generateP_A(stri a) {
 
 	return 0;
 }
-
-	// LOAD i		r_i <- pr_0
-	// STORE i 		pr_0 <- r_i     <=======>    COPY i 	r_0 <- r_i
-	// ZERO i 		r_i <- 0
-	// ADD i 		r_i <- r_i + pr_0
-	// SUB i 		r_i <- r_i - pr_0
  
  /** Funkcja ktora
 	1. Sprawdza czy VALUE jest liczba- jesli tak- generuj w rejestrze a
@@ -704,19 +693,10 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_EQ) { // a == b
 		
-		//JZERO i j 	<==>	 	r_i = 0 -> jump j
-		//JODD i j 		<==>		r_i nieparzyste -> jump j
-		// LOAD i		r_i <- p_r0
-		// STORE i 		p_r0 <- r_i     <=======>    COPY i 	r_0 <- r_i
-		// ZERO i 		r_i <- 0
-		// ADD i 		r_i <- r_i + p_r0
-		// SUB i 		r_i <- r_i - p_r0
-		// int result1 = generateArithOp(S_MINUS, a, b);
-		// int result2 = generateArithOp(S_MINUS, b, a);
+		int result1 = generateArithOp(S_MINUS, a, b);
+		int result2 = generateArithOp(S_MINUS, b, a);
 		int main_result; 
 		int reg_of_c = registerManager.findFreeRegister();
-		// generateArithOp(S_MINUS, a, b); 
-		// generateArithOp(S_MINUS, b, a);
 
 		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_b **", reg_of_b);
 		addCodeLine(temp);
@@ -735,10 +715,11 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 		
-		// if (result1 == result2) {
-		// 	main_result = 1;
-		// } else main_result = 0;
-		// printf("%d == %d ---> %d\n", a_val, b_val, main_result);
+		if (result1 == result2) {
+			main_result = 1;
+		} else main_result = 0;
+		printf("%d == %d ---> %d\n", a_val, b_val, main_result);
+		return main_result;
 
 	} else if (op == S_NEQ) { // a <> b
 		
@@ -777,8 +758,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_LET) { // a <= b
 		
-		// a - b = 0  ==> return 1;
-		// a - b > 0  ==> return 0;
 		generateArithOp(S_MINUS, a, b);
 		int currentLine = tempCode.size() - 1;
 		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+1);	
@@ -811,7 +790,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 		return -1;
 		if (ERR) printf("Nieznany operator %s", op.c_str());
 	}
-	// jumper();
 	return 0;
 }
 
