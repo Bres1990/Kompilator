@@ -5,14 +5,6 @@ Nieużywane symbole terminalne w gramatyce
    IDENTIFIER
 
 
-Bezużyteczne reguły w analizatorze z powodu konfliktów
-
-   19 $@6: %empty
-
-
-Stan 12 konflikty: 1 redukcja/redukcja
-
-
 Gramatyka
 
     0 $accept: program $end
@@ -35,48 +27,52 @@ Gramatyka
 
    12 $@2: %empty
 
-   13 command: IF $@1 condition THEN commands $@2 ELSE commands ENDIF
+   13 $@3: %empty
 
-   14 $@3: %empty
+   14 command: IF condition $@1 THEN commands $@2 ELSE commands $@3 ENDIF
 
-   15 command: WHILE $@3 condition DO commands ENDWHILE
+   15 $@4: %empty
 
-   16 $@4: %empty
+   16 $@5: %empty
 
-   17 $@5: %empty
+   17 command: WHILE condition $@4 DO commands $@5 ENDWHILE
 
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 TO VALUE DO commands ENDFOR
+   18 $@6: %empty
 
-   19 $@6: %empty
+   19 $@7: %empty
 
-   20 $@7: %empty
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE $@6 DO commands $@7 ENDFOR
 
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE DO commands ENDFOR
-   22        | READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON
-   23        | READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
-   24        | READ PIDENTIFIER SEMICOLON
-   25        | WRITE VALUE SEMICOLON
-   26        | SKIP
+   21 $@8: %empty
 
-   27 expression: VALUE
-   28           | VALUE PLUS VALUE
-   29           | VALUE MINUS VALUE
-   30           | VALUE MULT VALUE
-   31           | VALUE DIV VALUE
-   32           | VALUE MOD VALUE
+   22 $@9: %empty
 
-   33 condition: VALUE
-   34          | VALUE EQ VALUE
-   35          | VALUE NEQ VALUE
-   36          | VALUE LT VALUE
-   37          | VALUE GT VALUE
-   38          | VALUE GET VALUE
-   39          | VALUE LET VALUE
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 DO commands $@9 ENDFOR
+   24        | READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON
+   25        | READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
+   26        | READ PIDENTIFIER SEMICOLON
+   27        | WRITE VALUE SEMICOLON
+   28        | SKIP
 
-   40 VALUE: NUM
-   41      | PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET
-   42      | PIDENTIFIER LBRACKET NUM RBRACKET
-   43      | PIDENTIFIER
+   29 expression: VALUE
+   30           | VALUE PLUS VALUE
+   31           | VALUE MINUS VALUE
+   32           | VALUE MULT VALUE
+   33           | VALUE DIV VALUE
+   34           | VALUE MOD VALUE
+
+   35 condition: VALUE
+   36          | VALUE EQ VALUE
+   37          | VALUE NEQ VALUE
+   38          | VALUE LT VALUE
+   39          | VALUE GT VALUE
+   40          | VALUE GET VALUE
+   41          | VALUE LET VALUE
+
+   42 VALUE: NUM
+   43      | PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET
+   44      | PIDENTIFIER LBRACKET NUM RBRACKET
+   45      | PIDENTIFIER
 
 
 Symbole terminalne i reguły, w których występują
@@ -86,41 +82,41 @@ error (256)
 VAR (258) 2
 START (259) 2
 END (260) 2
-LBRACKET (261) 4 8 9 22 23 41 42
-RBRACKET (262) 4 8 9 22 23 41 42
+LBRACKET (261) 4 8 9 24 25 43 44
+RBRACKET (262) 4 8 9 24 25 43 44
 LCOMMENT (263)
 RCOMMENT (264)
-IF (265) 13
-THEN (266) 13
-ELSE (267) 13
-ENDIF (268) 13
-WHILE (269) 15
-DO (270) 15 18 21
-ENDWHILE (271) 15
-FOR (272) 18 21
-FROM (273) 18 21
-DOWNTO (274) 21
-TO (275) 18
-ENDFOR (276) 18 21
-READ (277) 22 23 24
-WRITE (278) 25
-SKIP (279) 26
+IF (265) 14
+THEN (266) 14
+ELSE (267) 14
+ENDIF (268) 14
+WHILE (269) 17
+DO (270) 17 20 23
+ENDWHILE (271) 17
+FOR (272) 20 23
+FROM (273) 20 23
+DOWNTO (274) 23
+TO (275) 20
+ENDFOR (276) 20 23
+READ (277) 24 25 26
+WRITE (278) 27
+SKIP (279) 28
 ASSIGN (280) 8 9 10
-PLUS (281) 28
-MINUS (282) 29
-MULT (283) 30
-DIV (284) 31
-MOD (285) 32
-EQ (286) 34
-LT (287) 36
-LET (288) 39
-GT (289) 37
-GET (290) 38
-NEQ (291) 35
-NUM (292) 4 9 23 40 42
-PIDENTIFIER (293) 3 4 8 9 10 18 21 22 23 24 41 42 43
+PLUS (281) 30
+MINUS (282) 31
+MULT (283) 32
+DIV (284) 33
+MOD (285) 34
+EQ (286) 36
+LT (287) 38
+LET (288) 41
+GT (289) 39
+GET (290) 40
+NEQ (291) 37
+NUM (292) 4 9 25 42 44
+PIDENTIFIER (293) 3 4 8 9 10 20 23 24 25 26 43 44 45
 IDENTIFIER (294)
-SEMICOLON (295) 8 9 10 22 23 24 25
+SEMICOLON (295) 8 9 10 24 25 26 27
 
 
 Symbole nieterminalne i reguły, w których występują
@@ -132,30 +128,34 @@ program (42)
 vdeclarations (43)
     po lewej: 3 4 5, po prawej: 2 3 4
 commands (44)
-    po lewej: 6 7, po prawej: 2 6 13 15 18 21
+    po lewej: 6 7, po prawej: 2 6 14 17 20 23
 command (45)
-    po lewej: 8 9 10 13 15 18 21 22 23 24 25 26, po prawej: 6
+    po lewej: 8 9 10 14 17 20 23 24 25 26 27 28, po prawej: 6
 $@1 (46)
-    po lewej: 11, po prawej: 13
+    po lewej: 11, po prawej: 14
 $@2 (47)
-    po lewej: 12, po prawej: 13
+    po lewej: 12, po prawej: 14
 $@3 (48)
-    po lewej: 14, po prawej: 15
+    po lewej: 13, po prawej: 14
 $@4 (49)
-    po lewej: 16, po prawej: 18
+    po lewej: 15, po prawej: 17
 $@5 (50)
-    po lewej: 17, po prawej: 18
+    po lewej: 16, po prawej: 17
 $@6 (51)
-    po lewej: 19, po prawej: 21
+    po lewej: 18, po prawej: 20
 $@7 (52)
-    po lewej: 20, po prawej: 21
-expression (53)
-    po lewej: 27 28 29 30 31 32, po prawej: 8 9 10
-condition (54)
-    po lewej: 33 34 35 36 37 38 39, po prawej: 13 15
-VALUE (55)
-    po lewej: 40 41 42 43, po prawej: 18 21 25 27 28 29 30 31 32 33
-    34 35 36 37 38 39
+    po lewej: 19, po prawej: 20
+$@8 (53)
+    po lewej: 21, po prawej: 23
+$@9 (54)
+    po lewej: 22, po prawej: 23
+expression (55)
+    po lewej: 29 30 31 32 33 34, po prawej: 8 9 10
+condition (56)
+    po lewej: 35 36 37 38 39 40 41, po prawej: 14 17
+VALUE (57)
+    po lewej: 42 43 44 45, po prawej: 20 23 27 29 30 31 32 33 34 35
+    36 37 38 39 40 41
 
 
 Stan 0
@@ -254,59 +254,58 @@ Stan 9
 
 Stan 10
 
-   13 command: IF . $@1 condition THEN commands $@2 ELSE commands ENDIF
+   14 command: IF . condition $@1 THEN commands $@2 ELSE commands $@3 ENDIF
 
-    $domyślnie  redukcja przy użyciu reguły 11 ($@1)
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
-    $@1  przejście do stanu 19
+    condition  przejście do stanu 21
+    VALUE      przejście do stanu 22
 
 
 Stan 11
 
-   15 command: WHILE . $@3 condition DO commands ENDWHILE
+   17 command: WHILE . condition $@4 DO commands $@5 ENDWHILE
 
-    $domyślnie  redukcja przy użyciu reguły 14 ($@3)
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
-    $@3  przejście do stanu 20
+    condition  przejście do stanu 23
+    VALUE      przejście do stanu 22
 
 
 Stan 12
 
-   18 command: FOR . $@4 PIDENTIFIER FROM VALUE $@5 TO VALUE DO commands ENDFOR
-   21        | FOR . $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE DO commands ENDFOR
+   20 command: FOR . PIDENTIFIER FROM VALUE TO VALUE $@6 DO commands $@7 ENDFOR
+   23        | FOR . PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 DO commands $@9 ENDFOR
 
-    PIDENTIFIER  redukcja przy użyciu reguły 16 ($@4)
-    PIDENTIFIER  [redukcja przy użyciu reguły 19 ($@6)]
-    $domyślnie  redukcja przy użyciu reguły 16 ($@4)
-
-    $@4  przejście do stanu 21
-    $@6  przejście do stanu 22
+    PIDENTIFIER  przesunięcie, i przejście do stanu 24
 
 
 Stan 13
 
-   22 command: READ . PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON
-   23        | READ . PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
-   24        | READ . PIDENTIFIER SEMICOLON
+   24 command: READ . PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON
+   25        | READ . PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
+   26        | READ . PIDENTIFIER SEMICOLON
 
-    PIDENTIFIER  przesunięcie, i przejście do stanu 23
+    PIDENTIFIER  przesunięcie, i przejście do stanu 25
 
 
 Stan 14
 
-   25 command: WRITE . VALUE SEMICOLON
+   27 command: WRITE . VALUE SEMICOLON
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
     VALUE  przejście do stanu 26
 
 
 Stan 15
 
-   26 command: SKIP .
+   28 command: SKIP .
 
-    $domyślnie  redukcja przy użyciu reguły 26 (command)
+    $domyślnie  redukcja przy użyciu reguły 28 (command)
 
 
 Stan 16
@@ -335,73 +334,83 @@ Stan 18
 
 Stan 19
 
-   13 command: IF $@1 . condition THEN commands $@2 ELSE commands ENDIF
+   42 VALUE: NUM .
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    condition  przejście do stanu 30
-    VALUE      przejście do stanu 31
+    $domyślnie  redukcja przy użyciu reguły 42 (VALUE)
 
 
 Stan 20
 
-   15 command: WHILE $@3 . condition DO commands ENDWHILE
+   43 VALUE: PIDENTIFIER . LBRACKET PIDENTIFIER RBRACKET
+   44      | PIDENTIFIER . LBRACKET NUM RBRACKET
+   45      | PIDENTIFIER .
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    LBRACKET  przesunięcie, i przejście do stanu 30
 
-    condition  przejście do stanu 32
-    VALUE      przejście do stanu 31
+    $domyślnie  redukcja przy użyciu reguły 45 (VALUE)
 
 
 Stan 21
 
-   18 command: FOR $@4 . PIDENTIFIER FROM VALUE $@5 TO VALUE DO commands ENDFOR
+   14 command: IF condition . $@1 THEN commands $@2 ELSE commands $@3 ENDIF
 
-    PIDENTIFIER  przesunięcie, i przejście do stanu 33
+    $domyślnie  redukcja przy użyciu reguły 11 ($@1)
+
+    $@1  przejście do stanu 31
 
 
 Stan 22
 
-   21 command: FOR $@6 . PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE DO commands ENDFOR
+   35 condition: VALUE .
+   36          | VALUE . EQ VALUE
+   37          | VALUE . NEQ VALUE
+   38          | VALUE . LT VALUE
+   39          | VALUE . GT VALUE
+   40          | VALUE . GET VALUE
+   41          | VALUE . LET VALUE
 
-    PIDENTIFIER  przesunięcie, i przejście do stanu 34
+    EQ   przesunięcie, i przejście do stanu 32
+    LT   przesunięcie, i przejście do stanu 33
+    LET  przesunięcie, i przejście do stanu 34
+    GT   przesunięcie, i przejście do stanu 35
+    GET  przesunięcie, i przejście do stanu 36
+    NEQ  przesunięcie, i przejście do stanu 37
+
+    $domyślnie  redukcja przy użyciu reguły 35 (condition)
 
 
 Stan 23
 
-   22 command: READ PIDENTIFIER . LBRACKET PIDENTIFIER RBRACKET SEMICOLON
-   23        | READ PIDENTIFIER . LBRACKET NUM RBRACKET SEMICOLON
-   24        | READ PIDENTIFIER . SEMICOLON
+   17 command: WHILE condition . $@4 DO commands $@5 ENDWHILE
 
-    LBRACKET   przesunięcie, i przejście do stanu 35
-    SEMICOLON  przesunięcie, i przejście do stanu 36
+    $domyślnie  redukcja przy użyciu reguły 15 ($@4)
+
+    $@4  przejście do stanu 38
 
 
 Stan 24
 
-   40 VALUE: NUM .
+   20 command: FOR PIDENTIFIER . FROM VALUE TO VALUE $@6 DO commands $@7 ENDFOR
+   23        | FOR PIDENTIFIER . FROM VALUE DOWNTO VALUE $@8 DO commands $@9 ENDFOR
 
-    $domyślnie  redukcja przy użyciu reguły 40 (VALUE)
+    FROM  przesunięcie, i przejście do stanu 39
 
 
 Stan 25
 
-   41 VALUE: PIDENTIFIER . LBRACKET PIDENTIFIER RBRACKET
-   42      | PIDENTIFIER . LBRACKET NUM RBRACKET
-   43      | PIDENTIFIER .
+   24 command: READ PIDENTIFIER . LBRACKET PIDENTIFIER RBRACKET SEMICOLON
+   25        | READ PIDENTIFIER . LBRACKET NUM RBRACKET SEMICOLON
+   26        | READ PIDENTIFIER . SEMICOLON
 
-    LBRACKET  przesunięcie, i przejście do stanu 37
-
-    $domyślnie  redukcja przy użyciu reguły 43 (VALUE)
+    LBRACKET   przesunięcie, i przejście do stanu 40
+    SEMICOLON  przesunięcie, i przejście do stanu 41
 
 
 Stan 26
 
-   25 command: WRITE VALUE . SEMICOLON
+   27 command: WRITE VALUE . SEMICOLON
 
-    SEMICOLON  przesunięcie, i przejście do stanu 38
+    SEMICOLON  przesunięcie, i przejście do stanu 42
 
 
 Stan 27
@@ -409,19 +418,19 @@ Stan 27
     8 command: PIDENTIFIER LBRACKET . PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
     9        | PIDENTIFIER LBRACKET . NUM RBRACKET ASSIGN expression SEMICOLON
 
-    NUM          przesunięcie, i przejście do stanu 39
-    PIDENTIFIER  przesunięcie, i przejście do stanu 40
+    NUM          przesunięcie, i przejście do stanu 43
+    PIDENTIFIER  przesunięcie, i przejście do stanu 44
 
 
 Stan 28
 
    10 command: PIDENTIFIER ASSIGN . expression SEMICOLON
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
-    expression  przejście do stanu 41
-    VALUE       przejście do stanu 42
+    expression  przejście do stanu 45
+    VALUE       przejście do stanu 46
 
 
 Stan 29
@@ -433,324 +442,346 @@ Stan 29
 
 Stan 30
 
-   13 command: IF $@1 condition . THEN commands $@2 ELSE commands ENDIF
+   43 VALUE: PIDENTIFIER LBRACKET . PIDENTIFIER RBRACKET
+   44      | PIDENTIFIER LBRACKET . NUM RBRACKET
 
-    THEN  przesunięcie, i przejście do stanu 43
+    NUM          przesunięcie, i przejście do stanu 47
+    PIDENTIFIER  przesunięcie, i przejście do stanu 48
 
 
 Stan 31
 
-   33 condition: VALUE .
-   34          | VALUE . EQ VALUE
-   35          | VALUE . NEQ VALUE
-   36          | VALUE . LT VALUE
-   37          | VALUE . GT VALUE
-   38          | VALUE . GET VALUE
-   39          | VALUE . LET VALUE
+   14 command: IF condition $@1 . THEN commands $@2 ELSE commands $@3 ENDIF
 
-    EQ   przesunięcie, i przejście do stanu 44
-    LT   przesunięcie, i przejście do stanu 45
-    LET  przesunięcie, i przejście do stanu 46
-    GT   przesunięcie, i przejście do stanu 47
-    GET  przesunięcie, i przejście do stanu 48
-    NEQ  przesunięcie, i przejście do stanu 49
-
-    $domyślnie  redukcja przy użyciu reguły 33 (condition)
+    THEN  przesunięcie, i przejście do stanu 49
 
 
 Stan 32
 
-   15 command: WHILE $@3 condition . DO commands ENDWHILE
+   36 condition: VALUE EQ . VALUE
 
-    DO  przesunięcie, i przejście do stanu 50
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 50
 
 
 Stan 33
 
-   18 command: FOR $@4 PIDENTIFIER . FROM VALUE $@5 TO VALUE DO commands ENDFOR
+   38 condition: VALUE LT . VALUE
 
-    FROM  przesunięcie, i przejście do stanu 51
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 51
 
 
 Stan 34
 
-   21 command: FOR $@6 PIDENTIFIER . FROM VALUE $@7 DOWNTO VALUE DO commands ENDFOR
+   41 condition: VALUE LET . VALUE
 
-    FROM  przesunięcie, i przejście do stanu 52
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 52
 
 
 Stan 35
 
-   22 command: READ PIDENTIFIER LBRACKET . PIDENTIFIER RBRACKET SEMICOLON
-   23        | READ PIDENTIFIER LBRACKET . NUM RBRACKET SEMICOLON
+   39 condition: VALUE GT . VALUE
 
-    NUM          przesunięcie, i przejście do stanu 53
-    PIDENTIFIER  przesunięcie, i przejście do stanu 54
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 53
 
 
 Stan 36
 
-   24 command: READ PIDENTIFIER SEMICOLON .
+   40 condition: VALUE GET . VALUE
 
-    $domyślnie  redukcja przy użyciu reguły 24 (command)
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 54
 
 
 Stan 37
 
-   41 VALUE: PIDENTIFIER LBRACKET . PIDENTIFIER RBRACKET
-   42      | PIDENTIFIER LBRACKET . NUM RBRACKET
+   37 condition: VALUE NEQ . VALUE
 
-    NUM          przesunięcie, i przejście do stanu 55
-    PIDENTIFIER  przesunięcie, i przejście do stanu 56
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 55
 
 
 Stan 38
 
-   25 command: WRITE VALUE SEMICOLON .
+   17 command: WHILE condition $@4 . DO commands $@5 ENDWHILE
 
-    $domyślnie  redukcja przy użyciu reguły 25 (command)
+    DO  przesunięcie, i przejście do stanu 56
 
 
 Stan 39
 
-    9 command: PIDENTIFIER LBRACKET NUM . RBRACKET ASSIGN expression SEMICOLON
+   20 command: FOR PIDENTIFIER FROM . VALUE TO VALUE $@6 DO commands $@7 ENDFOR
+   23        | FOR PIDENTIFIER FROM . VALUE DOWNTO VALUE $@8 DO commands $@9 ENDFOR
 
-    RBRACKET  przesunięcie, i przejście do stanu 57
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 57
 
 
 Stan 40
 
-    8 command: PIDENTIFIER LBRACKET PIDENTIFIER . RBRACKET ASSIGN expression SEMICOLON
+   24 command: READ PIDENTIFIER LBRACKET . PIDENTIFIER RBRACKET SEMICOLON
+   25        | READ PIDENTIFIER LBRACKET . NUM RBRACKET SEMICOLON
 
-    RBRACKET  przesunięcie, i przejście do stanu 58
+    NUM          przesunięcie, i przejście do stanu 58
+    PIDENTIFIER  przesunięcie, i przejście do stanu 59
 
 
 Stan 41
 
-   10 command: PIDENTIFIER ASSIGN expression . SEMICOLON
+   26 command: READ PIDENTIFIER SEMICOLON .
 
-    SEMICOLON  przesunięcie, i przejście do stanu 59
+    $domyślnie  redukcja przy użyciu reguły 26 (command)
 
 
 Stan 42
 
-   27 expression: VALUE .
-   28           | VALUE . PLUS VALUE
-   29           | VALUE . MINUS VALUE
-   30           | VALUE . MULT VALUE
-   31           | VALUE . DIV VALUE
-   32           | VALUE . MOD VALUE
+   27 command: WRITE VALUE SEMICOLON .
 
-    PLUS   przesunięcie, i przejście do stanu 60
-    MINUS  przesunięcie, i przejście do stanu 61
-    MULT   przesunięcie, i przejście do stanu 62
-    DIV    przesunięcie, i przejście do stanu 63
-    MOD    przesunięcie, i przejście do stanu 64
-
-    $domyślnie  redukcja przy użyciu reguły 27 (expression)
+    $domyślnie  redukcja przy użyciu reguły 27 (command)
 
 
 Stan 43
 
-   13 command: IF $@1 condition THEN . commands $@2 ELSE commands ENDIF
+    9 command: PIDENTIFIER LBRACKET NUM . RBRACKET ASSIGN expression SEMICOLON
 
-    $domyślnie  redukcja przy użyciu reguły 7 (commands)
-
-    commands  przejście do stanu 65
+    RBRACKET  przesunięcie, i przejście do stanu 60
 
 
 Stan 44
 
-   34 condition: VALUE EQ . VALUE
+    8 command: PIDENTIFIER LBRACKET PIDENTIFIER . RBRACKET ASSIGN expression SEMICOLON
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 66
+    RBRACKET  przesunięcie, i przejście do stanu 61
 
 
 Stan 45
 
-   36 condition: VALUE LT . VALUE
+   10 command: PIDENTIFIER ASSIGN expression . SEMICOLON
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 67
+    SEMICOLON  przesunięcie, i przejście do stanu 62
 
 
 Stan 46
 
-   39 condition: VALUE LET . VALUE
+   29 expression: VALUE .
+   30           | VALUE . PLUS VALUE
+   31           | VALUE . MINUS VALUE
+   32           | VALUE . MULT VALUE
+   33           | VALUE . DIV VALUE
+   34           | VALUE . MOD VALUE
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    PLUS   przesunięcie, i przejście do stanu 63
+    MINUS  przesunięcie, i przejście do stanu 64
+    MULT   przesunięcie, i przejście do stanu 65
+    DIV    przesunięcie, i przejście do stanu 66
+    MOD    przesunięcie, i przejście do stanu 67
 
-    VALUE  przejście do stanu 68
+    $domyślnie  redukcja przy użyciu reguły 29 (expression)
 
 
 Stan 47
 
-   37 condition: VALUE GT . VALUE
+   44 VALUE: PIDENTIFIER LBRACKET NUM . RBRACKET
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 69
+    RBRACKET  przesunięcie, i przejście do stanu 68
 
 
 Stan 48
 
-   38 condition: VALUE GET . VALUE
+   43 VALUE: PIDENTIFIER LBRACKET PIDENTIFIER . RBRACKET
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 70
+    RBRACKET  przesunięcie, i przejście do stanu 69
 
 
 Stan 49
 
-   35 condition: VALUE NEQ . VALUE
+   14 command: IF condition $@1 THEN . commands $@2 ELSE commands $@3 ENDIF
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    $domyślnie  redukcja przy użyciu reguły 7 (commands)
 
-    VALUE  przejście do stanu 71
+    commands  przejście do stanu 70
 
 
 Stan 50
 
-   15 command: WHILE $@3 condition DO . commands ENDWHILE
+   36 condition: VALUE EQ VALUE .
 
-    $domyślnie  redukcja przy użyciu reguły 7 (commands)
-
-    commands  przejście do stanu 72
+    $domyślnie  redukcja przy użyciu reguły 36 (condition)
 
 
 Stan 51
 
-   18 command: FOR $@4 PIDENTIFIER FROM . VALUE $@5 TO VALUE DO commands ENDFOR
+   38 condition: VALUE LT VALUE .
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 73
+    $domyślnie  redukcja przy użyciu reguły 38 (condition)
 
 
 Stan 52
 
-   21 command: FOR $@6 PIDENTIFIER FROM . VALUE $@7 DOWNTO VALUE DO commands ENDFOR
+   41 condition: VALUE LET VALUE .
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 74
+    $domyślnie  redukcja przy użyciu reguły 41 (condition)
 
 
 Stan 53
 
-   23 command: READ PIDENTIFIER LBRACKET NUM . RBRACKET SEMICOLON
+   39 condition: VALUE GT VALUE .
 
-    RBRACKET  przesunięcie, i przejście do stanu 75
+    $domyślnie  redukcja przy użyciu reguły 39 (condition)
 
 
 Stan 54
 
-   22 command: READ PIDENTIFIER LBRACKET PIDENTIFIER . RBRACKET SEMICOLON
+   40 condition: VALUE GET VALUE .
 
-    RBRACKET  przesunięcie, i przejście do stanu 76
+    $domyślnie  redukcja przy użyciu reguły 40 (condition)
 
 
 Stan 55
 
-   42 VALUE: PIDENTIFIER LBRACKET NUM . RBRACKET
+   37 condition: VALUE NEQ VALUE .
 
-    RBRACKET  przesunięcie, i przejście do stanu 77
+    $domyślnie  redukcja przy użyciu reguły 37 (condition)
 
 
 Stan 56
 
-   41 VALUE: PIDENTIFIER LBRACKET PIDENTIFIER . RBRACKET
+   17 command: WHILE condition $@4 DO . commands $@5 ENDWHILE
 
-    RBRACKET  przesunięcie, i przejście do stanu 78
+    $domyślnie  redukcja przy użyciu reguły 7 (commands)
+
+    commands  przejście do stanu 71
 
 
 Stan 57
 
-    9 command: PIDENTIFIER LBRACKET NUM RBRACKET . ASSIGN expression SEMICOLON
+   20 command: FOR PIDENTIFIER FROM VALUE . TO VALUE $@6 DO commands $@7 ENDFOR
+   23        | FOR PIDENTIFIER FROM VALUE . DOWNTO VALUE $@8 DO commands $@9 ENDFOR
 
-    ASSIGN  przesunięcie, i przejście do stanu 79
+    DOWNTO  przesunięcie, i przejście do stanu 72
+    TO      przesunięcie, i przejście do stanu 73
 
 
 Stan 58
 
-    8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET . ASSIGN expression SEMICOLON
+   25 command: READ PIDENTIFIER LBRACKET NUM . RBRACKET SEMICOLON
 
-    ASSIGN  przesunięcie, i przejście do stanu 80
+    RBRACKET  przesunięcie, i przejście do stanu 74
 
 
 Stan 59
+
+   24 command: READ PIDENTIFIER LBRACKET PIDENTIFIER . RBRACKET SEMICOLON
+
+    RBRACKET  przesunięcie, i przejście do stanu 75
+
+
+Stan 60
+
+    9 command: PIDENTIFIER LBRACKET NUM RBRACKET . ASSIGN expression SEMICOLON
+
+    ASSIGN  przesunięcie, i przejście do stanu 76
+
+
+Stan 61
+
+    8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET . ASSIGN expression SEMICOLON
+
+    ASSIGN  przesunięcie, i przejście do stanu 77
+
+
+Stan 62
 
    10 command: PIDENTIFIER ASSIGN expression SEMICOLON .
 
     $domyślnie  redukcja przy użyciu reguły 10 (command)
 
 
-Stan 60
-
-   28 expression: VALUE PLUS . VALUE
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 81
-
-
-Stan 61
-
-   29 expression: VALUE MINUS . VALUE
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 82
-
-
-Stan 62
-
-   30 expression: VALUE MULT . VALUE
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 83
-
-
 Stan 63
 
-   31 expression: VALUE DIV . VALUE
+   30 expression: VALUE PLUS . VALUE
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
-    VALUE  przejście do stanu 84
+    VALUE  przejście do stanu 78
 
 
 Stan 64
 
-   32 expression: VALUE MOD . VALUE
+   31 expression: VALUE MINUS . VALUE
 
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
-    VALUE  przejście do stanu 85
+    VALUE  przejście do stanu 79
 
 
 Stan 65
 
+   32 expression: VALUE MULT . VALUE
+
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 80
+
+
+Stan 66
+
+   33 expression: VALUE DIV . VALUE
+
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 81
+
+
+Stan 67
+
+   34 expression: VALUE MOD . VALUE
+
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 82
+
+
+Stan 68
+
+   44 VALUE: PIDENTIFIER LBRACKET NUM RBRACKET .
+
+    $domyślnie  redukcja przy użyciu reguły 44 (VALUE)
+
+
+Stan 69
+
+   43 VALUE: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET .
+
+    $domyślnie  redukcja przy użyciu reguły 43 (VALUE)
+
+
+Stan 70
+
     6 commands: commands . command
-   13 command: IF $@1 condition THEN commands . $@2 ELSE commands ENDIF
+   14 command: IF condition $@1 THEN commands . $@2 ELSE commands $@3 ENDIF
 
     IF           przesunięcie, i przejście do stanu 10
     WHILE        przesunięcie, i przejście do stanu 11
@@ -763,277 +794,229 @@ Stan 65
     $domyślnie  redukcja przy użyciu reguły 12 ($@2)
 
     command  przejście do stanu 17
-    $@2      przejście do stanu 86
-
-
-Stan 66
-
-   34 condition: VALUE EQ VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 34 (condition)
-
-
-Stan 67
-
-   36 condition: VALUE LT VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 36 (condition)
-
-
-Stan 68
-
-   39 condition: VALUE LET VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 39 (condition)
-
-
-Stan 69
-
-   37 condition: VALUE GT VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 37 (condition)
-
-
-Stan 70
-
-   38 condition: VALUE GET VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 38 (condition)
+    $@2      przejście do stanu 83
 
 
 Stan 71
 
-   35 condition: VALUE NEQ VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 35 (condition)
-
-
-Stan 72
-
     6 commands: commands . command
-   15 command: WHILE $@3 condition DO commands . ENDWHILE
+   17 command: WHILE condition $@4 DO commands . $@5 ENDWHILE
 
     IF           przesunięcie, i przejście do stanu 10
     WHILE        przesunięcie, i przejście do stanu 11
-    ENDWHILE     przesunięcie, i przejście do stanu 87
     FOR          przesunięcie, i przejście do stanu 12
     READ         przesunięcie, i przejście do stanu 13
     WRITE        przesunięcie, i przejście do stanu 14
     SKIP         przesunięcie, i przejście do stanu 15
     PIDENTIFIER  przesunięcie, i przejście do stanu 16
 
+    $domyślnie  redukcja przy użyciu reguły 16 ($@5)
+
     command  przejście do stanu 17
+    $@5      przejście do stanu 84
+
+
+Stan 72
+
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO . VALUE $@8 DO commands $@9 ENDFOR
+
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    VALUE  przejście do stanu 85
 
 
 Stan 73
 
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE . $@5 TO VALUE DO commands ENDFOR
+   20 command: FOR PIDENTIFIER FROM VALUE TO . VALUE $@6 DO commands $@7 ENDFOR
 
-    $domyślnie  redukcja przy użyciu reguły 17 ($@5)
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
 
-    $@5  przejście do stanu 88
+    VALUE  przejście do stanu 86
 
 
 Stan 74
 
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE . $@7 DOWNTO VALUE DO commands ENDFOR
+   25 command: READ PIDENTIFIER LBRACKET NUM RBRACKET . SEMICOLON
 
-    $domyślnie  redukcja przy użyciu reguły 20 ($@7)
-
-    $@7  przejście do stanu 89
+    SEMICOLON  przesunięcie, i przejście do stanu 87
 
 
 Stan 75
 
-   23 command: READ PIDENTIFIER LBRACKET NUM RBRACKET . SEMICOLON
+   24 command: READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET . SEMICOLON
 
-    SEMICOLON  przesunięcie, i przejście do stanu 90
+    SEMICOLON  przesunięcie, i przejście do stanu 88
 
 
 Stan 76
 
-   22 command: READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET . SEMICOLON
+    9 command: PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN . expression SEMICOLON
 
-    SEMICOLON  przesunięcie, i przejście do stanu 91
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    expression  przejście do stanu 89
+    VALUE       przejście do stanu 46
 
 
 Stan 77
 
-   42 VALUE: PIDENTIFIER LBRACKET NUM RBRACKET .
+    8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN . expression SEMICOLON
 
-    $domyślnie  redukcja przy użyciu reguły 42 (VALUE)
+    NUM          przesunięcie, i przejście do stanu 19
+    PIDENTIFIER  przesunięcie, i przejście do stanu 20
+
+    expression  przejście do stanu 90
+    VALUE       przejście do stanu 46
 
 
 Stan 78
 
-   41 VALUE: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET .
-
-    $domyślnie  redukcja przy użyciu reguły 41 (VALUE)
-
-
-Stan 79
-
-    9 command: PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN . expression SEMICOLON
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    expression  przejście do stanu 92
-    VALUE       przejście do stanu 42
-
-
-Stan 80
-
-    8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN . expression SEMICOLON
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    expression  przejście do stanu 93
-    VALUE       przejście do stanu 42
-
-
-Stan 81
-
-   28 expression: VALUE PLUS VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 28 (expression)
-
-
-Stan 82
-
-   29 expression: VALUE MINUS VALUE .
-
-    $domyślnie  redukcja przy użyciu reguły 29 (expression)
-
-
-Stan 83
-
-   30 expression: VALUE MULT VALUE .
+   30 expression: VALUE PLUS VALUE .
 
     $domyślnie  redukcja przy użyciu reguły 30 (expression)
 
 
-Stan 84
+Stan 79
 
-   31 expression: VALUE DIV VALUE .
+   31 expression: VALUE MINUS VALUE .
 
     $domyślnie  redukcja przy użyciu reguły 31 (expression)
 
 
-Stan 85
+Stan 80
 
-   32 expression: VALUE MOD VALUE .
+   32 expression: VALUE MULT VALUE .
 
     $domyślnie  redukcja przy użyciu reguły 32 (expression)
 
 
+Stan 81
+
+   33 expression: VALUE DIV VALUE .
+
+    $domyślnie  redukcja przy użyciu reguły 33 (expression)
+
+
+Stan 82
+
+   34 expression: VALUE MOD VALUE .
+
+    $domyślnie  redukcja przy użyciu reguły 34 (expression)
+
+
+Stan 83
+
+   14 command: IF condition $@1 THEN commands $@2 . ELSE commands $@3 ENDIF
+
+    ELSE  przesunięcie, i przejście do stanu 91
+
+
+Stan 84
+
+   17 command: WHILE condition $@4 DO commands $@5 . ENDWHILE
+
+    ENDWHILE  przesunięcie, i przejście do stanu 92
+
+
+Stan 85
+
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE . $@8 DO commands $@9 ENDFOR
+
+    $domyślnie  redukcja przy użyciu reguły 21 ($@8)
+
+    $@8  przejście do stanu 93
+
+
 Stan 86
 
-   13 command: IF $@1 condition THEN commands $@2 . ELSE commands ENDIF
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE . $@6 DO commands $@7 ENDFOR
 
-    ELSE  przesunięcie, i przejście do stanu 94
+    $domyślnie  redukcja przy użyciu reguły 18 ($@6)
+
+    $@6  przejście do stanu 94
 
 
 Stan 87
 
-   15 command: WHILE $@3 condition DO commands ENDWHILE .
+   25 command: READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON .
 
-    $domyślnie  redukcja przy użyciu reguły 15 (command)
+    $domyślnie  redukcja przy użyciu reguły 25 (command)
 
 
 Stan 88
 
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 . TO VALUE DO commands ENDFOR
+   24 command: READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON .
 
-    TO  przesunięcie, i przejście do stanu 95
+    $domyślnie  redukcja przy użyciu reguły 24 (command)
 
 
 Stan 89
 
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 . DOWNTO VALUE DO commands ENDFOR
+    9 command: PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression . SEMICOLON
 
-    DOWNTO  przesunięcie, i przejście do stanu 96
+    SEMICOLON  przesunięcie, i przejście do stanu 95
 
 
 Stan 90
 
-   23 command: READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON .
+    8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression . SEMICOLON
 
-    $domyślnie  redukcja przy użyciu reguły 23 (command)
+    SEMICOLON  przesunięcie, i przejście do stanu 96
 
 
 Stan 91
 
-   22 command: READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON .
+   14 command: IF condition $@1 THEN commands $@2 ELSE . commands $@3 ENDIF
 
-    $domyślnie  redukcja przy użyciu reguły 22 (command)
+    $domyślnie  redukcja przy użyciu reguły 7 (commands)
+
+    commands  przejście do stanu 97
 
 
 Stan 92
 
-    9 command: PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression . SEMICOLON
+   17 command: WHILE condition $@4 DO commands $@5 ENDWHILE .
 
-    SEMICOLON  przesunięcie, i przejście do stanu 97
+    $domyślnie  redukcja przy użyciu reguły 17 (command)
 
 
 Stan 93
 
-    8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression . SEMICOLON
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 . DO commands $@9 ENDFOR
 
-    SEMICOLON  przesunięcie, i przejście do stanu 98
+    DO  przesunięcie, i przejście do stanu 98
 
 
 Stan 94
 
-   13 command: IF $@1 condition THEN commands $@2 ELSE . commands ENDIF
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE $@6 . DO commands $@7 ENDFOR
 
-    $domyślnie  redukcja przy użyciu reguły 7 (commands)
-
-    commands  przejście do stanu 99
+    DO  przesunięcie, i przejście do stanu 99
 
 
 Stan 95
-
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 TO . VALUE DO commands ENDFOR
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 100
-
-
-Stan 96
-
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO . VALUE DO commands ENDFOR
-
-    NUM          przesunięcie, i przejście do stanu 24
-    PIDENTIFIER  przesunięcie, i przejście do stanu 25
-
-    VALUE  przejście do stanu 101
-
-
-Stan 97
 
     9 command: PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression SEMICOLON .
 
     $domyślnie  redukcja przy użyciu reguły 9 (command)
 
 
-Stan 98
+Stan 96
 
     8 command: PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON .
 
     $domyślnie  redukcja przy użyciu reguły 8 (command)
 
 
-Stan 99
+Stan 97
 
     6 commands: commands . command
-   13 command: IF $@1 condition THEN commands $@2 ELSE commands . ENDIF
+   14 command: IF condition $@1 THEN commands $@2 ELSE commands . $@3 ENDIF
 
     IF           przesunięcie, i przejście do stanu 10
-    ENDIF        przesunięcie, i przejście do stanu 102
     WHILE        przesunięcie, i przejście do stanu 11
     FOR          przesunięcie, i przejście do stanu 12
     READ         przesunięcie, i przejście do stanu 13
@@ -1041,91 +1024,105 @@ Stan 99
     SKIP         przesunięcie, i przejście do stanu 15
     PIDENTIFIER  przesunięcie, i przejście do stanu 16
 
+    $domyślnie  redukcja przy użyciu reguły 13 ($@3)
+
     command  przejście do stanu 17
+    $@3      przejście do stanu 100
+
+
+Stan 98
+
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 DO . commands $@9 ENDFOR
+
+    $domyślnie  redukcja przy użyciu reguły 7 (commands)
+
+    commands  przejście do stanu 101
+
+
+Stan 99
+
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE $@6 DO . commands $@7 ENDFOR
+
+    $domyślnie  redukcja przy użyciu reguły 7 (commands)
+
+    commands  przejście do stanu 102
 
 
 Stan 100
 
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 TO VALUE . DO commands ENDFOR
+   14 command: IF condition $@1 THEN commands $@2 ELSE commands $@3 . ENDIF
 
-    DO  przesunięcie, i przejście do stanu 103
+    ENDIF  przesunięcie, i przejście do stanu 103
 
 
 Stan 101
 
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE . DO commands ENDFOR
+    6 commands: commands . command
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 DO commands . $@9 ENDFOR
 
-    DO  przesunięcie, i przejście do stanu 104
+    IF           przesunięcie, i przejście do stanu 10
+    WHILE        przesunięcie, i przejście do stanu 11
+    FOR          przesunięcie, i przejście do stanu 12
+    READ         przesunięcie, i przejście do stanu 13
+    WRITE        przesunięcie, i przejście do stanu 14
+    SKIP         przesunięcie, i przejście do stanu 15
+    PIDENTIFIER  przesunięcie, i przejście do stanu 16
+
+    $domyślnie  redukcja przy użyciu reguły 22 ($@9)
+
+    command  przejście do stanu 17
+    $@9      przejście do stanu 104
 
 
 Stan 102
 
-   13 command: IF $@1 condition THEN commands $@2 ELSE commands ENDIF .
+    6 commands: commands . command
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE $@6 DO commands . $@7 ENDFOR
 
-    $domyślnie  redukcja przy użyciu reguły 13 (command)
+    IF           przesunięcie, i przejście do stanu 10
+    WHILE        przesunięcie, i przejście do stanu 11
+    FOR          przesunięcie, i przejście do stanu 12
+    READ         przesunięcie, i przejście do stanu 13
+    WRITE        przesunięcie, i przejście do stanu 14
+    SKIP         przesunięcie, i przejście do stanu 15
+    PIDENTIFIER  przesunięcie, i przejście do stanu 16
+
+    $domyślnie  redukcja przy użyciu reguły 19 ($@7)
+
+    command  przejście do stanu 17
+    $@7      przejście do stanu 105
 
 
 Stan 103
 
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 TO VALUE DO . commands ENDFOR
+   14 command: IF condition $@1 THEN commands $@2 ELSE commands $@3 ENDIF .
 
-    $domyślnie  redukcja przy użyciu reguły 7 (commands)
-
-    commands  przejście do stanu 105
+    $domyślnie  redukcja przy użyciu reguły 14 (command)
 
 
 Stan 104
 
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE DO . commands ENDFOR
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 DO commands $@9 . ENDFOR
 
-    $domyślnie  redukcja przy użyciu reguły 7 (commands)
-
-    commands  przejście do stanu 106
+    ENDFOR  przesunięcie, i przejście do stanu 106
 
 
 Stan 105
 
-    6 commands: commands . command
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 TO VALUE DO commands . ENDFOR
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE $@6 DO commands $@7 . ENDFOR
 
-    IF           przesunięcie, i przejście do stanu 10
-    WHILE        przesunięcie, i przejście do stanu 11
-    FOR          przesunięcie, i przejście do stanu 12
-    ENDFOR       przesunięcie, i przejście do stanu 107
-    READ         przesunięcie, i przejście do stanu 13
-    WRITE        przesunięcie, i przejście do stanu 14
-    SKIP         przesunięcie, i przejście do stanu 15
-    PIDENTIFIER  przesunięcie, i przejście do stanu 16
-
-    command  przejście do stanu 17
+    ENDFOR  przesunięcie, i przejście do stanu 107
 
 
 Stan 106
 
-    6 commands: commands . command
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE DO commands . ENDFOR
+   23 command: FOR PIDENTIFIER FROM VALUE DOWNTO VALUE $@8 DO commands $@9 ENDFOR .
 
-    IF           przesunięcie, i przejście do stanu 10
-    WHILE        przesunięcie, i przejście do stanu 11
-    FOR          przesunięcie, i przejście do stanu 12
-    ENDFOR       przesunięcie, i przejście do stanu 108
-    READ         przesunięcie, i przejście do stanu 13
-    WRITE        przesunięcie, i przejście do stanu 14
-    SKIP         przesunięcie, i przejście do stanu 15
-    PIDENTIFIER  przesunięcie, i przejście do stanu 16
-
-    command  przejście do stanu 17
+    $domyślnie  redukcja przy użyciu reguły 23 (command)
 
 
 Stan 107
 
-   18 command: FOR $@4 PIDENTIFIER FROM VALUE $@5 TO VALUE DO commands ENDFOR .
+   20 command: FOR PIDENTIFIER FROM VALUE TO VALUE $@6 DO commands $@7 ENDFOR .
 
-    $domyślnie  redukcja przy użyciu reguły 18 (command)
-
-
-Stan 108
-
-   21 command: FOR $@6 PIDENTIFIER FROM VALUE $@7 DOWNTO VALUE DO commands ENDFOR .
-
-    $domyślnie  redukcja przy użyciu reguły 21 (command)
+    $domyślnie  redukcja przy użyciu reguły 20 (command)

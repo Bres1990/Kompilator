@@ -1,0 +1,4 @@
+Jak u¿ywaæ?
+Wejœcie kompilatora odbywa siê przez standardowe wejœcie; wyjœcie odbywa siê przez standardowe wyjœcie.
+Przyk³ad u¿ycia: c < program0.imp > wyjscie.out
+Output bezpoœrednio do interpretera: c < test.imp > test.out.txt && interpreter test.out.txt

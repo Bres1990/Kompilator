@@ -20,6 +20,8 @@ void err(int line, int no);
 
 #include "translate.c" 
 
+int forPlaceholder = -1;
+
 %}
  
 %union{ char *stru; char *numu; } 
@@ -43,7 +45,7 @@ void err(int line, int no);
 
 %%
 program : 	| 
-		VAR { int forPlaceholder = -1; } vdeclarations START commands END     
+		VAR vdeclarations START commands END     
 		{ 
 		    endOfProgram();  
 		} 
@@ -149,7 +151,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
 				break; 
-		}
+		} 
 	}
   
     | IF condition
@@ -180,7 +182,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 
 	| FOR PIDENTIFIER FROM VALUE TO VALUE
 	{
-		int result = variableManager.getItemIndex($<stru>2)
+		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
 			case -1:
 				stri err = "Niezadeklarowana zmienna ";
@@ -201,7 +203,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 
 	| FOR PIDENTIFIER FROM VALUE DOWNTO VALUE
 	{
-		int result = variableManager.getItemIndex($<stru>2)
+		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
 			case -1:
 				stri err = "Niezadeklarowana zmienna ";

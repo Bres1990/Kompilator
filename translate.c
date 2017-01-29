@@ -1,7 +1,7 @@
 #ifndef TRANSLATE_GUARD
 #define TRANSLATE_GUARD
 
-#define DEBUG 1
+#define DEBUG 0
 #define ERR 0
 #define LINECODE 0
 
@@ -179,7 +179,7 @@ class VariableManager {
 					} 
 				}
 			} else {
-				printf("*******przypisanie wartosci do nieistniejacej zmiennej\n");
+				if (DEBUG) printf("*******przypisanie wartosci do nieistniejacej zmiennej\n");
 				return -1;
 			}
 		}
@@ -197,7 +197,7 @@ class VariableManager {
 				int index = getItemIndex(varName);
 				memoryVector.at(index) = address;
 			} else {
-				printf("\t\t*******tworze zmienna %s\n", varName.c_str());
+				if (DEBUG) printf("\t\t*******tworze zmienna %s\n", varName.c_str());
 				addVariable(varName, address);
 			}
 		}
@@ -240,9 +240,10 @@ void addCodeLine(stri line) {
 }
 
 
-void generateDivision() {
+void generateDivision(int a, int b, bool modulo) {
 	char temp[50];
-	int mod=0;
+	int pl = tempCode.size();
+
 
  // 	int a=42;
  //    int b=7;
@@ -277,9 +278,14 @@ void generateDivision() {
   //   }
   //   System.out.println("Result "+result+" remainder " + a);
   // }
+
+	// int result = generateBoolOp(S_LET, b, a);
+	// sprintf(temp, "JZERO %d %d", result, generateDo(pl)+1); // jump_poza_petle
+	// addCodeLine(temp);
+	//generateWhile(result);
 }
 
-void generateMultiplication() {
+void generateMultiplication(int a, int b) {
 	char temp[50];
  //    int a=10;
  //    int b=3;
@@ -329,7 +335,7 @@ void binaryNumberToCode(stri bin, stri dec) {
     for (int i = v.size() - 1; i >= 0; i--) {
         addCodeLine(v.at(i));
 	}
-	addCodeLine("COPY " + regnum + "\t ** copy " + dec.c_str() + " to register 0 **");
+	addCodeLine("COPY " + regnum);
 	registerManager.setValueToRegister(dec, 0);
 
 }
@@ -379,7 +385,7 @@ int generateP_A(stri a) {
 		} else { // jezeli istnieje zmienna
 			char temp[50];
 			int reg = AvarIndex+1;
-			sprintf(temp, "LOAD %d \t** Pobieram zmienna (%s) z komorki pamieci %d do rejestru %d **", reg, a.c_str(), variableManager.getAddressOfVariable(a), reg);
+			sprintf(temp, "LOAD %d", reg);
 			addCodeLine(temp);
 			registerManager.setValueToRegister(a, reg);
 		}
@@ -402,7 +408,7 @@ int generateP_AB(stri a, stri b) {
 	if (isNumber(a)) {
 		reg = registerManager.findFreeRegister();
 		variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
-		sprintf(temp, "STORE %d \t** umieszczam %s w komorce pamieci %d", reg, a.c_str(), variableManager.getAddressOfVariable(a));
+		sprintf(temp, "STORE %d", reg);
 		addCodeLine(temp); // r_i <- pr_0 
 		registerManager.removeLastVariable();
 	}
@@ -413,7 +419,7 @@ int generateP_AB(stri a, stri b) {
 	if (isNumber(b)) {
 		reg = registerManager.findFreeRegister();
 		variableManager.setAddressOfVariable(b, registerManager.getAccumulatorValue());
-		sprintf(temp, "STORE %d \t** umieszczam %s w komorce pamieci %d", reg, b.c_str(), variableManager.getAddressOfVariable(b));
+		sprintf(temp, "STORE %d", reg);
 		addCodeLine(temp); // r_i = pr_0
 		registerManager.removeLastVariable();
 	}
@@ -445,7 +451,7 @@ int generateVariableAssign(stri varName, stri varVal) {
 	if (DEBUG) printf("\tPrzypisuje zmiennej <%s> wartosc <%s>\n", varName.c_str(), variableManager.getValueOfVariable(varName).c_str());
 	if (DEBUG) printf("Indeks zmiennej to %d\n", varIndex);
 	char temp[50];
-	sprintf(temp, "STORE %d \t** // umieszczam %s w komorce pamieci %d // **", varIndex, varName.c_str(), registerManager.getAccumulatorValue());
+	sprintf(temp, "STORE %d", varIndex);
 	variableManager.setAddressOfVariable(varName, registerManager.getAccumulatorValue());
 	addCodeLine(temp);
 	return 0;
@@ -458,20 +464,6 @@ int getVariableRegister(stri variable) {
 	} else { 
 		return registerManager.getRegisterOfVariable(variable); 
 	}
-}
-
-void jumper() {
-	if (DEBUG) printf("TEST JUMPERA\n");
-	int line = tempCode.size() - 1;
-	jumpStack.push_back(line);
-	if (DEBUG) printf("Tymczasowy jumper w linii %d\n", line);
-}
-
-void labeler() {
-	if (DEBUG) addCodeLine("---ETYKIETA---\n");
-	int line = tempCode.size() - 1;
-	labelStack.push_back(line);
-	if (DEBUG) printf("Tymczasowy label w linii %d\n", line);
 }
 
 /*
@@ -506,17 +498,17 @@ int generateArithOp(stri op, stri a, stri b) {
 
 
 		if (a == "1") {
-			sprintf(temp, "INC %d \t** DODAWANIE, a = 1 **", reg_of_b);
+			sprintf(temp, "INC %d", reg_of_b);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);
 			addCodeLine(temp);
 		} else if (b == "1") {
-			sprintf(temp, "INC %d \t** DODAWANIE, b = 1 **", reg_of_a);
+			sprintf(temp, "INC %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
 			addCodeLine(temp);
 		} else {
-			sprintf(temp, "STORE %d \t** DODAWANIE (pr_0 = reg_a) **", reg_of_a); 
+			sprintf(temp, "STORE %d", reg_of_a); 
 			addCodeLine(temp); // pr_0 = reg_a
 			sprintf(temp, "ADD %d", reg_of_b);
 			addCodeLine(temp); // reg_b = reg_b + pr0
@@ -532,12 +524,12 @@ int generateArithOp(stri op, stri a, stri b) {
 		
 
 		if (b == "1") {
-			sprintf(temp, "DEC %d \t** ODEJMOWANIE, b = 1 **", reg_of_a);
+			sprintf(temp, "DEC %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
 			addCodeLine(temp);
 		} else {
-			sprintf(temp, "STORE %d \t** ODEJMOWANIE (pr_0 = reg_b) **", reg_of_b); 
+			sprintf(temp, "STORE %d", reg_of_b); 
 			addCodeLine(temp); // pr_0 = reg_b
 			sprintf(temp, "SUB %d", reg_of_a);
 			addCodeLine(temp); // reg_a = reg_a - pr0
@@ -557,7 +549,7 @@ int generateArithOp(stri op, stri a, stri b) {
 
 
 		if (a == "0" || b == "0") {
-			sprintf(temp, "ZERO 0 \t** MNOŻENIE PRZEZ ZERO **");
+			sprintf(temp, "ZERO 0");
 			addCodeLine(temp);
 
 			registerManager.removeLastVariable();
@@ -565,7 +557,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 		
 		if (b == "2") {
-			sprintf(temp, "SHR %d \t** MNOŻENIE (b = 2) **", reg_of_a);
+			sprintf(temp, "SHR %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);				
 			addCodeLine(temp); // r_0 = reg_a
@@ -574,7 +566,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return a_val * 2;
 		}
 		else if (a == "2") {
-			sprintf(temp, "SHR %d \t** MNOŻENIE (a = 2) **", reg_of_b);
+			sprintf(temp, "SHR %d", reg_of_b);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
@@ -583,7 +575,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return 2 * b_val;
 		}
 		else {
-			generateMultiplication();
+			generateMultiplication(a_val, b_val);
 
 			registerManager.removeLastVariable();
 			return a_val * b_val;
@@ -593,7 +585,7 @@ int generateArithOp(stri op, stri a, stri b) {
 
 		
 		if (a == "0" || b == "0") {
-			sprintf(temp, "ZERO 0 \t** DZIELENIE PRZEZ ZERO **");
+			sprintf(temp, "ZERO 0");
 			addCodeLine(temp);
 
 			registerManager.removeLastVariable();
@@ -601,7 +593,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}
 
 		if (b == "2") {
-			sprintf(temp, "SHL %d \t** DZIELENIE (b = 2) **", reg_of_a);
+			sprintf(temp, "SHL %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);				
 			addCodeLine(temp); // r_0 = reg_a
@@ -610,7 +602,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return floor(a_val / 2);
 		}
 		else if (a == "2") {
-			sprintf(temp, "SHL %d \t** DZIELENIE (a = 2) **", reg_of_b);
+			sprintf(temp, "SHL %d", reg_of_b);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_b);				
 			addCodeLine(temp); // r_0 = reg_b
@@ -619,7 +611,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return floor(2 / b_val);
 		}
 		else {
-			generateDivision();
+			generateDivision(a_val, b_val, false);
 
 			registerManager.removeLastVariable();
 			return floor(a_val / b_val);
@@ -629,7 +621,7 @@ int generateArithOp(stri op, stri a, stri b) {
 	} else if (op == S_MOD){
 
 		
-		generateDivision();
+		generateDivision(a_val, b_val, true);
 		
 		registerManager.removeLastVariable();
 		return a_val % b_val;
@@ -672,6 +664,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 		// a - b = 0  ==> return 1;
 		// a - b > 0  ==> return 0;
 		generateArithOp(S_MINUS, b, a);
+		int currentLine = tempCode.size() - 1;
 		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+1);	
 		addCodeLine(temp);
 
@@ -688,17 +681,17 @@ int generateBoolOp(stri op, stri a, stri b) {
 		int main_result; 
 		int reg_of_c = registerManager.findFreeRegister();
 
-		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_b **", reg_of_b);
+		sprintf(temp, "STORE %d", reg_of_b);
 		addCodeLine(temp);
-		sprintf(temp, "SUB %d \t** ==\t r_%d <- r_%d - p_%d", reg_of_a, reg_of_a, reg_of_a, registerManager.getAccumulatorValue());
+		sprintf(temp, "SUB %d", reg_of_a);
 		addCodeLine(temp);
-		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_i **", reg_of_c);
+		sprintf(temp, "STORE %d", reg_of_c);
 		addCodeLine(temp);
-		sprintf(temp, "LOAD %d \t** ==\t  reg_i <- p_r0 **", reg_of_a);
+		sprintf(temp, "LOAD %d", reg_of_a);
 		addCodeLine(temp);
-		sprintf(temp, "SUB %d \t** ==\t r_i <- r_i - p_r0", reg_of_b);
+		sprintf(temp, "SUB %d", reg_of_b);
 		addCodeLine(temp);
-		sprintf(temp, "ADD %d \t** ==\t r_i < r_i + p_r0", reg_of_c);
+		sprintf(temp, "ADD %d", reg_of_c);
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
@@ -716,17 +709,17 @@ int generateBoolOp(stri op, stri a, stri b) {
 		int main_result; 
 		int reg_of_c = registerManager.findFreeRegister();
 
-		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_b **", reg_of_b);
+		sprintf(temp, "STORE %d", reg_of_b);
 		addCodeLine(temp);
-		sprintf(temp, "SUB %d \t** ==\t r_%d <- r_%d - p_%d", reg_of_a, reg_of_a, reg_of_a, registerManager.getAccumulatorValue());
+		sprintf(temp, "SUB %d", reg_of_a);
 		addCodeLine(temp);
-		sprintf(temp, "STORE %d \t** ==\t  p_r0 <- reg_i **", reg_of_c);
+		sprintf(temp, "STORE %d", reg_of_c);
 		addCodeLine(temp);
-		sprintf(temp, "LOAD %d \t** ==\t  reg_i <- p_r0 **", reg_of_a);
+		sprintf(temp, "LOAD %d", reg_of_a);
 		addCodeLine(temp);
-		sprintf(temp, "SUB %d \t** ==\t r_i <- r_i - p_r0", reg_of_b);
+		sprintf(temp, "SUB %d", reg_of_b);
 		addCodeLine(temp);
-		sprintf(temp, "ADD %d \t** ==\t r_i < r_i + p_r0", reg_of_c);
+		sprintf(temp, "ADD %d", reg_of_c);
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
@@ -734,7 +727,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 		if (result1 == result2) {
 			main_result = 0;
 		} else main_result = 1;
-		printf("%d == %d ---> %d\n", a_val, b_val, main_result);
+		if (DEBUG) printf("%d == %d ---> %d\n", a_val, b_val, main_result);
 		return main_result;
 
 	} else if (op == S_GT) { // a > b
@@ -844,6 +837,7 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 }
 
 void generateToDo(int placeholder) {
+	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje to-do w linii %d\n", pl);
 
@@ -852,6 +846,7 @@ void generateToDo(int placeholder) {
 }
 
 void generateDowntoDo(int placeholder) {
+	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje downto-do w linii %d\n", pl);
 
@@ -884,14 +879,14 @@ int generateWrite(stri a) {
 	if (ret != 0) return ret;
 
 	if (isNumber(a)) { // liczba
-		addCodeLine("PUT 0 \t** Wyswietlam zawartosc rejestru 0 **");
+		addCodeLine("PUT 0");
 	} else { // zmienna
 		if (variableManager.getValueOfVariable(a) == "null") return 666;
 		int a_val = atoi(variableManager.getValueOfVariable(a).c_str());
 
 		int AvarIndex = variableManager.getItemIndex(a);
 		int reg = AvarIndex+1;
-		sprintf(temp, "PUT %d \t** Wyswietlam zawartosc rejestru %d **", reg, reg); //wyswietlam zmienna zamiast jej wartosc
+		sprintf(temp, "PUT %d", reg); //wyswietlam zmienna zamiast jej wartosc
 		addCodeLine(temp);
 	}
 
@@ -913,10 +908,10 @@ int generateRead(stri a) {
 			registerManager.setValueToRegister(ss.str(), 0);
 			char temp[50];
 			int reg = registerManager.getRegisterOfVariable(a);
-			sprintf(temp, "GET %d \t** Pobieram liczbe i zapisuje w rejestrze %d **", reg, reg);
+			sprintf(temp, "GET %d", reg);
 			addCodeLine(temp);
 			registerManager.setValueToRegister(a, 0);
-			sprintf(temp, "STORE %d \t** Zawartosc rejestru %d zapisuje w pamieci pod adresem %d **", reg, reg, registerManager.getAccumulatorValue());
+			sprintf(temp, "STORE %d", reg);
 			addCodeLine(temp);
 			variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
 		}
