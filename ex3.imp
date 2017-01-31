@@ -3,7 +3,7 @@ VAR
 BEGIN
 	a := 0;
 	b := 0;
-	IF a == b THEN a := 0;
+	IF a == b THEN SKIP;
 		ELSE a := 1;
 	ENDIF
 END

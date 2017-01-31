@@ -15,5 +15,127 @@
 
 
 Generuje read
-Generuje wartosc a
-BLAD: [Linia 6] Użycie niezainicjalizowanej zmiennej a
+Operacja boolowska a > 0
+		*******tworze zmienna 0
+Generuje while w linii 17
+Generuje do w linii 17
+Obsluga while
+
+
+****** BLOK KOMENDY ******
+
+
+Operacja arytmetyczna a / 2
+		*******tworze zmienna 2
+	Przypisuje zmiennej <b> wartosc <0>
+Indeks zmiennej to 1
+	Udane przypisanie do zmiennej
+Operacja arytmetyczna 2 * b
+	Przypisuje zmiennej <b> wartosc <0>
+Indeks zmiennej to 1
+	Udane przypisanie do zmiennej
+Operacja boolowska a > b
+Generuje if w linii 48
+Generuje then w linii 48
+Generuje else w linii 48
+Obsluga if 
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje write
+	Udane wypisanie zmiennej
+Generuje then w linii 54
+Generuje else w linii 54
+Obsluga then 
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje write
+	Udane wypisanie zmiennej
+Generuje else w linii 58
+Obsluga else 
+Operacja arytmetyczna a / 2
+	Przypisuje zmiennej <a> wartosc <0>
+Indeks zmiennej to 0
+	Udane przypisanie do zmiennej
+Generuje do w linii 67
+Condition do while
+Koniec programu, zwracam HALT
+
+
+******** KOD ********
+
+
+0. GET 1
+1. STORE 1
+2. LOAD 1
+3. ZERO 4
+4. COPY 4
+5. STORE 4
+6. LOAD 1
+7. ZERO -1
+8. COPY -1
+9. STORE -1
+10. STORE 7
+11. SUB 6
+12. COPY 6
+13. JZERO 0 16
+14. ZERO 0
+15. JUMP 17
+16. INC 0
+17. JUMP 17
+18. JZERO 0 18
+19. LOAD 1
+20. ZERO 3
+21. INC 3
+22. SHL 3
+23. COPY 3
+24. STORE 3
+25. SHL 1
+26. COPY 1
+27. STORE 1
+28. ZERO 4
+29. INC 4
+30. SHL 4
+31. COPY 4
+32. STORE 4
+33. LOAD 2
+34. SHR 9
+35. COPY 9
+36. STORE 1
+37. LOAD 1
+38. LOAD 2
+39. LOAD 1
+40. LOAD 2
+41. STORE 13
+42. SUB 12
+43. COPY 12
+44. JZERO 2 47
+45. ZERO 0
+46. JUMP 48
+47. INC 2
+48. JUMP 49
+49. JZERO 0 49
+50. ZERO 3
+51. INC 3
+52. COPY 3
+53. PUT 0
+54. JUMP 55
+55. ZERO 3
+56. COPY 3
+57. PUT 0
+58. LOAD 1
+59. ZERO 3
+60. INC 3
+61. SHL 3
+62. COPY 3
+63. STORE 3
+64. SHL 1
+65. COPY 1
+66. STORE 0
+67. JUMP -1
+68. HALT

@@ -185,7 +185,11 @@ class VariableManager {
 		}
 
 		stri getValueOfVariable(stri varName) {
+			if (isNumber(varName)) {
+				return varName;
+			}
 			stri varVal = valueVector.at(getItemIndex(varName));
+
 			if (varVal != "") {
 				return varVal;
 			}
@@ -329,7 +333,7 @@ void binaryNumberToCode(stri bin, stri dec) {
             bin.erase(bin.size() - 1, 1);
         }
     }
-    v.push_back(zero + "\t ** binaryNumberToCode: " + dec.c_str() +" **");
+    v.push_back(zero);
     
 
     for (int i = v.size() - 1; i >= 0; i--) {
@@ -441,7 +445,7 @@ int declareVariable(stri varName) {
 	return result;
 }
 
-int generateVariableAssign(stri varName, stri varVal) {
+int generateVariableAssign(stri varName, stri varVal) { 
 	int varIndex = variableManager.getItemIndex(varName);
 	if (varIndex == -1) { // jeśli nie istnieje zmienna
 		return 1;
@@ -457,6 +461,7 @@ int generateVariableAssign(stri varName, stri varVal) {
 	sprintf(temp, "STORE %d", varIndex);
 	variableManager.setAddressOfVariable(varName, registerManager.getAccumulatorValue());
 	addCodeLine(temp);
+
 	return 0;
 }
 
