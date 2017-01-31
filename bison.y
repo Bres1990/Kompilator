@@ -27,14 +27,14 @@ int forPlaceholder = -1;
 %union{ char *stru; char *numu; } 
 %token <stru> VAR /* blok deklaracji zmiennych */
 %token <stru> START END /* blok kodu */
-%token <stru> LBRACKET RBRACKET 
-%token <stru> LCOMMENT RCOMMENT
+%token <stru> LBRACKET RBRACKET  
+%token <stru> LCOMMENT RCOMMENT 
 %token <stru> IF THEN ELSE ENDIF 
 %token <stru> WHILE DO ENDWHILE
-%token <stru> FOR FROM DOWNTO TO ENDFOR  
+%token <stru> FOR FROM DOWNTO TO ENDFOR       
 %token <stru> READ WRITE
-%token <stru> SKIP
-%token <stru> ASSIGN
+%token <stru> SKIP 
+%token <stru> ASSIGN 
 %token <stru> PLUS MINUS MULT DIV MOD
 %token <stru> EQ LT LET GT GET NEQ  
 %token <numu> NUM 
@@ -116,20 +116,20 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 				break;
 			case 0: 
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
-				break; 
-		}
-	} 
+				break;  
+		}  
+	}       
 
 	| PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression SEMICOLON
 	{
 	    int result = generateVariableAssign($<stru>1, $<stru>3);    
 		switch (result) { 
-			case 1:
-				{ 
+			case 1:  
+			{ 
 				stri err = "Niezadeklarowana zmienna ";   
 				err += $<stru>1;
 				catch_error(yylineno, err.c_str());
-				}
+			}
 				break;
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
@@ -141,22 +141,29 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 	    int result = generateVariableAssign($<stru>1, $<stru>3);    
 		switch (result) {
+			case 2: 
+				{
+					stri err = "Użycie niezainicjalizowanej zmiennej ";
+					err += $<stru>3;
+					catch_error(yylineno, err.c_str());
+				}
+				break;
 			case 1:
 				{
-				stri err = "Niezadeklarowana zmienna ";
-				err += $<stru>1;
-				catch_error(yylineno, err.c_str());
+					stri err = "Niezadeklarowana zmienna ";
+					err += $<stru>1;
+					catch_error(yylineno, err.c_str());
 				}
 				break;
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
 				break; 
-		} 
+		}  
 	}
   
     | IF condition
 	{ 
-		int result = $<stru>2;
+		int result = atoi($<stru>2);
 		generateIf(result);
 	}
 	THEN commands
@@ -170,7 +177,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 
     | WHILE condition
 	{
-		int result = $<stru>2;
+		int result = atoi($<stru>2);
 	    generateWhile(result);
 		if (DEBUG)printf("Obsluga while\n");
 	}	
@@ -185,14 +192,18 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
 			case -1:
+			{
 				stri err = "Niezadeklarowana zmienna ";
 				err += $<stru>2;
 				catch_error(yylineno, err.c_str());
 				break;
+			}
 			default:
+			{
 				if (DEBUG) printf("Obsluga for\n");
 				forPlaceholder = generateFor($<stru>2, $<stru>4, $<stru>6, true);
 				break;
+			}
 		}
 	}  
 	DO commands
@@ -206,14 +217,18 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
 			case -1:
+			{
 				stri err = "Niezadeklarowana zmienna ";
 				err += $<stru>2;
 				catch_error(yylineno, err.c_str());
 				break;
+			}
 			default:
+			{
 				if (DEBUG) printf("Obsluga for\n");
 				forPlaceholder = generateFor($<stru>2, $<stru>4, $<stru>6, false);
 				break;
+			}
 		}
 	} 
 	DO commands
@@ -417,7 +432,7 @@ void err(int line, int no) {
 		case(-5):
 			sprintf(txt, "Niezainicjalizowana zmienna"); 
 			break;
-		default:  
+		default:   
 			sprintf(txt, "BLAD NUMER %d", no); 
 			break;
 	}

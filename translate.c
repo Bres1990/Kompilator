@@ -1,7 +1,7 @@
 #ifndef TRANSLATE_GUARD
 #define TRANSLATE_GUARD
 
-#define DEBUG 0
+#define DEBUG 1
 #define ERR 0
 #define LINECODE 0
 
@@ -174,8 +174,8 @@ class VariableManager {
 					if (getValueOfVariable(varVal) != "") {
 						valueVector.at(index) = getValueOfVariable(varVal);
 					} else {
-						if (ERR) printf("podstawiana zmienna jest niezainicjalizowana\n");
-						return -1;
+						if (DEBUG) printf("podstawiana zmienna jest niezainicjalizowana\n");
+						return -2;
 					} 
 				}
 			} else {
@@ -447,6 +447,9 @@ int generateVariableAssign(stri varName, stri varVal) {
 		return 1;
 	}
 	// istnieje indeks zmiennej
+	if (variableManager.getValueOfVariable(varVal) == "null") {
+		return 2;
+	}
 	variableManager.setValueToVariable(varName, varVal);
 	if (DEBUG) printf("\tPrzypisuje zmiennej <%s> wartosc <%s>\n", varName.c_str(), variableManager.getValueOfVariable(varName).c_str());
 	if (DEBUG) printf("Indeks zmiennej to %d\n", varIndex);
@@ -784,12 +787,11 @@ int generateBoolOp(stri op, stri a, stri b) {
 	return 0;
 }
 
-void generateIf(int result) {
-	char temp[50];
+int generateElse() {
 	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje if w linii %d\n", pl);
-	sprintf(temp, "JZERO %d %d", result, generateThen()+1); // goto ELSE
-	addCodeLine(temp);
+	if (DEBUG) printf("Generuje else w linii %d\n", pl);
+
+	return pl;
 }
 
 int generateThen() {
@@ -802,11 +804,12 @@ int generateThen() {
 	return pl;
 }
 
-int generateElse() {
+void generateIf(int result) {
+	char temp[50];
 	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje else w linii %d\n", pl);
-
-	return pl;
+	if (DEBUG) printf("Generuje if w linii %d\n", pl);
+	sprintf(temp, "JZERO %d %d", result, generateThen()+1); // goto ELSE
+	addCodeLine(temp);
 }
 
 int generateFor(stri pid, stri from, stri to, bool mode) {
@@ -820,7 +823,7 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 	sprintf(temp, "LOAD %d", freeReg);
 	addCodeLine(temp);
 
-	int result = generateBoolOp(S_GET, atoi(pid.c_str()), atoi(to.c_str()));
+	int result = generateBoolOp(S_GET, pid, to);
 	sprintf(temp, "JODD %d %d", result, pl+4); // warunek spelniony, wykonaj cialo petli
 	addCodeLine(temp);
 	if (mode == true) {
@@ -854,14 +857,6 @@ void generateDowntoDo(int placeholder) {
 	addCodeLine(temp);
 }
 
-void generateWhile(int result) {
-	char temp[50];
-	int pl = tempCode.size();
-	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
-	sprintf(temp, "JZERO %d %d", result, generateDo(pl)+1); // jump_poza_petle
-	addCodeLine(temp);
-}
-
 int generateDo(int jumper) {
 	char temp[50];
 	int pl = tempCode.size();
@@ -870,6 +865,14 @@ int generateDo(int jumper) {
 	addCodeLine(temp);
 
 	return pl;
+}
+
+void generateWhile(int result) {
+	char temp[50];
+	int pl = tempCode.size();
+	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
+	sprintf(temp, "JZERO %d %d", result, generateDo(pl)+1); // jump_poza_petle
+	addCodeLine(temp);
 }
 
 int generateWrite(stri a) {

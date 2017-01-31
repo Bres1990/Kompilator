@@ -9,5 +9,11 @@
 	Deklaracja zmiennej <b>
 	Udana deklaracja zmiennej
 	Zmienna przypisana do rejestru 2
-	Deklaracja zmiennej <a>
-*******ZMIENNA a JUZ ISTNIEJEBLAD: [Linia 4] Redeklaracja zmiennej a
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje read
+Generuje wartosc a
+BLAD: [Linia 6] Użycie niezainicjalizowanej zmiennej a

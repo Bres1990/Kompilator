@@ -491,10 +491,10 @@ static const yytype_uint8 yytranslate[] =
 static const yytype_uint16 yyrline[] =
 {
        0,    47,    47,    48,    54,    77,    99,   102,   103,   106,
-     123,   140,   158,   163,   167,   157,   172,   178,   171,   184,
-     199,   183,   205,   220,   204,   226,   234,   242,   250,   267,
-     270,   277,   287,   297,   307,   317,   332,   337,   347,   357,
-     367,   377,   387,   400,   401,   402,   403
+     123,   140,   165,   170,   174,   164,   179,   185,   178,   191,
+     210,   190,   216,   235,   215,   241,   249,   257,   265,   282,
+     285,   292,   302,   312,   322,   332,   347,   352,   362,   372,
+     382,   392,   402,   415,   416,   417,   418
 };
 #endif
 
@@ -1414,8 +1414,8 @@ yyreduce:
 				break;
 			case 0: 
 				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
-				break; 
-		}
+				break;  
+		}  
 	}
 #line 1421 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1425,12 +1425,12 @@ yyreduce:
     {
 	    int result = generateVariableAssign((yyvsp[-6].stru), (yyvsp[-4].stru));    
 		switch (result) { 
-			case 1:
-				{ 
+			case 1:  
+			{ 
 				stri err = "Niezadeklarowana zmienna ";   
 				err += (yyvsp[-6].stru);
 				catch_error(yylineno, err.c_str());
-				}
+			}
 				break;
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
@@ -1445,156 +1445,171 @@ yyreduce:
     {
 	    int result = generateVariableAssign((yyvsp[-3].stru), (yyvsp[-1].stru));    
 		switch (result) {
+			case 2: 
+				{
+					stri err = "Użycie niezainicjalizowanej zmiennej ";
+					err += (yyvsp[-1].stru);
+					catch_error(yylineno, err.c_str());
+				}
+				break;
 			case 1:
 				{
-				stri err = "Niezadeklarowana zmienna ";
-				err += (yyvsp[-3].stru);
-				catch_error(yylineno, err.c_str());
+					stri err = "Niezadeklarowana zmienna ";
+					err += (yyvsp[-3].stru);
+					catch_error(yylineno, err.c_str());
 				}
 				break;
 			case 0:
 				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
 				break; 
-		} 
+		}  
 	}
-#line 1461 "bison.tab.c" /* yacc.c:1646  */
+#line 1468 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 12:
-#line 158 "bison.y" /* yacc.c:1646  */
+#line 165 "bison.y" /* yacc.c:1646  */
     { 
-		int result = (yyvsp[0].stru);
+		int result = atoi((yyvsp[0].stru));
 		generateIf(result);
 	}
-#line 1470 "bison.tab.c" /* yacc.c:1646  */
+#line 1477 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 13:
-#line 163 "bison.y" /* yacc.c:1646  */
+#line 170 "bison.y" /* yacc.c:1646  */
     {        
 		generateThen();
 	}
-#line 1478 "bison.tab.c" /* yacc.c:1646  */
+#line 1485 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 14:
-#line 167 "bison.y" /* yacc.c:1646  */
+#line 174 "bison.y" /* yacc.c:1646  */
     {
 		generateElse();
 	}
-#line 1486 "bison.tab.c" /* yacc.c:1646  */
+#line 1493 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 16:
-#line 172 "bison.y" /* yacc.c:1646  */
+#line 179 "bison.y" /* yacc.c:1646  */
     {
-		int result = (yyvsp[0].stru);
+		int result = atoi((yyvsp[0].stru));
 	    generateWhile(result);
 		if (DEBUG)printf("Obsluga while\n");
 	}
-#line 1496 "bison.tab.c" /* yacc.c:1646  */
+#line 1503 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 17:
-#line 178 "bison.y" /* yacc.c:1646  */
+#line 185 "bison.y" /* yacc.c:1646  */
     {	
 		generateDo(-1);
 	    if (DEBUG)printf("Condition do while\n");
 	}
-#line 1505 "bison.tab.c" /* yacc.c:1646  */
+#line 1512 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 19:
-#line 184 "bison.y" /* yacc.c:1646  */
+#line 191 "bison.y" /* yacc.c:1646  */
     {
 		int result = variableManager.getItemIndex((yyvsp[-4].stru));
 		switch(result) {
 			case -1:
+			{
 				stri err = "Niezadeklarowana zmienna ";
 				err += (yyvsp[-4].stru);
 				catch_error(yylineno, err.c_str());
 				break;
+			}
 			default:
+			{
 				if (DEBUG) printf("Obsluga for\n");
 				forPlaceholder = generateFor((yyvsp[-4].stru), (yyvsp[-2].stru), (yyvsp[0].stru), true);
 				break;
+			}
 		}
 	}
-#line 1524 "bison.tab.c" /* yacc.c:1646  */
+#line 1535 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 20:
-#line 199 "bison.y" /* yacc.c:1646  */
+#line 210 "bison.y" /* yacc.c:1646  */
     {
 		generateToDo(forPlaceholder);
 		if (DEBUG) printf("Obsluga to-do\n"); 
 	}
-#line 1533 "bison.tab.c" /* yacc.c:1646  */
+#line 1544 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 22:
-#line 205 "bison.y" /* yacc.c:1646  */
+#line 216 "bison.y" /* yacc.c:1646  */
     {
 		int result = variableManager.getItemIndex((yyvsp[-4].stru));
 		switch(result) {
 			case -1:
+			{
 				stri err = "Niezadeklarowana zmienna ";
 				err += (yyvsp[-4].stru);
 				catch_error(yylineno, err.c_str());
 				break;
+			}
 			default:
+			{
 				if (DEBUG) printf("Obsluga for\n");
 				forPlaceholder = generateFor((yyvsp[-4].stru), (yyvsp[-2].stru), (yyvsp[0].stru), false);
 				break;
+			}
 		}
 	}
-#line 1552 "bison.tab.c" /* yacc.c:1646  */
+#line 1567 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 23:
-#line 220 "bison.y" /* yacc.c:1646  */
+#line 235 "bison.y" /* yacc.c:1646  */
     { 
 		generateDowntoDo(forPlaceholder);
 		if (DEBUG) printf("Obsluga downto-do\n");
 	}
-#line 1561 "bison.tab.c" /* yacc.c:1646  */
+#line 1576 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 25:
-#line 227 "bison.y" /* yacc.c:1646  */
+#line 242 "bison.y" /* yacc.c:1646  */
     {
 	    int result = generateRead((yyvsp[-4].stru));
 		if (result != 0) {  
 			err(yylineno, result); //fixit   
 		}
 	}
-#line 1572 "bison.tab.c" /* yacc.c:1646  */
+#line 1587 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 26:
-#line 235 "bison.y" /* yacc.c:1646  */
+#line 250 "bison.y" /* yacc.c:1646  */
     { 
 	    int result = generateRead((yyvsp[-4].stru));
 		if (result != 0) {   
 			err(yylineno, result);
 		} 
 	}
-#line 1583 "bison.tab.c" /* yacc.c:1646  */
+#line 1598 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 27:
-#line 243 "bison.y" /* yacc.c:1646  */
+#line 258 "bison.y" /* yacc.c:1646  */
     {
 	    int result = generateRead((yyvsp[-1].stru));
 		if (result != 0) {
 			err(yylineno, result); //fixit      
 		}
 	}
-#line 1594 "bison.tab.c" /* yacc.c:1646  */
+#line 1609 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 28:
-#line 251 "bison.y" /* yacc.c:1646  */
+#line 266 "bison.y" /* yacc.c:1646  */
     { 
 	    int result = generateWrite((yyvsp[-1].stru));
 		switch(result) {
@@ -1610,28 +1625,28 @@ yyreduce:
 					break;     
 		}  
 	}
-#line 1614 "bison.tab.c" /* yacc.c:1646  */
+#line 1629 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 29:
-#line 267 "bison.y" /* yacc.c:1646  */
+#line 282 "bison.y" /* yacc.c:1646  */
     {}
-#line 1620 "bison.tab.c" /* yacc.c:1646  */
+#line 1635 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 30:
-#line 271 "bison.y" /* yacc.c:1646  */
+#line 286 "bison.y" /* yacc.c:1646  */
     {	
 				if (DEBUG) printf("Generuje wartosc %s\n", (yyvsp[0].stru));
 				
 				int result = generateP_A((yyvsp[0].stru));
 				if (result) { err(yylineno, result); }
 			}
-#line 1631 "bison.tab.c" /* yacc.c:1646  */
+#line 1646 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 31:
-#line 278 "bison.y" /* yacc.c:1646  */
+#line 293 "bison.y" /* yacc.c:1646  */
     {
 				if (DEBUG) printf("Operacja arytmetyczna %s + %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp("+", (yyvsp[-2].stru), (yyvsp[0].stru)); 
@@ -1641,11 +1656,11 @@ yyreduce:
 				os << result;
 				(yyval.numu) = strdup(os.str().c_str());
 			}
-#line 1645 "bison.tab.c" /* yacc.c:1646  */
+#line 1660 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 32:
-#line 288 "bison.y" /* yacc.c:1646  */
+#line 303 "bison.y" /* yacc.c:1646  */
     {
 				if (DEBUG) printf("Operacja arytmetyczna %s - %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp("-", (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1655,11 +1670,11 @@ yyreduce:
 				os << result;
 				(yyval.numu) = strdup(os.str().c_str());
 			}
-#line 1659 "bison.tab.c" /* yacc.c:1646  */
+#line 1674 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 33:
-#line 298 "bison.y" /* yacc.c:1646  */
+#line 313 "bison.y" /* yacc.c:1646  */
     {
 				if (DEBUG) printf("Operacja arytmetyczna %s * %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp(S_MULT, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1669,11 +1684,11 @@ yyreduce:
 				os << result;
 				(yyval.numu) = strdup(os.str().c_str());
 			}
-#line 1673 "bison.tab.c" /* yacc.c:1646  */
+#line 1688 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 34:
-#line 308 "bison.y" /* yacc.c:1646  */
+#line 323 "bison.y" /* yacc.c:1646  */
     {
 				if (DEBUG) printf("Operacja arytmetyczna %s / %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp(S_DIV, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1683,11 +1698,11 @@ yyreduce:
 				os << result; 
 				(yyval.numu) = strdup(os.str().c_str());
 			}
-#line 1687 "bison.tab.c" /* yacc.c:1646  */
+#line 1702 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 35:
-#line 318 "bison.y" /* yacc.c:1646  */
+#line 333 "bison.y" /* yacc.c:1646  */
     {
 				if (DEBUG) printf("Operacja arytmetyczna %s % %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 				int result = generateArithOp(S_MOD, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1697,20 +1712,20 @@ yyreduce:
 				os << result; 
 				(yyval.numu) = strdup(os.str().c_str());
 			}
-#line 1701 "bison.tab.c" /* yacc.c:1646  */
+#line 1716 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 36:
-#line 333 "bison.y" /* yacc.c:1646  */
+#line 348 "bison.y" /* yacc.c:1646  */
     {    
 		int result = generateP_A((yyvsp[0].stru)); 
 		if (result) { err(yylineno, result); }     
 	}
-#line 1710 "bison.tab.c" /* yacc.c:1646  */
+#line 1725 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 37:
-#line 338 "bison.y" /* yacc.c:1646  */
+#line 353 "bison.y" /* yacc.c:1646  */
     {
 		if (DEBUG) printf("Operacja boolowska %s == %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_EQ, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1720,11 +1735,11 @@ yyreduce:
 		os << result;
 		(yyval.numu) = strdup(os.str().c_str());
 	}
-#line 1724 "bison.tab.c" /* yacc.c:1646  */
+#line 1739 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 38:
-#line 348 "bison.y" /* yacc.c:1646  */
+#line 363 "bison.y" /* yacc.c:1646  */
     {
 		if (DEBUG) printf("Operacja boolowska %s <> %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_NEQ, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1734,11 +1749,11 @@ yyreduce:
 		os << result; 
 		(yyval.numu) = strdup(os.str().c_str());    
 	}
-#line 1738 "bison.tab.c" /* yacc.c:1646  */
+#line 1753 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 39:
-#line 358 "bison.y" /* yacc.c:1646  */
+#line 373 "bison.y" /* yacc.c:1646  */
     { 
 		if (DEBUG) printf("Operacja boolowska %s < %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_GT, (yyvsp[0].stru), (yyvsp[-2].stru));
@@ -1748,11 +1763,11 @@ yyreduce:
 		os << result;  
 		(yyval.numu) = strdup(os.str().c_str()); 
 	}
-#line 1752 "bison.tab.c" /* yacc.c:1646  */
+#line 1767 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 368 "bison.y" /* yacc.c:1646  */
+#line 383 "bison.y" /* yacc.c:1646  */
     {
 		if (DEBUG) printf("Operacja boolowska %s > %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_GT, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1762,11 +1777,11 @@ yyreduce:
 		os << result;
 		(yyval.numu) = strdup(os.str().c_str());
 	}
-#line 1766 "bison.tab.c" /* yacc.c:1646  */
+#line 1781 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 378 "bison.y" /* yacc.c:1646  */
+#line 393 "bison.y" /* yacc.c:1646  */
     {	
 		if (DEBUG) printf("Operacja boolowska %s >= %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_GET, (yyvsp[-2].stru), (yyvsp[0].stru));
@@ -1776,11 +1791,11 @@ yyreduce:
 		os << result;  
 		(yyval.numu) = strdup(os.str().c_str());       
 	}
-#line 1780 "bison.tab.c" /* yacc.c:1646  */
+#line 1795 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 388 "bison.y" /* yacc.c:1646  */
+#line 403 "bison.y" /* yacc.c:1646  */
     {  
 		if (DEBUG) printf("Operacja boolowska %s <= %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
 		int result = generateBoolOp(S_GET, (yyvsp[0].stru), (yyvsp[-2].stru)); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
@@ -1790,11 +1805,11 @@ yyreduce:
 		os << result; 
 		(yyval.numu) = strdup(os.str().c_str()); 
 	}
-#line 1794 "bison.tab.c" /* yacc.c:1646  */
+#line 1809 "bison.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1798 "bison.tab.c" /* yacc.c:1646  */
+#line 1813 "bison.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2022,7 +2037,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 406 "bison.y" /* yacc.c:1906  */
+#line 421 "bison.y" /* yacc.c:1906  */
 
  
 void err(int line, int no) { 
@@ -2037,7 +2052,7 @@ void err(int line, int no) {
 		case(-5):
 			sprintf(txt, "Niezainicjalizowana zmienna"); 
 			break;
-		default:  
+		default:   
 			sprintf(txt, "BLAD NUMER %d", no); 
 			break;
 	}
