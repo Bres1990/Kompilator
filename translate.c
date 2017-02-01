@@ -74,6 +74,7 @@ class RegisterManager {
 
 		int setValueToRegister(stri value, int regnum) {
 			regValVector.at(regnum) = atoi(value.c_str());
+			printf("%d\n", regValVector.at(regnum));
 		}
 
 		int findFreeRegister() {
@@ -138,12 +139,16 @@ class VariableManager {
 
 			int memoryAddress = valInAcc;
 			memoryVector.push_back(memoryAddress);
+			if (DEBUG) printf("Dodaje zmienna %s o adresie %d\n", varName.c_str(), valInAcc);
 			return 0; // sukces
 		}
 		
 		int getItemIndex(stri varName) {
 			for (int i = 0; i < variableVector.size(); i++) {
-				if (varName == variableVector.at(i)) {
+				if (varName == variableVector.at(i)) 
+				{
+					if (varName == "i")
+						printf("%d %d\n", variableVector.size(), i);
 					return i;
 				}
 			}
@@ -169,6 +174,7 @@ class VariableManager {
 
 				if (isNumber(varVal)) {
 					valueVector.at(index) = varVal;
+					if (DEBUG) printf("%s = %s", varName.c_str(), varVal.c_str());
 				} else {
 					// sprawdz, czy zmienna jest zainicjalizowana
 					if (getValueOfVariable(varVal) != "") {
@@ -439,8 +445,11 @@ int declareVariable(stri varName) {
 	ss << variableManager.addVariable(varName, valInAcc);
 	stri addingVariable = ss.str();
 	int result = atoi(addingVariable.c_str());
-	if (registerManager.findFreeRegister() != -1)
+	int freeReg = registerManager.findFreeRegister();
+	printf("Wolny rejestr nr %d dla zmiennej %s\n", freeReg, varName.c_str());
+	if (freeReg != -1)
 		registerManager.populateRegister(varName);
+	printf("register %d populated\n", freeReg);
 
 	return result;
 }
@@ -473,10 +482,6 @@ int getVariableRegister(stri variable) {
 		return registerManager.getRegisterOfVariable(variable); 
 	}
 }
-
-/*
-	Zaczynajac od ostatnio dodanych etykiet i jumperow dopasowujemy je
-*/
 
 int generateArithOp(stri op, stri a, stri b) {
 	generateP_AB(a, b);
@@ -822,25 +827,38 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje for w linii %d\n", pl);
 
-	int freeReg = registerManager.findFreeRegister();
-	registerManager.setValueToRegister(from, freeReg);
+	int regOfIterator = variableManager.getItemIndex(pid)+1; 
+	printf("regOfIterator %s: %d\n", pid.c_str(), regOfIterator);
 
-	sprintf(temp, "LOAD %d", freeReg);
+	registerManager.setValueToRegister(from, regOfIterator); 
+	if (DEBUG) printf("Value %d set to register %d\n", from, variableManager.getItemIndex(from)+1);
+
+	sprintf(temp, "LOAD %d", regOfIterator);
 	addCodeLine(temp);
 
 	int result = generateBoolOp(S_GET, pid, to);
 	sprintf(temp, "JODD %d %d", result, pl+4); // warunek spelniony, wykonaj cialo petli
 	addCodeLine(temp);
 	if (mode == true) {
-		sprintf(temp, "INC %d", freeReg); // i++
+		sprintf(temp, "INC %d", regOfIterator); // i++
 		addCodeLine(temp);
+		std::stringstream ss;
+		ss << registerManager.getValueFromRegister(regOfIterator)+1;
+
+		registerManager.setValueToRegister(ss.str(), regOfIterator);
 	} else {
-		sprintf(temp, "DEC %d", freeReg); // i--
+		sprintf(temp, "DEC %d", regOfIterator); // i--
 		addCodeLine(temp);
+		std::stringstream ss;
+		ss << registerManager.getValueFromRegister(regOfIterator)+1;
+
+		registerManager.setValueToRegister(ss.str(), regOfIterator);
 	}
+	if (DEBUG) printf("iterator: %d\n", registerManager.getValueFromRegister(regOfIterator));
 	sprintf(temp, "JUMP %d", pl+5); // koniec petli for
 	addCodeLine(temp);
 
+	if (DEBUG) printf("Koniec generateFor()\n");
 	return pl+1;
 }
 

@@ -3,7 +3,7 @@ VAR
 BEGIN
 	a := 0;
 	b := 0;
-	IF a == b THEN SKIP;
-		ELSE a := 1;
-	ENDIF
+	WHILE a < 5 DO
+		a := a + 1;
+	ENDWHILE
 END

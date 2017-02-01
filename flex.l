@@ -19,7 +19,7 @@ VAR				{ return(VAR); }
 BEGIN			{ return(START); }
 ENDIF			{ return(ENDIF); }
 ENDFOR			{ return(ENDFOR); }
-ENDWHILE		{ return(ENDWHILE); }
+ENDWHILE		{ return(ENDWHILE); } 
 END				{ return(END); }
 ":="			{ return(ASSIGN); }
 WHILE			{ return(WHILE); }

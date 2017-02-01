@@ -160,7 +160,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 				}
 				break;
 			case 0:
-				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
+				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n"); 
 				break; 
 		}  
 	}
@@ -173,34 +173,39 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	}
 	THEN commands
 	{        
-		generateThen();
-		if (DEBUG) printf("Obsluga then \n");
+		generateThen(); 
+		if (DEBUG) printf("Obsluga then \n"); 
 	} 
 	ELSE commands 
 	{
 		generateElse();
 		if (DEBUG) printf("Obsluga else \n");
-	} ENDIF {}
-
-    | WHILE condition
-	{
-		int result = atoi($<stru>2);
-	    generateWhile(result);
-		if (DEBUG)printf("Obsluga while\n");
+	} ENDIF {} 
+ 
+    | WHILE condition      
+	{ 
+		int result = atoi($<stru>2);   
+	    generateWhile(result);  
+		if (DEBUG)printf("Obsluga while\n");   
 	}	
-	DO commands
+	DO commands  
 	{	
 		generateDo(-1);
-	    if (DEBUG)printf("Condition do while\n");
+	    if (DEBUG)printf("Condition do while\n");  
 	} ENDWHILE {}
 
-	| FOR PIDENTIFIER { 
-		forIterator = atoi($<stru>2);
-		if (registerManager.getAccumulatorValue() == -1) {
-			variableManager.addVariable($<stru>2, -1);
-		} else variableManager.addVariable($<stru>2, registerManager.getAccumulatorValue());
+	| FOR PIDENTIFIER 
+	{  
+		printf("iterator register: %d\n", getVariableRegister($<stru>2));
+		if (variableManager.getItemIndex($<stru>2) == -1) {
+			declareVariable($<stru>2);
+			stri var = ""; 
+			var =+ $<stru>2;
+			if (DEBUG) printf("FOR: Variable %s declared\n", var.c_str());
+		}
+
 	} 
-	FROM VALUE TO VALUE
+	FROM VALUE TO VALUE 
 	{
 		//variableManager.setValueToVariable($<stru>2, $<stru>5);
 		int result = variableManager.getItemIndex($<stru>2);
@@ -209,7 +214,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 			{
 				stri err = "Niezadeklarowana zmienna ";
 				err += $<stru>2;
-				catch_error(yylineno, err.c_str());
+				catch_error(yylineno, err.c_str()); 
 				break;
 			}
 			default:
@@ -223,20 +228,18 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	DO commands
 	{
 		generateToDo(forPlaceholder);
-		if (DEBUG) printf("Obsluga to-do\n"); 
+		if (DEBUG) printf("Obsluga to-do\n");  
 	} ENDFOR {}
 
-	| FOR PIDENTIFIER {
-		forIterator = atoi($<stru>2);
-		if (registerManager.getAccumulatorValue() == -1) {
-			variableManager.addVariable($<stru>2, -1);
-		} else variableManager.addVariable($<stru>2, registerManager.getAccumulatorValue());
+	| FOR PIDENTIFIER 
+	{ 
+		//declareVariable($<stru>2);
+		//if (DEBUG) printf("Wyszedlem\n");
 	} 
-	FROM VALUE DOWNTO VALUE
-	{
+	FROM VALUE DOWNTO VALUE {
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
-			case -1:
+			case -1: 
 			{
 				stri err = "Niezadeklarowana zmienna ";
 				err += $<stru>2;

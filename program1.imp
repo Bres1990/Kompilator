@@ -4,7 +4,7 @@ VAR
 BEGIN
     n := 100-1;
     FOR i FROM n DOWNTO 2 DO
-        sito[i] := 1;
+        {sito[100] := 1;}
     ENDFOR
     FOR i FROM 2 TO n DO
         IF sito[i] <> 0 THEN
