@@ -21,6 +21,7 @@ void err(int line, int no);
 #include "translate.c" 
 
 int forPlaceholder = -1;
+int forIterator = -1;
 
 %}
  
@@ -193,8 +194,15 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	    if (DEBUG)printf("Condition do while\n");
 	} ENDWHILE {}
 
-	| FOR PIDENTIFIER FROM VALUE TO VALUE
+	| FOR PIDENTIFIER { 
+		forIterator = atoi($<stru>2);
+		if (registerManager.getAccumulatorValue() == -1) {
+			variableManager.addVariable($<stru>2, -1);
+		} else variableManager.addVariable($<stru>2, registerManager.getAccumulatorValue());
+	} 
+	FROM VALUE TO VALUE
 	{
+		//variableManager.setValueToVariable($<stru>2, $<stru>5);
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
 			case -1:
@@ -207,7 +215,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 			default:
 			{
 				if (DEBUG) printf("Obsluga for\n");
-				forPlaceholder = generateFor($<stru>2, $<stru>4, $<stru>6, true);
+				forPlaceholder = generateFor($<stru>2, $<stru>5, $<stru>7, true);
 				break;
 			}
 		}
@@ -218,7 +226,13 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		if (DEBUG) printf("Obsluga to-do\n"); 
 	} ENDFOR {}
 
-	| FOR PIDENTIFIER FROM VALUE DOWNTO VALUE
+	| FOR PIDENTIFIER {
+		forIterator = atoi($<stru>2);
+		if (registerManager.getAccumulatorValue() == -1) {
+			variableManager.addVariable($<stru>2, -1);
+		} else variableManager.addVariable($<stru>2, registerManager.getAccumulatorValue());
+	} 
+	FROM VALUE DOWNTO VALUE
 	{
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
@@ -232,7 +246,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 			default:
 			{
 				if (DEBUG) printf("Obsluga for\n");
-				forPlaceholder = generateFor($<stru>2, $<stru>4, $<stru>6, false);
+				forPlaceholder = generateFor($<stru>2, $<stru>5, $<stru>7, false);
 				break;
 			}
 		}
