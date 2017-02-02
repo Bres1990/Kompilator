@@ -868,7 +868,7 @@ void generateToDo(int placeholder) {
 	addCodeLine(temp);
 }
 
-void generateDowntoDo(int placeholder) {
+void generateDowntoDo(int placeholder) { 
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje downto-do w linii %d\n", pl);
@@ -891,7 +891,7 @@ void generateWhile(int result) {
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
-	sprintf(temp, "JZERO %d %d", result, generateDo(pl)+1); // jump_poza_petle
+	sprintf(temp, "JZERO %d %d", result, generateDo(pl+1)); // jump_poza_petle
 	addCodeLine(temp);
 }
 

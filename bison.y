@@ -170,11 +170,11 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		int result = atoi($<stru>2);
 		generateIf(result);
 		if (DEBUG) printf("Obsluga if \n");
-	}
+	} 
 	THEN commands
 	{        
 		generateThen(); 
-		if (DEBUG) printf("Obsluga then \n");  
+		if (DEBUG) printf("Obsluga then \n");    
 	} 
 	ELSE commands 
 	{
@@ -190,7 +190,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	}	
 	DO commands  
 	{	
-		generateDo(-1);
+		//generateDo(-1);
 	    if (DEBUG)printf("Condition do while\n");  
 	} ENDWHILE {}
 
@@ -514,7 +514,7 @@ condition :  VALUE
 			err += $<stru>3;
 			catch_error(yylineno, err.c_str());
 		}
-		
+
 		int result = generateBoolOp(S_GET, $<stru>3, $<stru>1); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
 		if (result == -1) { err(yylineno, result); }      
  

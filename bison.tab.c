@@ -1490,7 +1490,7 @@ yyreduce:
 #line 175 "bison.y" /* yacc.c:1646  */
     {        
 		generateThen(); 
-		if (DEBUG) printf("Obsluga then \n");  
+		if (DEBUG) printf("Obsluga then \n");    
 	}
 #line 1496 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1523,7 +1523,7 @@ yyreduce:
   case 17:
 #line 192 "bison.y" /* yacc.c:1646  */
     {	
-		generateDo(-1);
+		//generateDo(-1);
 	    if (DEBUG)printf("Condition do while\n");  
 	}
 #line 1530 "bison.tab.c" /* yacc.c:1646  */
@@ -1948,7 +1948,7 @@ yyreduce:
 			err += (yyvsp[0].stru);
 			catch_error(yylineno, err.c_str());
 		}
-		
+
 		int result = generateBoolOp(S_GET, (yyvsp[0].stru), (yyvsp[-2].stru)); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
 		if (result == -1) { err(yylineno, result); }      
  

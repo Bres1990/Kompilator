@@ -1,9 +1,14 @@
 VAR
-	a b
+	a b c
 BEGIN
 	a := 0;
-	b := 3;
+	b := 8;
+	c := 0;
 	WHILE a < b DO 
 		a := a + 1;
+		WHILE a <> b DO
+			c := c + 1;
+		ENDWHILE
 	ENDWHILE
+	WRITE c;
 END
