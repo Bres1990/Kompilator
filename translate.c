@@ -196,10 +196,7 @@ class VariableManager {
 			}
 			stri varVal = valueVector.at(getItemIndex(varName));
 
-			if (varVal != "") {
-				return varVal;
-			}
-			return "null";
+			return varVal;
 		}
 
 		int setAddressOfVariable(stri varName, int address) {
@@ -460,7 +457,7 @@ int generateVariableAssign(stri varName, stri varVal) {
 		return 1;
 	}
 	// istnieje indeks zmiennej
-	if (variableManager.getValueOfVariable(varVal) == "null") {
+	if (variableManager.getValueOfVariable(varVal) == "") {
 		return 2;
 	}
 	variableManager.setValueToVariable(varName, varVal);

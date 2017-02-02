@@ -2,8 +2,7 @@ VAR
 	a b
 BEGIN
 	a := 0;
-	b := 0;
-	WHILE a < 5 DO
-		a := a + 1;
-	ENDWHILE
+	IF a > b THEN SKIP;
+	ELSE b := 1;
+	ENDIF
 END

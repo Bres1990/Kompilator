@@ -495,7 +495,7 @@ static const yytype_uint16 yyrline[] =
      125,   143,   169,   175,   180,   168,   186,   192,   185,   198,
      209,   229,   197,   235,   239,   258,   234,   264,   272,   280,
      288,   305,   308,   315,   325,   335,   345,   355,   370,   375,
-     385,   395,   405,   415,   425,   438,   439,   440,   441
+     400,   425,   450,   475,   500,   528,   529,   530,   531
 };
 #endif
 
@@ -1490,7 +1490,7 @@ yyreduce:
 #line 175 "bison.y" /* yacc.c:1646  */
     {        
 		generateThen(); 
-		if (DEBUG) printf("Obsluga then \n"); 
+		if (DEBUG) printf("Obsluga then \n");  
 	}
 #line 1496 "bison.tab.c" /* yacc.c:1646  */
     break;
@@ -1789,6 +1789,21 @@ yyreduce:
 #line 376 "bison.y" /* yacc.c:1646  */
     {
 		if (DEBUG) printf("Operacja boolowska %s == %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
+
+		if (variableManager.getValueOfVariable((yyvsp[-2].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[-2].stru); 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable((yyvsp[0].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[0].stru);
+			catch_error(yylineno, err.c_str());
+		}
+		
 		int result = generateBoolOp(S_EQ, (yyvsp[-2].stru), (yyvsp[0].stru));
 		if (result == -1) { err(yylineno, result); }
 
@@ -1796,13 +1811,28 @@ yyreduce:
 		os << result;
 		(yyval.numu) = strdup(os.str().c_str());
 	}
-#line 1800 "bison.tab.c" /* yacc.c:1646  */
+#line 1815 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 40:
-#line 386 "bison.y" /* yacc.c:1646  */
+#line 401 "bison.y" /* yacc.c:1646  */
     {
 		if (DEBUG) printf("Operacja boolowska %s <> %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
+
+		if (variableManager.getValueOfVariable((yyvsp[-2].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[-2].stru); 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable((yyvsp[0].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[0].stru);
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_NEQ, (yyvsp[-2].stru), (yyvsp[0].stru));
 		if (result == -1) { err(yylineno, result); }
 
@@ -1810,13 +1840,28 @@ yyreduce:
 		os << result; 
 		(yyval.numu) = strdup(os.str().c_str());    
 	}
-#line 1814 "bison.tab.c" /* yacc.c:1646  */
+#line 1844 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 41:
-#line 396 "bison.y" /* yacc.c:1646  */
+#line 426 "bison.y" /* yacc.c:1646  */
     { 
 		if (DEBUG) printf("Operacja boolowska %s < %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
+
+		if (variableManager.getValueOfVariable((yyvsp[-2].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[-2].stru); 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable((yyvsp[0].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[0].stru);
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_GT, (yyvsp[0].stru), (yyvsp[-2].stru));
 		if (result == -1) { err(yylineno, result); }       
  
@@ -1824,13 +1869,28 @@ yyreduce:
 		os << result;  
 		(yyval.numu) = strdup(os.str().c_str()); 
 	}
-#line 1828 "bison.tab.c" /* yacc.c:1646  */
+#line 1873 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 42:
-#line 406 "bison.y" /* yacc.c:1646  */
+#line 451 "bison.y" /* yacc.c:1646  */
     {
 		if (DEBUG) printf("Operacja boolowska %s > %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
+
+		if (variableManager.getValueOfVariable((yyvsp[-2].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[-2].stru); 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable((yyvsp[0].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[0].stru);
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_GT, (yyvsp[-2].stru), (yyvsp[0].stru));
 		if (result == -1) { err(yylineno, result); }
 
@@ -1838,13 +1898,28 @@ yyreduce:
 		os << result;
 		(yyval.numu) = strdup(os.str().c_str());
 	}
-#line 1842 "bison.tab.c" /* yacc.c:1646  */
+#line 1902 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 43:
-#line 416 "bison.y" /* yacc.c:1646  */
+#line 476 "bison.y" /* yacc.c:1646  */
     {	
 		if (DEBUG) printf("Operacja boolowska %s >= %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
+
+		if (variableManager.getValueOfVariable((yyvsp[-2].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[-2].stru); 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable((yyvsp[0].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[0].stru);
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_GET, (yyvsp[-2].stru), (yyvsp[0].stru));
 		if (result == -1) { err(yylineno, result); }
 
@@ -1852,13 +1927,28 @@ yyreduce:
 		os << result;  
 		(yyval.numu) = strdup(os.str().c_str());       
 	}
-#line 1856 "bison.tab.c" /* yacc.c:1646  */
+#line 1931 "bison.tab.c" /* yacc.c:1646  */
     break;
 
   case 44:
-#line 426 "bison.y" /* yacc.c:1646  */
+#line 501 "bison.y" /* yacc.c:1646  */
     {  
 		if (DEBUG) printf("Operacja boolowska %s <= %s\n", (yyvsp[-2].stru), (yyvsp[0].stru));
+
+		if (variableManager.getValueOfVariable((yyvsp[-2].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[-2].stru); 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable((yyvsp[0].stru)) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += (yyvsp[0].stru);
+			catch_error(yylineno, err.c_str());
+		}
+		
 		int result = generateBoolOp(S_GET, (yyvsp[0].stru), (yyvsp[-2].stru)); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
 		if (result == -1) { err(yylineno, result); }      
  
@@ -1866,11 +1956,11 @@ yyreduce:
 		os << result; 
 		(yyval.numu) = strdup(os.str().c_str()); 
 	}
-#line 1870 "bison.tab.c" /* yacc.c:1646  */
+#line 1960 "bison.tab.c" /* yacc.c:1646  */
     break;
 
 
-#line 1874 "bison.tab.c" /* yacc.c:1646  */
+#line 1964 "bison.tab.c" /* yacc.c:1646  */
       default: break;
     }
   /* User semantic actions sometimes alter yychar, and that requires
@@ -2098,7 +2188,7 @@ yyreturn:
 #endif
   return yyresult;
 }
-#line 444 "bison.y" /* yacc.c:1906  */
+#line 534 "bison.y" /* yacc.c:1906  */
 
  
 void err(int line, int no) { 

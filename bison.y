@@ -174,7 +174,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	THEN commands
 	{        
 		generateThen(); 
-		if (DEBUG) printf("Obsluga then \n"); 
+		if (DEBUG) printf("Obsluga then \n");  
 	} 
 	ELSE commands 
 	{
@@ -375,6 +375,21 @@ condition :  VALUE
 	| VALUE EQ VALUE
 	{
 		if (DEBUG) printf("Operacja boolowska %s == %s\n", $<stru>1, $<stru>3);
+
+		if (variableManager.getValueOfVariable($<stru>1) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>1; 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable($<stru>3) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>3;
+			catch_error(yylineno, err.c_str());
+		}
+		
 		int result = generateBoolOp(S_EQ, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }
 
@@ -385,6 +400,21 @@ condition :  VALUE
 	| VALUE NEQ VALUE
 	{
 		if (DEBUG) printf("Operacja boolowska %s <> %s\n", $<stru>1, $<stru>3);
+
+		if (variableManager.getValueOfVariable($<stru>1) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>1; 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable($<stru>3) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>3;
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_NEQ, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }
 
@@ -395,6 +425,21 @@ condition :  VALUE
 	| VALUE LT VALUE  
 	{ 
 		if (DEBUG) printf("Operacja boolowska %s < %s\n", $<stru>1, $<stru>3);
+
+		if (variableManager.getValueOfVariable($<stru>1) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>1; 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable($<stru>3) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>3;
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_GT, $<stru>3, $<stru>1);
 		if (result == -1) { err(yylineno, result); }       
  
@@ -405,6 +450,21 @@ condition :  VALUE
 	| VALUE GT VALUE 
 	{
 		if (DEBUG) printf("Operacja boolowska %s > %s\n", $<stru>1, $<stru>3);
+
+		if (variableManager.getValueOfVariable($<stru>1) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>1; 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable($<stru>3) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>3;
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_GT, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }
 
@@ -415,6 +475,21 @@ condition :  VALUE
 	| VALUE GET VALUE 
 	{	
 		if (DEBUG) printf("Operacja boolowska %s >= %s\n", $<stru>1, $<stru>3);
+
+		if (variableManager.getValueOfVariable($<stru>1) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>1; 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable($<stru>3) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>3;
+			catch_error(yylineno, err.c_str());
+		}
+
 		int result = generateBoolOp(S_GET, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }
 
@@ -425,6 +500,21 @@ condition :  VALUE
 	| VALUE LET VALUE 
 	{  
 		if (DEBUG) printf("Operacja boolowska %s <= %s\n", $<stru>1, $<stru>3);
+
+		if (variableManager.getValueOfVariable($<stru>1) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>1; 
+			catch_error(yylineno, err.c_str());
+		}
+
+		if (variableManager.getValueOfVariable($<stru>3) == "")
+		{
+			stri err = "Niezainicjalizowana zmienna ";
+			err += $<stru>3;
+			catch_error(yylineno, err.c_str());
+		}
+		
 		int result = generateBoolOp(S_GET, $<stru>3, $<stru>1); //odwracamy argumenty, bo (a>=b) <=> (b<=a)
 		if (result == -1) { err(yylineno, result); }      
  
