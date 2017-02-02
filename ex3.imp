@@ -1,10 +1,10 @@
 VAR
 	a b
 BEGIN
-	a := 0;
-	b := 0;
-	FOR a FROM 0 TO 6 DO
-		b := a;
-		WRITE b;
-	ENDFOR
+	b := 2;
+	{b := 0;}
+	{FOR i FROM a TO 6 DO}
+		{b := i;}
+		{WRITE b;}
+	{ENDFOR}
 END

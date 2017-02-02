@@ -74,7 +74,6 @@ class RegisterManager {
 
 		int setValueToRegister(stri value, int regnum) {
 			regValVector.at(regnum) = atoi(value.c_str());
-			printf("%d\n", regValVector.at(regnum));
 		}
 
 		int findFreeRegister() {
@@ -120,6 +119,12 @@ class RegisterManager {
 			} return -1;
 		}
 
+		void removeFromRegister(int regnum) {
+			if (DEBUG) printf ("Removed variable from register %d", regnum);
+			registerVector.at(regnum) = "";
+			regValVector.at(regnum) = -1;
+		}
+
 };
 
 
@@ -142,13 +147,21 @@ class VariableManager {
 			if (DEBUG) printf("Dodaje zmienna %s o adresie %d\n", varName.c_str(), valInAcc);
 			return 0; // sukces
 		}
+
+		void deleteVariable(stri varName) {
+			if (getItemIndex(varName) != -1) {
+				int varIndex = getItemIndex(varName);
+				variableVector.at(varIndex) = "";
+				valueVector.at(varIndex) = "";
+				memoryVector.at(varIndex) = -1;
+			}
+		}
 		
 		int getItemIndex(stri varName) {
 			for (int i = 0; i < variableVector.size(); i++) {
 				if (varName == variableVector.at(i)) 
 				{
 					if (varName == "i")
-						printf("%d %d\n", variableVector.size(), i);
 					return i;
 				}
 			}
@@ -248,8 +261,6 @@ void addCodeLine(stri line) {
 
 
 void generateDivision(int a, int b, bool modulo) {
-	char temp[50];
-	int pl = tempCode.size();
 
 
  // 	int a=42;
@@ -286,10 +297,33 @@ void generateDivision(int a, int b, bool modulo) {
   //   System.out.println("Result "+result+" remainder " + a);
   // }
 
-	// int result = generateBoolOp(S_LET, b, a);
-	// sprintf(temp, "JZERO %d %d", result, generateDo(pl)+1); // jump_poza_petle
+	char temp[50];
+	int k = 0;
+
+	
+	declareVariable()
+
+	int pl = tempCode.size();
+	int a_reg = getVariableRegister(a);
+	int b_reg = getVariableRegister(b);
+	int result = generateBoolOp(S_LET, b, a); // wynik b <= a zapisuje w rejestrze 0
+	sprintf(temp, "JZERO 0 %d", generateDo(pl+1)); // jesli warunek niespelniony, jump_poza_petle (WHILE)
+	addCodeLine(temp);
+	sprintf(temp, "SHL %d", b_reg);		// w p.p. wykonaj cialo petli
+	addCodeLine(temp);
+
+	// potem jump do sprawdzenia warunku
+
+	// int generateDo(int placeholder) {
+	// char temp[50];
+	// int pl = tempCode.size();
+	// if (DEBUG) printf("Generuje do w linii %d\n", pl);
+	// sprintf(temp, "JUMP %d", placeholder); // jump_do_sprawdzenia_warunku
 	// addCodeLine(temp);
-	//generateWhile(result);
+
+	// return pl;
+	// }
+	
 }
 
 void generateMultiplication(int a, int b) {
@@ -307,6 +341,8 @@ void generateMultiplication(int a, int b) {
  //      System.out.println("New b is "+b);
  //    }     
  //    System.out.println(result);
+
+
 }
 
 /**
@@ -316,11 +352,7 @@ void generateMultiplication(int a, int b) {
 
 void binaryNumberToCode(stri bin, stri dec) {
     vec<stri> v;
-    int numreg = registerManager.findFreeRegister();
-
-    if (numreg == -1) {
-
-    }
+    int numreg = registerManager.findFreeRegister(); // -1
     
     std::ostringstream os;
 	os << numreg;
@@ -451,7 +483,6 @@ int declareVariable(stri varName) {
 	printf("Wolny rejestr nr %d dla zmiennej %s\n", freeReg, varName.c_str());
 	if (freeReg != -1)
 		registerManager.populateRegister(varName);
-	printf("register %d populated\n", freeReg);
 
 	return result;
 }
@@ -590,7 +621,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return 2 * b_val;
 		}
 		else {
-			generateMultiplication(a_val, b_val);
+			generateMultiplication(a, b);
 
 			registerManager.removeLastVariable();
 			return a_val * b_val;
@@ -626,7 +657,7 @@ int generateArithOp(stri op, stri a, stri b) {
 			return floor(2 / b_val);
 		}
 		else {
-			generateDivision(a_val, b_val, false);
+			generateDivision(a, b, false);
 
 			registerManager.removeLastVariable();
 			return floor(a_val / b_val);
@@ -636,7 +667,7 @@ int generateArithOp(stri op, stri a, stri b) {
 	} else if (op == S_MOD){
 
 		
-		generateDivision(a_val, b_val, true);
+		generateDivision(a, b, true);
 		
 		registerManager.removeLastVariable();
 		return a_val % b_val;
@@ -834,8 +865,15 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 	int regOfIterator = variableManager.getItemIndex(pid)+1; 
 	printf("regOfIterator %s: %d\n", pid.c_str(), regOfIterator);
 
-	registerManager.setValueToRegister(from, regOfIterator); 
-	if (DEBUG) printf("Value %s set to register %d\n", from.c_str(), variableManager.getItemIndex(from)+1);
+	if (isNumber(from)) {
+		std::stringstream ss;
+		ss << atoi(from.c_str());
+		registerManager.setValueToRegister(ss.str(), regOfIterator); 
+		if (DEBUG) printf("Value %s set to register %d\n", from.c_str(), regOfIterator);
+	} else {
+		registerManager.setValueToRegister(variableManager.getValueOfVariable(from).c_str(), regOfIterator);
+		if (DEBUG) printf("Value %s set to register %d\n", variableManager.getValueOfVariable(from).c_str(), regOfIterator);
+	}
 
 	sprintf(temp, "LOAD %d", regOfIterator);
 	addCodeLine(temp);

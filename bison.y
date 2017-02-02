@@ -22,6 +22,7 @@ void err(int line, int no);
 
 int forPlaceholder = -1;
 int forIterator = -1;
+int iteratorRegister = -1; // register of a protected variable
 
 %}
  
@@ -154,7 +155,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 				break;
 			case 1:
 				{
-					stri err = "Niezadeklarowana zmienna ";
+					stri err = "NIEZADEKLAROWANA zmienna ";
 					err += $<stru>1;
 					catch_error(yylineno, err.c_str());
 				}
@@ -197,13 +198,19 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 
 	| FOR PIDENTIFIER 
 	{  
-		printf("iterator register: %d\n", getVariableRegister($<stru>2));
+		printf("iterator register: %d\n", getVariableRegister($<stru>2));  
 		if (variableManager.getItemIndex($<stru>2) == -1) {
 			declareVariable($<stru>2);
 			stri var = ""; 
 			var =+ $<stru>2;
 			if (DEBUG) printf("FOR: Variable %s declared\n", var.c_str());
-		}
+			iteratorRegister = getVariableRegister($<stru>2);
+		} else {
+			stri err = "Uzycie zmiennej globalnej o tej samej nazwie co iterator w zakresie petli: <";
+			err += $<stru>2;
+			err += ">";
+			catch_error(yylineno, err.c_str());
+		} 
 
 	} 
 	FROM VALUE TO VALUE 
@@ -230,7 +237,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 		generateToDo(forPlaceholder);
 		if (DEBUG) printf("Obsluga to-do\n");  
-	} ENDFOR {}
+	} ENDFOR { registerManager.removeFromRegister(iteratorRegister); variableManager.deleteVariable($<stru>2); iteratorRegister = -1; }
 
 	| FOR PIDENTIFIER 
 	{ 
@@ -308,7 +315,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	 
 expression: VALUE
 			{	
-				if (DEBUG) printf("Generuje wartosc %s\n", $<stru>1);
+				if (DEBUG) printf("Generuje wartosc %s\n", $<stru>1);     
 				
 				int result = generateP_A($<stru>1);
 				if (result) { err(yylineno, result); }

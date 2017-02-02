@@ -91,7 +91,7 @@ extern int yydebug;
 
 union YYSTYPE
 {
-#line 28 "bison.y" /* yacc.c:1909  */
+#line 29 "bison.y" /* yacc.c:1909  */
  char *stru; char *numu; 
 
 #line 98 "bison.tab.h" /* yacc.c:1909  */

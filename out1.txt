@@ -1,1 +1,23 @@
-ERROR: Line 1 - syntax error
+
+
+****** BLOK DEKLARACJI ZMIENNYCH ******
+
+
+	Deklaracja zmiennej <a>
+Dodaje zmienna a o adresie -1
+Wolny rejestr nr 1 dla zmiennej a
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 1
+	Deklaracja zmiennej <b>
+Dodaje zmienna b o adresie -1
+Wolny rejestr nr 2 dla zmiennej b
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 2
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje wartosc 2
+Rejestr liczby 2 to 3
+BLAD: [Linia 4] NIEZADEKLAROWANA zmienna b
