@@ -25,5 +25,69 @@ Generuje wartosc 0
 a = 0	Przypisuje zmiennej <a> wartosc <0>
 Indeks zmiennej to 0
 	Udane przypisanie do zmiennej
-Operacja boolowska a > b
-BLAD: [Linia 5] Niezainicjalizowana zmienna b
+Generuje wartosc 3
+3
+b = 3	Przypisuje zmiennej <b> wartosc <3>
+Indeks zmiennej to 1
+	Udane przypisanie do zmiennej
+Operacja boolowska a < b
+0
+0
+0
+0
+Generuje while w linii 20
+Generuje do w linii 20
+Obsluga while
+
+
+****** BLOK KOMENDY ******
+
+
+Operacja arytmetyczna a + 1
+0
+1
+		*******tworze zmienna 1
+Dodaje zmienna 1 o adresie 1
+a = 1	Przypisuje zmiennej <a> wartosc <1>
+Indeks zmiennej to 0
+	Udane przypisanie do zmiennej
+Generuje do w linii 30
+Condition do while
+Koniec programu, zwracam HALT
+
+
+******** KOD ********
+
+
+0. ZERO 3
+1. COPY 3
+2. STORE 0
+3. ZERO 3
+4. INC 3
+5. SHL 3
+6. INC 3
+7. COPY 3
+8. STORE 1
+9. LOAD 2
+10. LOAD 1
+11. LOAD 2
+12. LOAD 1
+13. STORE 7
+14. SUB 6
+15. COPY 6
+16. JZERO 3 19
+17. ZERO 0
+18. JUMP 20
+19. INC 3
+20. JUMP 20
+21. JZERO 1 21
+22. LOAD 1
+23. ZERO 3
+24. INC 3
+25. COPY 3
+26. STORE 3
+27. INC 1
+28. COPY 1
+29. STORE 0
+30. JUMP -1
+31. HALT

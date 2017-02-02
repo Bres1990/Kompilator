@@ -2,7 +2,8 @@ VAR
 	a b
 BEGIN
 	a := 0;
-	IF a > b THEN SKIP;
-	ELSE b := 1;
-	ENDIF
+	b := 3;
+	WHILE a < b DO 
+		a := a + 1;
+	ENDWHILE
 END

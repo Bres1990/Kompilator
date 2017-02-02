@@ -877,11 +877,11 @@ void generateDowntoDo(int placeholder) {
 	addCodeLine(temp);
 }
 
-int generateDo(int jumper) {
+int generateDo(int placeholder) {
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje do w linii %d\n", pl);
-	sprintf(temp, "JUMP %d", jumper); // jump_do_sprawdzenia_warunku
+	sprintf(temp, "JUMP %d", placeholder); // jump_do_sprawdzenia_warunku
 	addCodeLine(temp);
 
 	return pl;
