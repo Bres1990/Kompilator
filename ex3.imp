@@ -5,5 +5,6 @@ BEGIN
 	b := 0;
 	FOR a FROM 0 TO 6 DO
 		b := a;
+		WRITE b;
 	ENDFOR
 END

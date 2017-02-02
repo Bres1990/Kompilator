@@ -317,10 +317,15 @@ void generateMultiplication(int a, int b) {
 void binaryNumberToCode(stri bin, stri dec) {
     vec<stri> v;
     int numreg = registerManager.findFreeRegister();
+
+    if (numreg == -1) {
+
+    }
     
     std::ostringstream os;
 	os << numreg;
 	stri regnum = strdup(os.str().c_str());
+	if (DEBUG) printf("Rejestr liczby %s to %s\n", dec.c_str(), regnum.c_str());
 
 	stri zero = "ZERO " + regnum;
 	stri inc = "INC " + regnum;
@@ -675,7 +680,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 		// a - b > 0  ==> return 0;
 		generateArithOp(S_MINUS, b, a);
 		int currentLine = tempCode.size() - 1;
-		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+1);	
+		sprintf(temp, "JZERO 0 %d", currentLine+1);	
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
@@ -686,9 +691,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_EQ) { // a == b
 		
-		int result1 = generateArithOp(S_MINUS, a, b);
-		int result2 = generateArithOp(S_MINUS, b, a);
-		int main_result; 
 		int reg_of_c = registerManager.findFreeRegister();
 
 		sprintf(temp, "STORE %d", reg_of_b);
@@ -705,6 +707,10 @@ int generateBoolOp(stri op, stri a, stri b) {
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
+
+		int result1 = generateArithOp(S_MINUS, a, b);
+		int result2 = generateArithOp(S_MINUS, b, a);
+		int main_result; 
 		
 		if (result1 == result2) {
 			main_result = 1;
@@ -714,9 +720,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_NEQ) { // a <> b
 		
-		int result1 = generateArithOp(S_MINUS, a, b);
-		int result2 = generateArithOp(S_MINUS, b, a);
-		int main_result; 
 		int reg_of_c = registerManager.findFreeRegister();
 
 		sprintf(temp, "STORE %d", reg_of_b);
@@ -733,6 +736,10 @@ int generateBoolOp(stri op, stri a, stri b) {
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
+
+		int result1 = generateArithOp(S_MINUS, a, b);
+		int result2 = generateArithOp(S_MINUS, b, a);
+		int main_result; 
 		
 		if (result1 == result2) {
 			main_result = 0;
@@ -744,12 +751,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 		
 		generateArithOp(S_MINUS, a, b);
 		int currentLine = tempCode.size() - 1;
-		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+4);
-		addCodeLine(temp);
 		addCodeLine("ZERO 0");
+		sprintf(temp, "JZERO 0 %d", currentLine+3);
+		addCodeLine(temp);
 		sprintf(temp, "JUMP %d", currentLine+5);
 		addCodeLine(temp);
-		sprintf(temp, "INC %d", registerManager.getAccumulatorValue());
+		sprintf(temp, "INC 0");
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
@@ -761,7 +768,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 		
 		generateArithOp(S_MINUS, a, b);
 		int currentLine = tempCode.size() - 1;
-		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+1);	
+		sprintf(temp, "JZERO 0 %d", currentLine+1);	
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
@@ -774,18 +781,18 @@ int generateBoolOp(stri op, stri a, stri b) {
 		
 		generateArithOp(S_MINUS, b, a);
 		int currentLine = tempCode.size() - 1;
-		sprintf(temp, "JZERO %d %d", registerManager.getAccumulatorValue(), currentLine+4);
-		addCodeLine(temp);
 		addCodeLine("ZERO 0");
+		sprintf(temp, "JZERO 0 %d", currentLine+3);
+		addCodeLine(temp);
 		sprintf(temp, "JUMP %d", currentLine+5);
 		addCodeLine(temp);
-		sprintf(temp, "INC %d", registerManager.getAccumulatorValue());
+		sprintf(temp, "INC 0");
 		addCodeLine(temp);
 
 		registerManager.removeLastVariable();
 		if (a_val < b_val) {
 			return 1;
-		} else return 0;
+		} else return 0; 
 
 	} else {
 		return -1;
@@ -811,11 +818,11 @@ int generateThen() {
 	return pl;
 }
 
-void generateIf(int result) {
+void generateIf() {
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje if w linii %d\n", pl);
-	sprintf(temp, "JZERO %d %d", result, generateThen()+1); // goto ELSE
+	sprintf(temp, "JZERO 0 %d", generateThen()+1); // goto ELSE
 	addCodeLine(temp);
 }
 
@@ -828,13 +835,13 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 	printf("regOfIterator %s: %d\n", pid.c_str(), regOfIterator);
 
 	registerManager.setValueToRegister(from, regOfIterator); 
-	if (DEBUG) printf("Value %d set to register %d\n", from, variableManager.getItemIndex(from)+1);
+	if (DEBUG) printf("Value %s set to register %d\n", from.c_str(), variableManager.getItemIndex(from)+1);
 
 	sprintf(temp, "LOAD %d", regOfIterator);
 	addCodeLine(temp);
 
 	int result = generateBoolOp(S_GET, pid, to);
-	sprintf(temp, "JODD %d %d", result, pl+4); // warunek spelniony, wykonaj cialo petli
+	sprintf(temp, "JODD 0 %d", pl+4); // warunek spelniony, wykonaj cialo petli
 	addCodeLine(temp);
 	if (mode == true) {
 		sprintf(temp, "INC %d", regOfIterator); // i++
@@ -887,11 +894,11 @@ int generateDo(int placeholder) {
 	return pl;
 }
 
-void generateWhile(int result) {
+void generateWhile() {
 	char temp[50];
 	int pl = tempCode.size();
 	if (DEBUG) printf("Generuje while w linii %d\n", pl);	
-	sprintf(temp, "JZERO %d %d", result, generateDo(pl+1)); // jump_poza_petle
+	sprintf(temp, "JZERO 0 %d", generateDo(pl+1)); // jump_poza_petle
 	addCodeLine(temp);
 }
 
@@ -910,8 +917,7 @@ int generateWrite(stri a) {
 		int AvarIndex = variableManager.getItemIndex(a);
 		int reg = AvarIndex+1;
 		int value = registerManager.getValueFromRegister(reg);
-		if (value < 0) printf("DUUUUUUUUUUUUUUUUUUPA");
- 		sprintf(temp, "PUT %d", reg); //wyswietlam zmienna zamiast jej wartosc
+ 		sprintf(temp, "PUT %d", reg);
 		if (DEBUG) printf("%s = %d\n", a.c_str(), value);
 		addCodeLine(temp);
 	}

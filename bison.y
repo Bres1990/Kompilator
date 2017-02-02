@@ -167,8 +167,9 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
   
     | IF condition
 	{ 
-		int result = atoi($<stru>2);
-		generateIf(result);
+		//int result = atoi($<stru>2);
+		registerManager.setValueToRegister($<stru>2, 0);
+		generateIf();
 		if (DEBUG) printf("Obsluga if \n");
 	} 
 	THEN commands
@@ -184,8 +185,9 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
  
     | WHILE condition      
 	{ 
-		int result = atoi($<stru>2);   
-	    generateWhile(result);  
+		//int result = atoi($<stru>2);
+		registerManager.setValueToRegister($<stru>2, 0);
+	    generateWhile();  
 		if (DEBUG)printf("Obsluga while\n");   
 	}	
 	DO commands  
@@ -389,8 +391,8 @@ condition :  VALUE
 			catch_error(yylineno, err.c_str());
 		}
 		
-		int result = generateBoolOp(S_EQ, $<stru>1, $<stru>3);   
-		if (result == -1) { err(yylineno, result); } 
+		int result = generateBoolOp(S_EQ, $<stru>1, $<stru>3);     
+		if (result == -1) { err(yylineno, result); }       
  
 		std::ostringstream os; 
 		os << result;  
@@ -401,7 +403,7 @@ condition :  VALUE
 		if (DEBUG) printf("Operacja boolowska %s <> %s\n", $<stru>1, $<stru>3);
 
 		if (variableManager.getValueOfVariable($<stru>1) == "")
-		{
+		{ 
 			stri err = "Niezainicjalizowana zmienna ";
 			err += $<stru>1; 
 			catch_error(yylineno, err.c_str());
