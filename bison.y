@@ -190,7 +190,6 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	}	
 	DO commands  
 	{	
-		//generateDo(-1);
 	    if (DEBUG)printf("Condition do while\n");  
 	} ENDWHILE {}
 
@@ -390,13 +389,13 @@ condition :  VALUE
 			catch_error(yylineno, err.c_str());
 		}
 		
-		int result = generateBoolOp(S_EQ, $<stru>1, $<stru>3);
-		if (result == -1) { err(yylineno, result); }
-
-		std::ostringstream os;
-		os << result;
+		int result = generateBoolOp(S_EQ, $<stru>1, $<stru>3);   
+		if (result == -1) { err(yylineno, result); } 
+ 
+		std::ostringstream os; 
+		os << result;  
 		$$ = strdup(os.str().c_str());
-	}	
+	}	  
 	| VALUE NEQ VALUE
 	{
 		if (DEBUG) printf("Operacja boolowska %s <> %s\n", $<stru>1, $<stru>3);
@@ -413,7 +412,7 @@ condition :  VALUE
 			stri err = "Niezainicjalizowana zmienna ";
 			err += $<stru>3;
 			catch_error(yylineno, err.c_str());
-		}
+		} 
 
 		int result = generateBoolOp(S_NEQ, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }

@@ -904,12 +904,15 @@ int generateWrite(stri a) {
 	if (isNumber(a)) { // liczba
 		addCodeLine("PUT 0");
 	} else { // zmienna
-		if (variableManager.getValueOfVariable(a) == "null") return 666;
+		if (variableManager.getValueOfVariable(a) == "") return 666;
 		int a_val = atoi(variableManager.getValueOfVariable(a).c_str());
 
 		int AvarIndex = variableManager.getItemIndex(a);
 		int reg = AvarIndex+1;
-		sprintf(temp, "PUT %d", reg); //wyswietlam zmienna zamiast jej wartosc
+		int value = registerManager.getValueFromRegister(reg);
+		if (value < 0) printf("DUUUUUUUUUUUUUUUUUUPA");
+ 		sprintf(temp, "PUT %d", reg); //wyswietlam zmienna zamiast jej wartosc
+		if (DEBUG) printf("%s = %d\n", a.c_str(), value);
 		addCodeLine(temp);
 	}
 
@@ -927,13 +930,14 @@ int generateRead(stri a) {
 			return -1;
 		} else { // jezeli istnieje zmienna
 			std::stringstream ss;
-			ss << 666;
-			registerManager.setValueToRegister(ss.str(), 0);
+			ss << atoi(a.c_str());
+			registerManager.setValueToRegister(ss.str(), AvarIndex+1);
+			ss << registerManager.getValueFromRegister(AvarIndex+1);
+			variableManager.setValueToVariable(a, ss.str());
 			char temp[50];
 			int reg = registerManager.getRegisterOfVariable(a);
 			sprintf(temp, "GET %d", reg);
 			addCodeLine(temp);
-			registerManager.setValueToRegister(a, 0);
 			sprintf(temp, "STORE %d", reg);
 			addCodeLine(temp);
 			variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
