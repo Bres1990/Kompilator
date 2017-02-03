@@ -78,20 +78,23 @@ vdeclarations : vdeclarations PIDENTIFIER
 		}  
 		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET  
 		{  
-		    int result = declareVariable($<stru>2);  
+		    int result = arrayManager.declareArray($<stru>2, $<numu>4);  
 			switch (result) {
 				case 1: 
 					{
-					stri err = "Redeklaracja zmiennej ";
+					stri err = "Redeklaracja tablicy ";
 					err += $<stru>2; 
+					err += $<stru>3;
+					err += $<numu>4;
+					err += $<stru>5;
 					catch_error(yylineno, err.c_str());   
 					} 
 					break; 
 				case 0:
-					if (DEBUG) printf("\tUdana deklaracja zmiennej\n");  
+					if (DEBUG) printf("\tUdana deklaracja tablicy\n");  
 					break; 
 				case -1: 
-					stri err = "Zmienna ";
+					stri err = "Tablica ";
 					err += $<stru>2;
 					err += " musi miec nazwe\n";
 					catch_error(yylineno, err.c_str());
@@ -112,31 +115,40 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		switch (result) {     
 			case 1: 
 				{
-				stri err = "Niezadeklarowana zmienna ";   
-				err += $<stru>1;
+				stri err = "Niezadeklarowana tablica ";   
+				err += $<stru>1; 
+				err += $<stru>2;
+				err += $<stru>3;
+				err += $<stru>4;
 				catch_error(yylineno, err.c_str());
 				} 
 				break;
 			case 0: 
-				if(DEBUG)printf("\tUdane przypisanie do zmiennej\n");
+				if(DEBUG)printf("\tUdane przypisanie do indeksu tablicy\n");
 				break;  
 		}  
 	}       
 
 	| PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression SEMICOLON
 	{
+		arrayManager.declareArray($<stru>1, $<numu>3);
+
+
 	    int result = generateVariableAssign($<stru>1, $<stru>3);   
 
 		switch (result) { 
 			case 1:  
 			{ 
-				stri err = "Niezadeklarowana zmienna ";   
-				err += $<stru>1;
+				stri err = "Niezadeklarowana tablica ";   
+				err += $<stru>1; 
+				err += $<stru>2;
+				err += $<stru>3;
+				err += $<stru>4;
 				catch_error(yylineno, err.c_str());
 			}
 				break;
 			case 0:
-				if (DEBUG) printf("\tUdane przypisanie do zmiennej\n");
+				if (DEBUG) printf("\tUdane przypisanie do indeksu tablicy\n");
 				break;
 		}
 	}

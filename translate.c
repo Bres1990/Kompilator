@@ -252,11 +252,16 @@ class ArrayManager {
 	private:
 		vec<stri> arrays;
 	public:
-		void declareArray(stri name, int dimension) {
+		int declareArray(stri name, int dimension) {
+			if (name == "")
+				return -1;
+			if (findArray(name) != -1)
+				return 1;
 			arrays.push_back(name);
 			for (int i = 0; i < dimension; i++) {
 				arrays.push_back(i);
 			}
+			return 0;
 		}
 
 		stri findArrayIndexValue(stri name, int index) {
