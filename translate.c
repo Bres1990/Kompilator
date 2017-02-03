@@ -372,8 +372,38 @@ void generateMultiplication(int a, int b) {
  //      System.out.println("New b is "+b);
  //    }     
  //    System.out.println(result);
+	char temp[50];
+	int pl = tempCode.size();
 
+	int a_reg = getVariableRegister(a);
+	int b_reg = getVariableRegister(b);
 
+	std::stringstream ss;
+	ss << 0;
+	generateBoolOp(S_GT, b, ss.str());
+	int pl2 = tempCode.size();
+
+	// poczatek WHILE
+	sprintf(temp, "JZERO 0 %d", pl3); // jesli warunek niespelniony, jump_poza_petle (WHILE)
+	addCodeLine(temp);
+	// poczatek IF	// w p.p. wykonaj cialo petli
+	generateArithOp(S_MOD, b, 2);
+	int result = registerManager.getAccumulatorValue();
+	generateArithOp(S_EQ, result, 1);
+	sprintf(temp, "JZERO 0 %d", pl3); 	// koniec IF
+	addCodeLine(temp);
+	sprintf(temp, "JUMP %d", pl3);
+	addCodeLine(temp);
+	// koniec IF
+
+	sprintf(temp, "SHL %d", a_reg);
+	addCodeLine(temp);
+	sprintf(temp, "SHR %d", b_reg);
+	addCodeLine(temp);
+	sprintf(temp, "JUMP %d", pl); 		// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+	// koniec WHILE
+	int pl3 = tempCode.size();
 }
 
 /**
