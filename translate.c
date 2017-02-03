@@ -1,7 +1,7 @@
 #ifndef TRANSLATE_GUARD
 #define TRANSLATE_GUARD
 
-#define DEBUG 1
+#define DEBUG 0
 #define ERR 0
 #define LINECODE 0
 
@@ -161,7 +161,7 @@ class VariableManager {
 			for (int i = 0; i < variableVector.size(); i++) {
 				if (varName == variableVector.at(i)) 
 				{
-					if (varName == "i")
+					//if (varName == "i")
 					return i;
 				}
 			}
@@ -235,9 +235,6 @@ class VariableManager {
 		}
 };
 
-/*
-*	Register 0 memory manager
-*/
 class MemoryManager {
 	private:
 		vec<stri> memoryVariables;
@@ -251,9 +248,37 @@ class MemoryManager {
 		}
 };
 
+class ArrayManager {
+	private:
+		vec<stri> arrays;
+	public:
+		void declareArray(stri name, int dimension) {
+			arrays.push_back(name);
+			for (int i = 0; i < dimension; i++) {
+				arrays.push_back(i);
+			}
+		}
+
+		stri findArrayIndexValue(stri name, int index) {
+			return arrays.at(findArray(name) + index + 1);
+		}
+
+		int findArray(stri name) {
+			for (int i = 0; i < arrays.size(); i++) {
+				if (name == arrays.at(i)) 
+				{
+					return i;
+				}
+			}
+			if (ERR) printf("*******nie ma takiej tablicy\n");
+			return -1;
+		}
+}
+
 VariableManager	variableManager;
 RegisterManager registerManager;
 MemoryManager memoryManager;
+ArrayManager arrayManager;
 
 void addCodeLine(stri line) {
 	tempCode.push_back(line);
@@ -405,10 +430,6 @@ void generateMultiplication(int a, int b) {
 	// koniec WHILE
 	int pl3 = tempCode.size();
 }
-
-/**
- * ZARZADZANIE PAMIECIA
- */
 
 
 void binaryNumberToCode(stri bin, stri dec) {
