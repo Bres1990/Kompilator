@@ -110,6 +110,8 @@ commands : commands command
  
 command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{  
+		// check if array exists
+		// assign value to array index
 	    int result = generateVariableAssign($<stru>1, $<stru>3);    
 	  
 		switch (result) {     
@@ -131,7 +133,8 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 
 	| PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression SEMICOLON
 	{
-		arrayManager.declareArray($<stru>1, $<numu>3);
+		//check if array exists
+		//assign value to array index
 
 
 	    int result = generateVariableAssign($<stru>1, $<stru>3);   

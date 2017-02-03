@@ -264,8 +264,11 @@ class ArrayManager {
 			return 0;
 		}
 
-		stri findArrayIndexValue(stri name, int index) {
-			return arrays.at(findArray(name) + index + 1);
+		stri findArrayIndexValue(stri name, stri index) {
+			if (isNumber(index))
+				return arrays.at(findArray(name) + index + 1);
+			int true_index = variableManager.getValueOfVariable(index);
+			return arrays.at(findArray(name) + true_index + 1);
 		}
 
 		int findArray(stri name) {
