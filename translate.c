@@ -260,7 +260,7 @@ void addCodeLine(stri line) {
 }
 
 
-void generateDivision(int a, int b, bool modulo) {
+int generateDivision(int a, int b, bool modulo) {
 
 
  // 	int a=42;
@@ -300,7 +300,6 @@ void generateDivision(int a, int b, bool modulo) {
 	char temp[50];
 	stri k = "k";
 	int k_val = 0;
-	int result = 0;
 
 	std::stringstream ss;
 	ss << k_val;
@@ -308,17 +307,13 @@ void generateDivision(int a, int b, bool modulo) {
 	variableManager.setValueToVariable(k, ss.str());
 	int k_reg = getVariableRegister(k);
 
-	//declareVariable(result);
-	//variableManager.setValueToVariable(result, ss.str());
-	//int result_reg = getVariableRegister(result);
-
 	int pl = tempCode.size();
 	int a_reg = getVariableRegister(a);
 	int b_reg = getVariableRegister(b);
 
 	// poczatek pierwszego while'a
 
-	generateBoolOp(S_LET, b, a); // zapisz wynik do osobnej komorki pamieci
+	generateBoolOp(S_LET, b, a);
 	int pl2 = tempCode.size();
 	sprintf(temp, "JZERO 0 %d", pl2+5); // jesli warunek niespelniony, jump_poza_petle (WHILE)
 	addCodeLine(temp);
@@ -336,9 +331,8 @@ void generateDivision(int a, int b, bool modulo) {
 	// poczatek drugiego while'a
 
 	int pl3 = tempCode.size();
-	generateBoolOp(S_GT, k, 0); // zapisz wynik do osobnej komorki pamieci
-	//int pl4 = tempCode.size();
-	sprintf(temp, "JZERO 0 %d", x);
+	generateBoolOp(S_GT, k, ss.str());
+	sprintf(temp, "JZERO 0 %d", pl4);
 	addCodeLine(temp);
 	sprintf(temp, "SHR %d", b_reg);
 	k_val--;
@@ -346,17 +340,21 @@ void generateDivision(int a, int b, bool modulo) {
 	sprintf(temp, "DEC %d", k_reg);
 	addCodeLine(temp);
 	variableManager.setValueToVariable(k, ss.str());
-	//sprintf(temp, "SHL %d", result_reg);
-	//addCodeLine(temp);
 
-	// poczatek if
-	
-	// koniec if
-
-	sprintf(temp, "JUMP %d", pl3); 			// jump_do_sprawdzenia_warunku
+	// poczatek IF
+	generateBoolOp(S_GET, a, b);
+	sprintf(temp, "JZERO 0 %d", pl4); 	// koniec IF
 	addCodeLine(temp);
-	// koniec drugiego while'a
+	generateArithOp(S_MINUS, a, b);		// THEN
+	generateVariableAssign(a, registerManager.getAccumulatorValue());
+	sprintf(temp, "JUMP %d", pl4); 
+	addCodeLine(temp);
+	// koniec IF
 
+	sprintf(temp, "JUMP %d", pl3); 		// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+	int pl4 = tempCode.size();
+	// koniec drugiego while'a
 }
 
 void generateMultiplication(int a, int b) {
@@ -697,9 +695,7 @@ int generateArithOp(stri op, stri a, stri b) {
 		}	
 
 
-	} else if (op == S_MOD){
-
-		
+	} else if (op == S_MOD) {		
 		generateDivision(a, b, true);
 		
 		registerManager.removeLastVariable();
