@@ -281,6 +281,25 @@ class ArrayManager {
 			if (ERR) printf("*******nie ma takiej tablicy\n");
 			return -1;
 		}
+
+		int setArrayIndexValue(stri name, stri index, stri value) {
+			if (isNumber(index)) {
+				if (isNumber(value)) {
+					arrays.at(findArray(name) + index + 1) = value;
+				} else {
+					int true_value = variableManager.getValueOfVariable(value);
+					arrays.at(findArray(name) + index + 1) = true_value;
+				}
+			} else {
+				int true_index = variableManager.getValueOfVariable(index);
+				if (isNumber(value)) {
+					arrays.at(findArray(name) + true_index + 1) = value;
+				} else {
+					int true_value = variableManager.getValueOfVariable(value);
+					arrays.at(findArray(name) + true_index + 1) = true_value;
+				}
+			}
+		}
 }
 
 VariableManager	variableManager;

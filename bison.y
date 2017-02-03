@@ -110,49 +110,31 @@ commands : commands command
  
 command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{  
-		// check if array exists
-		// assign value to array index
-	    int result = generateVariableAssign($<stru>1, $<stru>3);    
-	  
-		switch (result) {     
-			case 1: 
-				{
-				stri err = "Niezadeklarowana tablica ";   
-				err += $<stru>1; 
-				err += $<stru>2;
-				err += $<stru>3;
-				err += $<stru>4;
-				catch_error(yylineno, err.c_str());
-				} 
-				break;
-			case 0: 
-				if(DEBUG)printf("\tUdane przypisanie do indeksu tablicy\n");
-				break;  
-		}  
+		if (arrayManager.findArray($<stru>1) == -1) { // check if array exists
+			stri err = "Niezadeklarowana tablica";
+			err += $<stru>1; 
+			err += $<stru>2;
+			err += $<stru>3;
+			err += $<stru>4;
+			catch_error(yylineno, err.c_str());
+		} else { 	// assign value to array index
+			arrayManager.setArrayIndexValue($<stru>1, $<stru>3, $<stru>6);
+			if (DEBUG) printf("\tUdane przypisanie do indeksu tablicy");
+		}
 	}       
 
 	| PIDENTIFIER LBRACKET NUM RBRACKET ASSIGN expression SEMICOLON
 	{
-		//check if array exists
-		//assign value to array index
-
-
-	    int result = generateVariableAssign($<stru>1, $<stru>3);   
-
-		switch (result) { 
-			case 1:  
-			{ 
-				stri err = "Niezadeklarowana tablica ";   
-				err += $<stru>1; 
-				err += $<stru>2;
-				err += $<stru>3;
-				err += $<stru>4;
-				catch_error(yylineno, err.c_str());
-			}
-				break;
-			case 0:
-				if (DEBUG) printf("\tUdane przypisanie do indeksu tablicy\n");
-				break;
+		if (arrayManager.findArray($<stru>1) == -1) { // check if array exists
+			stri err = "Niezadeklarowana tablica";
+			err += $<stru>1; 
+			err += $<stru>2;
+			err += $<stru>3;
+			err += $<stru>4;
+			catch_error(yylineno, err.c_str());
+		} else { 	// assign value to array index
+			arrayManager.setArrayIndexValue($<stru>1, $<stru>3, $<stru>6);
+			if (DEBUG) printf("\tUdane przypisanie do indeksu tablicy");
 		}
 	}
 
