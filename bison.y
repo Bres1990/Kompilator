@@ -180,7 +180,6 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
   
     | IF condition
 	{ 
-		//int result = atoi($<stru>2);
 		registerManager.setValueToRegister($<stru>2, 0);
 		generateIf();
 		if (DEBUG) printf("Obsluga if \n");
@@ -198,7 +197,6 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
  
     | WHILE condition      
 	{ 
-		//int result = atoi($<stru>2);
 		registerManager.setValueToRegister($<stru>2, 0);
 	    generateWhile();  
 		if (DEBUG)printf("Obsluga while\n");   
@@ -227,7 +225,6 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	} 
 	FROM VALUE TO VALUE 
 	{
-		//variableManager.setValueToVariable($<stru>2, $<stru>5);
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
 			case -1:
@@ -252,10 +249,21 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	} ENDFOR { registerManager.removeFromRegister(iteratorRegister); variableManager.deleteVariable($<stru>2); iteratorRegister = -1; }
 
 	| FOR PIDENTIFIER 
-	{ 
-		//declareVariable($<stru>2);
-		//if (DEBUG) printf("Wyszedlem\n");
-	} 
+	{
+		printf("iterator register: %d\n", getVariableRegister($<stru>2));  
+		if (variableManager.getItemIndex($<stru>2) == -1) {
+			declareVariable($<stru>2);
+			stri var = ""; 
+			var =+ $<stru>2;
+			if (DEBUG) printf("FOR: Variable %s declared\n", var.c_str());
+			iteratorRegister = getVariableRegister($<stru>2);
+		} else {
+			stri err = "Uzycie zmiennej globalnej o tej samej nazwie co iterator w zakresie petli: <";
+			err += $<stru>2;
+			err += ">";
+			catch_error(yylineno, err.c_str());
+		} 
+	}
 	FROM VALUE DOWNTO VALUE {
 		int result = variableManager.getItemIndex($<stru>2);
 		switch(result) {
