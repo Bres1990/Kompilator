@@ -298,32 +298,65 @@ void generateDivision(int a, int b, bool modulo) {
   // }
 
 	char temp[50];
-	int k = 0;
+	stri k = "k";
+	int k_val = 0;
+	int result = 0;
 
-	
-	declareVariable()
+	std::stringstream ss;
+	ss << k_val;
+	declareVariable(k);
+	variableManager.setValueToVariable(k, ss.str());
+	int k_reg = getVariableRegister(k);
+
+	//declareVariable(result);
+	//variableManager.setValueToVariable(result, ss.str());
+	//int result_reg = getVariableRegister(result);
 
 	int pl = tempCode.size();
 	int a_reg = getVariableRegister(a);
 	int b_reg = getVariableRegister(b);
-	int result = generateBoolOp(S_LET, b, a); // wynik b <= a zapisuje w rejestrze 0
-	sprintf(temp, "JZERO 0 %d", generateDo(pl+1)); // jesli warunek niespelniony, jump_poza_petle (WHILE)
+
+	// poczatek pierwszego while'a
+
+	generateBoolOp(S_LET, b, a); // zapisz wynik do osobnej komorki pamieci
+	int pl2 = tempCode.size();
+	sprintf(temp, "JZERO 0 %d", pl2+5); // jesli warunek niespelniony, jump_poza_petle (WHILE)
 	addCodeLine(temp);
 	sprintf(temp, "SHL %d", b_reg);		// w p.p. wykonaj cialo petli
 	addCodeLine(temp);
+	k_val++;
+	ss << k_val;
+	sprintf(temp, "INC %d", k_reg);
+	addCodeLine(temp);
+	variableManager.setValueToVariable(k, ss.str());
+	sprintf(temp, "JUMP %d", pl);			// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
 
-	// potem jump do sprawdzenia warunku
+	// koniec pierwszego while'a
+	// poczatek drugiego while'a
 
-	// int generateDo(int placeholder) {
-	// char temp[50];
-	// int pl = tempCode.size();
-	// if (DEBUG) printf("Generuje do w linii %d\n", pl);
-	// sprintf(temp, "JUMP %d", placeholder); // jump_do_sprawdzenia_warunku
-	// addCodeLine(temp);
+	int pl3 = tempCode.size();
+	generateBoolOp(S_GT, k, 0); // zapisz wynik do osobnej komorki pamieci
+	//int pl4 = tempCode.size();
+	sprintf(temp, "JZERO 0 %d", x);
+	addCodeLine(temp);
+	sprintf(temp, "SHR %d", b_reg);
+	k_val--;
+	ss << k_val;
+	sprintf(temp, "DEC %d", k_reg);
+	addCodeLine(temp);
+	variableManager.setValueToVariable(k, ss.str());
+	//sprintf(temp, "SHL %d", result_reg);
+	//addCodeLine(temp);
 
-	// return pl;
-	// }
+	// poczatek if
 	
+	// koniec if
+
+	sprintf(temp, "JUMP %d", pl3); 			// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+	// koniec drugiego while'a
+
 }
 
 void generateMultiplication(int a, int b) {
