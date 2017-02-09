@@ -19,6 +19,8 @@ vec<int> labelStack; //przechowuje miejsca do ktorych beda odbywac sie skoki
 
 
 int tempLines;
+int currentJumpLine;
+
 vec<stri> tempCode;
 
 const stri op_temp_a = "0";
@@ -126,6 +128,8 @@ class RegisterManager {
 		}
 
 };
+
+RegisterManager registerManager;
 
 
 class VariableManager {
@@ -235,6 +239,8 @@ class VariableManager {
 		}
 };
 
+VariableManager variableManager;
+
 class MemoryManager {
 	private:
 		vec<stri> memoryVariables;
@@ -248,27 +254,35 @@ class MemoryManager {
 		}
 };
 
+MemoryManager memoryManager;
+
 class ArrayManager {
 	private:
 		vec<stri> arrays;
 	public:
-		int declareArray(stri name, int dimension) {
+		int declareArray(stri name, stri dimension) {
+			int dim = atoi(dimension.c_str());
 			if (name == "")
 				return -1;
 			if (findArray(name) != -1)
 				return 1;
 			arrays.push_back(name);
-			for (int i = 0; i < dimension; i++) {
-				arrays.push_back(i);
+			for (int i = 0; i < dim; i++) {
+				std::stringstream ss;
+				ss << i;
+				arrays.push_back(ss.str());
 			}
 			return 0;
 		}
 
 		stri findArrayIndexValue(stri name, stri index) {
-			if (isNumber(index))
-				return arrays.at(findArray(name) + index + 1);
-			int true_index = variableManager.getValueOfVariable(index);
-			return arrays.at(findArray(name) + true_index + 1);
+			if (isNumber(index)) {
+				int x = findArray(name) + atoi(index.c_str()) + 1;
+				return arrays.at(x);
+			}
+			int true_index = atoi(variableManager.getValueOfVariable(index).c_str());
+			int x = findArray(name) + true_index + 1;
+			return arrays.at(x);
 		}
 
 		int findArray(stri name) {
@@ -284,180 +298,31 @@ class ArrayManager {
 
 		int setArrayIndexValue(stri name, stri index, stri value) {
 			if (isNumber(index)) {
+				int x = findArray(name) + atoi(index.c_str()) + 1;
 				if (isNumber(value)) {
-					arrays.at(findArray(name) + index + 1) = value;
+					arrays.at(x) = atoi(value.c_str());
 				} else {
-					int true_value = variableManager.getValueOfVariable(value);
-					arrays.at(findArray(name) + index + 1) = true_value;
+					int true_value = atoi(variableManager.getValueOfVariable(value).c_str());
+					arrays.at(x) = true_value;
 				}
 			} else {
-				int true_index = variableManager.getValueOfVariable(index);
+				int true_index = atoi(variableManager.getValueOfVariable(index).c_str());
+				int x = findArray(name) + true_index + 1;
 				if (isNumber(value)) {
-					arrays.at(findArray(name) + true_index + 1) = value;
+					arrays.at(x) = atoi(value.c_str());
 				} else {
-					int true_value = variableManager.getValueOfVariable(value);
-					arrays.at(findArray(name) + true_index + 1) = true_value;
+					int true_value = atoi(variableManager.getValueOfVariable(value).c_str());
+					arrays.at(x) = true_value;
 				}
 			}
 		}
-}
+};
 
-VariableManager	variableManager;
-RegisterManager registerManager;
-MemoryManager memoryManager;
 ArrayManager arrayManager;
 
 void addCodeLine(stri line) {
 	tempCode.push_back(line);
 }
-
-
-int generateDivision(int a, int b, bool modulo) {
-
-
- // 	int a=42;
- //    int b=7;
- //    int result = 0;
- //    int k=0;
-    /** ustawiamy liczby jak w dzieleniu pisemnym
-    *
-    *   ____            
-    *   1100                
-    *   110                  
-    *
-    *   k = 1 : jedno przesuniecie bylo potrzebne, zeby ustawic liczby dobrze
-    *
-    *   ______
-    *   101010
-    *    110
-    *  
-    *   k = 2 : dwa przsuniecia byly potrzebne, zeby ustawic liczby dobrze
-    */
-  //   while(b<=a){
-  //     b = b<<1;
-  //     k++;
-  //   }
-  //   while(k>0){   
-  //     k--;
-  //     b=b>>1;
-  //     result = result<<1;
-  //     if(a>=b) {      
-  //         result=result+1;
-  //         a=a-b;
-  //     }
-  //   }
-  //   System.out.println("Result "+result+" remainder " + a);
-  // }
-
-	char temp[50];
-	stri k = "k";
-	int k_val = 0;
-
-	std::stringstream ss;
-	ss << k_val;
-	declareVariable(k);
-	variableManager.setValueToVariable(k, ss.str());
-	int k_reg = getVariableRegister(k);
-
-	int pl = tempCode.size();
-	int a_reg = getVariableRegister(a);
-	int b_reg = getVariableRegister(b);
-
-	// poczatek pierwszego while'a
-
-	generateBoolOp(S_LET, b, a);
-	int pl2 = tempCode.size();
-	sprintf(temp, "JZERO 0 %d", pl2+5); // jesli warunek niespelniony, jump_poza_petle (WHILE)
-	addCodeLine(temp);
-	sprintf(temp, "SHL %d", b_reg);		// w p.p. wykonaj cialo petli
-	addCodeLine(temp);
-	k_val++;
-	ss << k_val;
-	sprintf(temp, "INC %d", k_reg);
-	addCodeLine(temp);
-	variableManager.setValueToVariable(k, ss.str());
-	sprintf(temp, "JUMP %d", pl);			// jump_do_sprawdzenia_warunku
-	addCodeLine(temp);
-
-	// koniec pierwszego while'a
-	// poczatek drugiego while'a
-
-	int pl3 = tempCode.size();
-	generateBoolOp(S_GT, k, ss.str());
-	sprintf(temp, "JZERO 0 %d", pl4);
-	addCodeLine(temp);
-	sprintf(temp, "SHR %d", b_reg);
-	k_val--;
-	ss << k_val;
-	sprintf(temp, "DEC %d", k_reg);
-	addCodeLine(temp);
-	variableManager.setValueToVariable(k, ss.str());
-
-	// poczatek IF
-	generateBoolOp(S_GET, a, b);
-	sprintf(temp, "JZERO 0 %d", pl4); 	// koniec IF
-	addCodeLine(temp);
-	generateArithOp(S_MINUS, a, b);		// THEN
-	generateVariableAssign(a, registerManager.getAccumulatorValue());
-	sprintf(temp, "JUMP %d", pl4); 
-	addCodeLine(temp);
-	// koniec IF
-
-	sprintf(temp, "JUMP %d", pl3); 		// jump_do_sprawdzenia_warunku
-	addCodeLine(temp);
-	int pl4 = tempCode.size();
-	// koniec drugiego while'a
-}
-
-void generateMultiplication(int a, int b) {
-	char temp[50];
- //    int a=10;
- //    int b=3;
- //    int result = 0;
- //    while(b>0){      
- //      if(b%2==1) {     
- //        result = result+a;
- //        System.out.println(b + " is odd");
- //      }
- //      a = a<<1;
- //      b = b>>1;   
- //      System.out.println("New b is "+b);
- //    }     
- //    System.out.println(result);
-	char temp[50];
-	int pl = tempCode.size();
-
-	int a_reg = getVariableRegister(a);
-	int b_reg = getVariableRegister(b);
-
-	std::stringstream ss;
-	ss << 0;
-	generateBoolOp(S_GT, b, ss.str());
-	int pl2 = tempCode.size();
-
-	// poczatek WHILE
-	sprintf(temp, "JZERO 0 %d", pl3); // jesli warunek niespelniony, jump_poza_petle (WHILE)
-	addCodeLine(temp);
-	// poczatek IF	// w p.p. wykonaj cialo petli
-	generateArithOp(S_MOD, b, 2);
-	int result = registerManager.getAccumulatorValue();
-	generateArithOp(S_EQ, result, 1);
-	sprintf(temp, "JZERO 0 %d", pl3); 	// koniec IF
-	addCodeLine(temp);
-	sprintf(temp, "JUMP %d", pl3);
-	addCodeLine(temp);
-	// koniec IF
-
-	sprintf(temp, "SHL %d", a_reg);
-	addCodeLine(temp);
-	sprintf(temp, "SHR %d", b_reg);
-	addCodeLine(temp);
-	sprintf(temp, "JUMP %d", pl); 		// jump_do_sprawdzenia_warunku
-	addCodeLine(temp);
-	// koniec WHILE
-	int pl3 = tempCode.size();
-}
-
 
 void binaryNumberToCode(stri bin, stri dec) {
     vec<stri> v;
@@ -625,7 +490,56 @@ int getVariableRegister(stri variable) {
 	}
 }
 
-int generateArithOp(stri op, stri a, stri b) {
+int generateAddition(stri a, stri b) {
+	generateP_AB(a, b);
+
+	int a_val, b_val = 0;
+	if (isNumber(a)) {
+		a_val = atoi(a.c_str());
+	} else {
+		a_val = atoi(variableManager.getValueOfVariable(a).c_str());
+	}
+	if (isNumber(b)) {
+		b_val = atoi(b.c_str());
+	} else {
+		b_val = atoi(variableManager.getValueOfVariable(b).c_str());
+	}
+
+	char temp[50];
+
+	int reg_of_a = getVariableRegister(a);
+	int reg_of_b = getVariableRegister(b);
+	if (reg_of_a == -5)
+		reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	if (reg_of_b == -5) 
+		reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+
+	if (a == "1") {
+		sprintf(temp, "INC %d", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "COPY %d", reg_of_b);
+		addCodeLine(temp);
+	} else if (b == "1") {
+		sprintf(temp, "INC %d", reg_of_a);
+		addCodeLine(temp);
+		sprintf(temp, "COPY %d", reg_of_a);
+		addCodeLine(temp);
+	} else {
+		sprintf(temp, "STORE %d", reg_of_a); 
+		addCodeLine(temp); // pr_0 = reg_a
+		sprintf(temp, "ADD %d", reg_of_b);
+		addCodeLine(temp); // reg_b = reg_b + pr0
+		sprintf(temp, "COPY %d", reg_of_b);				
+		addCodeLine(temp); // r_0 = reg_b
+	}
+
+	currentJumpLine = tempCode.size();
+	registerManager.removeLastVariable();
+
+	return a_val + b_val;
+}
+
+int generateSubtraction(stri a, stri b) {
 	generateP_AB(a, b);
 
 	int a_val, b_val = 0;
@@ -649,141 +563,27 @@ int generateArithOp(stri op, stri a, stri b) {
 		if (reg_of_b == -5) 
 			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
 
-	if (op == S_PLUS) {
-
-
-		if (a == "1") {
-			sprintf(temp, "INC %d", reg_of_b);
-			addCodeLine(temp);
-			sprintf(temp, "COPY %d", reg_of_b);
-			addCodeLine(temp);
-		} else if (b == "1") {
-			sprintf(temp, "INC %d", reg_of_a);
-			addCodeLine(temp);
-			sprintf(temp, "COPY %d", reg_of_a);
-			addCodeLine(temp);
-		} else {
-			sprintf(temp, "STORE %d", reg_of_a); 
-			addCodeLine(temp); // pr_0 = reg_a
-			sprintf(temp, "ADD %d", reg_of_b);
-			addCodeLine(temp); // reg_b = reg_b + pr0
-			sprintf(temp, "COPY %d", reg_of_b);				
-			addCodeLine(temp); // r_0 = reg_b
-		}
-
-		registerManager.removeLastVariable();
-
-		return a_val + b_val;
-
-	} else if (op == S_MINUS) {
-		
-
-		if (b == "1") {
+	if (b == "1") {
 			sprintf(temp, "DEC %d", reg_of_a);
 			addCodeLine(temp);
 			sprintf(temp, "COPY %d", reg_of_a);
 			addCodeLine(temp);
-		} else {
+	} else {
 			sprintf(temp, "STORE %d", reg_of_b); 
 			addCodeLine(temp); // pr_0 = reg_b
 			sprintf(temp, "SUB %d", reg_of_a);
 			addCodeLine(temp); // reg_a = reg_a - pr0
 			sprintf(temp, "COPY %d", reg_of_a);				
 			addCodeLine(temp); // r_0 = reg_a
-		}
-
-		registerManager.removeLastVariable();
-		int result = a_val - b_val;
-
-		if (result < 0) 
-			return 0;
-		else return a_val - b_val;
-		return result;
-
-	} else if (op == S_MULT) {
-
-
-		if (a == "0" || b == "0") {
-			sprintf(temp, "ZERO 0");
-			addCodeLine(temp);
-
-			registerManager.removeLastVariable();
-			return 0;
-		}
-		
-		if (b == "2") {
-			sprintf(temp, "SHR %d", reg_of_a);
-			addCodeLine(temp);
-			sprintf(temp, "COPY %d", reg_of_a);				
-			addCodeLine(temp); // r_0 = reg_a
-
-			registerManager.removeLastVariable();
-			return a_val * 2;
-		}
-		else if (a == "2") {
-			sprintf(temp, "SHR %d", reg_of_b);
-			addCodeLine(temp);
-			sprintf(temp, "COPY %d", reg_of_b);				
-			addCodeLine(temp); // r_0 = reg_b
-
-			registerManager.removeLastVariable();
-			return 2 * b_val;
-		}
-		else {
-			generateMultiplication(a, b);
-
-			registerManager.removeLastVariable();
-			return a_val * b_val;
-		}
-		
-	} else if (op == S_DIV) {
-
-		
-		if (a == "0" || b == "0") {
-			sprintf(temp, "ZERO 0");
-			addCodeLine(temp);
-
-			registerManager.removeLastVariable();
-			return 0;
-		}
-
-		if (b == "2") {
-			sprintf(temp, "SHL %d", reg_of_a);
-			addCodeLine(temp);
-			sprintf(temp, "COPY %d", reg_of_a);				
-			addCodeLine(temp); // r_0 = reg_a
-
-			registerManager.removeLastVariable();
-			return floor(a_val / 2);
-		}
-		else if (a == "2") {
-			sprintf(temp, "SHL %d", reg_of_b);
-			addCodeLine(temp);
-			sprintf(temp, "COPY %d", reg_of_b);				
-			addCodeLine(temp); // r_0 = reg_b
-
-			registerManager.removeLastVariable();
-			return floor(2 / b_val);
-		}
-		else {
-			generateDivision(a, b, false);
-
-			registerManager.removeLastVariable();
-			return floor(a_val / b_val);
-		}	
-
-
-	} else if (op == S_MOD) {		
-		generateDivision(a, b, true);
-		
-		registerManager.removeLastVariable();
-		return a_val % b_val;
-	}
-	else { 
-		if (ERR) printf("Nieznany operator %s\n", op.c_str());
 	}
 
-	return 0;
+	currentJumpLine = tempCode.size();
+	registerManager.removeLastVariable();
+	int result = a_val - b_val;
+
+	if (result < 0) 
+		return 0;
+	else return result;
 }
 
 int generateBoolOp(stri op, stri a, stri b) {
@@ -816,11 +616,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 		
 		// a - b = 0  ==> return 1;
 		// a - b > 0  ==> return 0;
-		generateArithOp(S_MINUS, b, a);
+		generateSubtraction(b, a);
 		int currentLine = tempCode.size() - 1;
 		sprintf(temp, "JZERO 0 %d", currentLine+1);	
 		addCodeLine(temp);
 
+		currentJumpLine = tempCode.size();
 		registerManager.removeLastVariable();
 		if (a_val >= b_val) {
 			return 1;
@@ -844,12 +645,14 @@ int generateBoolOp(stri op, stri a, stri b) {
 		sprintf(temp, "ADD %d", reg_of_c);
 		addCodeLine(temp);
 
+
 		registerManager.removeLastVariable();
 
-		int result1 = generateArithOp(S_MINUS, a, b);
-		int result2 = generateArithOp(S_MINUS, b, a);
+		int result1 = a_val - b_val;
+		int result2 = b_val - a_val;
 		int main_result; 
-		
+
+		currentJumpLine = tempCode.size();
 		if (result1 == result2) {
 			main_result = 1;
 		} else main_result = 0;
@@ -875,10 +678,11 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 		registerManager.removeLastVariable();
 
-		int result1 = generateArithOp(S_MINUS, a, b);
-		int result2 = generateArithOp(S_MINUS, b, a);
+		int result1 = a_val - b_val;
+		int result2 = b_val - a_val;
 		int main_result; 
 		
+		currentJumpLine = tempCode.size();
 		if (result1 == result2) {
 			main_result = 0;
 		} else main_result = 1;
@@ -887,7 +691,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_GT) { // a > b
 		
-		generateArithOp(S_MINUS, a, b);
+		generateSubtraction(a, b);
 		int currentLine = tempCode.size() - 1;
 		addCodeLine("ZERO 0");
 		sprintf(temp, "JZERO 0 %d", currentLine+3);
@@ -897,6 +701,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 		sprintf(temp, "INC 0");
 		addCodeLine(temp);
 
+		currentJumpLine = tempCode.size();
 		registerManager.removeLastVariable();
 		if (a_val > b_val) {
 			return 1;
@@ -904,11 +709,12 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_LET) { // a <= b
 		
-		generateArithOp(S_MINUS, a, b);
+		generateSubtraction(a, b);
 		int currentLine = tempCode.size() - 1;
 		sprintf(temp, "JZERO 0 %d", currentLine+1);	
 		addCodeLine(temp);
 
+		currentJumpLine = tempCode.size();
 		registerManager.removeLastVariable();
 		if (a_val <= b_val) {
 			return 1;
@@ -917,7 +723,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	} else if (op == S_LT) { // a < b
 		
-		generateArithOp(S_MINUS, b, a);
+		generateSubtraction(b, a);
 		int currentLine = tempCode.size() - 1;
 		addCodeLine("ZERO 0");
 		sprintf(temp, "JZERO 0 %d", currentLine+3);
@@ -927,6 +733,7 @@ int generateBoolOp(stri op, stri a, stri b) {
 		sprintf(temp, "INC 0");
 		addCodeLine(temp);
 
+		currentJumpLine = tempCode.size();
 		registerManager.removeLastVariable();
 		if (a_val < b_val) {
 			return 1;
@@ -975,7 +782,7 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 	if (isNumber(from)) {
 		std::stringstream ss;
 		ss << atoi(from.c_str());
-		registerManager.setValueToRegister(ss.str(), regOfIterator); 
+		registerManager.setValueToRegister(ss.str(), regOfIterator-1); 
 		if (DEBUG) printf("Value %s set to register %d\n", from.c_str(), regOfIterator);
 	} else {
 		registerManager.setValueToRegister(variableManager.getValueOfVariable(from).c_str(), regOfIterator);
@@ -1096,6 +903,337 @@ int generateRead(stri a) {
 	}
 	return 0;
 }
+
+int generateDivision(stri a, stri b) {
+
+  //   while(b<=a){
+  //     b = b<<1;
+  //     k++;
+  //   }
+  //   while(k>0){   
+  //     k--;
+  //     b=b>>1;
+  //     result = result<<1;
+  //     if(a>=b) {      
+  //         result=result+1;
+  //         a=a-b;
+  //     }
+  //   }
+  //   System.out.println("Result "+result+" remainder " + a);
+  // }
+
+	generateP_AB(a, b);
+
+	int a_val, b_val = 0;
+	if (isNumber(a)) {
+		a_val = atoi(a.c_str());
+	} else {
+		a_val = atoi(variableManager.getValueOfVariable(a).c_str());
+	}
+	if (isNumber(b)) {
+		b_val = atoi(b.c_str());
+	} else {
+		b_val = atoi(variableManager.getValueOfVariable(b).c_str());
+	}
+
+	stri k = "k";
+	int k_val = 0;
+	int k_reg = getVariableRegister(k);
+		if (k_reg == -5)
+			k_reg = memoryManager.storeInMemory(k, variableManager.getAddressOfVariable(k));
+		int a_reg = getVariableRegister(a);
+		if (a_reg == -5)
+			a_reg = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		int b_reg = getVariableRegister(b);
+		if (b_reg == -5)
+			b_reg = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+
+	char temp[50];
+
+	if (a == "0" || b == "0") {
+			sprintf(temp, "ZERO 0");
+			addCodeLine(temp);
+
+			registerManager.removeLastVariable();
+			return 0;
+	}
+
+	if (b == "2") {
+		sprintf(temp, "SHL %d", a_reg);
+		addCodeLine(temp);
+		sprintf(temp, "COPY %d", a_reg);				
+		addCodeLine(temp); // r_0 = reg_a
+
+		registerManager.removeLastVariable();
+		return floor(a_val / 2);
+	}
+	else if (a == "2") {
+		sprintf(temp, "SHL %d", b_reg);
+		addCodeLine(temp);
+		sprintf(temp, "COPY %d", b_reg);				
+		addCodeLine(temp); // r_0 = reg_b
+
+		registerManager.removeLastVariable();
+		return floor(2 / b_val);
+	}
+	else {
+
+		std::stringstream ss;
+		ss << k_val;
+		declareVariable(k);
+		variableManager.setValueToVariable(k, ss.str());
+		int pl = tempCode.size();
+		// poczatek pierwszego while'a
+
+		generateBoolOp(S_LET, b, a);
+		int pl2 = tempCode.size();
+		sprintf(temp, "JZERO 0 %d", pl2+5); // jesli warunek niespelniony, jump_poza_petle (WHILE)
+		addCodeLine(temp);
+		sprintf(temp, "SHL %d", b_reg);		// w p.p. wykonaj cialo petli
+		addCodeLine(temp);
+		k_val++;
+		ss << k_val;
+		sprintf(temp, "INC %d", k_reg);
+		addCodeLine(temp);
+		variableManager.setValueToVariable(k, ss.str());
+		sprintf(temp, "JUMP %d", pl);			// jump_do_sprawdzenia_warunku
+		addCodeLine(temp);
+
+		// koniec pierwszego while'a
+		// poczatek drugiego while'a
+
+		int pl3 = tempCode.size();
+		int pl4 = pl3 + 20;
+		generateBoolOp(S_GT, k, ss.str());
+		sprintf(temp, "JZERO 0 %d", pl4);
+		addCodeLine(temp);
+		sprintf(temp, "SHR %d", b_reg);
+		k_val--;
+		ss << k_val;
+		sprintf(temp, "DEC %d", k_reg);
+		addCodeLine(temp);
+		variableManager.setValueToVariable(k, ss.str());
+
+		// poczatek IF
+		generateBoolOp(S_GET, a, b);
+		sprintf(temp, "JZERO 0 %d", pl4); 	// koniec IF
+		addCodeLine(temp);
+		generateSubtraction(a, b);		// THEN
+		ss << registerManager.getAccumulatorValue();
+		generateVariableAssign(a, ss.str());
+		sprintf(temp, "JUMP %d", pl4); 
+		addCodeLine(temp);
+		// koniec IF
+
+		sprintf(temp, "JUMP %d", pl3); 		// jump_do_sprawdzenia_warunku
+		addCodeLine(temp);
+		// koniec drugiego while'a
+
+		registerManager.removeLastVariable();
+
+		return floor(a_val / b_val);
+	}
+}
+
+int generateModulo(stri a, stri b) {
+	//   while(b<=a){
+  //     b = b<<1;
+  //     k++;
+  //   }
+  //   while(k>0){   
+  //     k--;
+  //     b=b>>1;
+  //     result = result<<1;
+  //     if(a>=b) {      
+  //         result=result+1;
+  //         a=a-b;
+  //     }
+  //   }
+  //   System.out.println("Result "+result+" remainder " + a);
+  // }
+
+	generateP_AB(a, b);
+
+	int a_val, b_val = 0;
+	if (isNumber(a)) {
+		a_val = atoi(a.c_str());
+	} else {
+		a_val = atoi(variableManager.getValueOfVariable(a).c_str());
+	}
+	if (isNumber(b)) {
+		b_val = atoi(b.c_str());
+	} else {
+		b_val = atoi(variableManager.getValueOfVariable(b).c_str());
+	}
+
+	char temp[50];
+
+	stri k = "k";
+	int k_val = 0;
+
+	std::stringstream ss;
+	ss << k_val;
+	declareVariable(k);
+	variableManager.setValueToVariable(k, ss.str());
+	int pl = tempCode.size();
+	int k_reg = getVariableRegister(k);
+	if (k_reg == -5)
+		k_reg = memoryManager.storeInMemory(k, variableManager.getAddressOfVariable(k));
+	int a_reg = getVariableRegister(a);
+	if (a_reg == -5)
+		a_reg = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+	int b_reg = getVariableRegister(b);
+	if (b_reg == -5)
+		b_reg = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+	// poczatek pierwszego while'a
+
+	generateBoolOp(S_LET, b, a);
+	int pl2 = tempCode.size();
+	sprintf(temp, "JZERO 0 %d", pl2+5); // jesli warunek niespelniony, jump_poza_petle (WHILE)
+	addCodeLine(temp);
+	sprintf(temp, "SHL %d", b_reg);		// w p.p. wykonaj cialo petli
+	addCodeLine(temp);
+	k_val++;
+	ss << k_val;
+	sprintf(temp, "INC %d", k_reg);
+	addCodeLine(temp);
+	variableManager.setValueToVariable(k, ss.str());
+	sprintf(temp, "JUMP %d", pl);			// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+
+	// koniec pierwszego while'a
+	// poczatek drugiego while'a
+
+	int pl3 = tempCode.size();
+	int pl4 = pl3 + 20;
+	generateBoolOp(S_GT, k, ss.str());
+	sprintf(temp, "JZERO 0 %d", pl4);
+	addCodeLine(temp);
+	sprintf(temp, "SHR %d", b_reg);
+	k_val--;
+	ss << k_val;
+	sprintf(temp, "DEC %d", k_reg);
+	addCodeLine(temp);
+	variableManager.setValueToVariable(k, ss.str());
+
+	// poczatek IF
+	generateBoolOp(S_GET, a, b);
+	sprintf(temp, "JZERO 0 %d", pl4); 	// koniec IF
+	addCodeLine(temp);
+	generateSubtraction(a, b);		// THEN
+	ss << registerManager.getAccumulatorValue();
+	generateVariableAssign(a, ss.str());
+	sprintf(temp, "JUMP %d", pl4); 
+	addCodeLine(temp);
+	// koniec IF
+
+	sprintf(temp, "JUMP %d", pl3); 		// jump_do_sprawdzenia_warunku
+	addCodeLine(temp);
+	// koniec drugiego while'a
+
+	registerManager.removeLastVariable();
+
+	return a_val % b_val;
+}
+
+int generateMultiplication(stri a, stri b) {
+ //    int a=10;
+ //    int b=3;
+ //    int result = 0;
+ //    while(b>0){      
+ //      if(b%2==1) {     
+ //        result = result+a;
+ //        System.out.println(b + " is odd");
+ //      }
+ //      a = a<<1;
+ //      b = b>>1;   
+ //      System.out.println("New b is "+b);
+ //    }     
+ //    System.out.println(result);
+	generateP_AB(a, b);
+
+	int a_val, b_val = 0;
+	if (isNumber(a)) {
+		a_val = atoi(a.c_str());
+	} else {
+		a_val = atoi(variableManager.getValueOfVariable(a).c_str());
+	}
+	if (isNumber(b)) {
+		b_val = atoi(b.c_str());
+	} else {
+		b_val = atoi(variableManager.getValueOfVariable(b).c_str());
+	}
+
+	char temp[50];
+
+	int reg_of_a = getVariableRegister(a);
+		int reg_of_b = getVariableRegister(b);
+		if (reg_of_a == -5)
+			reg_of_a = memoryManager.storeInMemory(a, variableManager.getAddressOfVariable(a));
+		if (reg_of_b == -5) 
+			reg_of_b = memoryManager.storeInMemory(b, variableManager.getAddressOfVariable(b));
+
+	int pl = tempCode.size();
+	if (a == "0" || b == "0") {
+		sprintf(temp, "ZERO 0");
+		addCodeLine(temp);
+
+		registerManager.removeLastVariable();
+		return 0;
+	}
+	
+	if (b == "2") {
+		sprintf(temp, "SHR %d", reg_of_a);
+		addCodeLine(temp);
+		sprintf(temp, "COPY %d", reg_of_a);				
+		addCodeLine(temp); // r_0 = reg_a
+
+		registerManager.removeLastVariable();
+		return a_val * 2;
+	}
+	else if (a == "2") {
+		sprintf(temp, "SHR %d", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "COPY %d", reg_of_b);				
+		addCodeLine(temp); // r_0 = reg_b
+
+		registerManager.removeLastVariable();
+		return 2 * b_val;
+	}
+	else {
+		std::stringstream ss;
+		ss << 0;
+		generateBoolOp(S_GT, b, ss.str());
+		int pl2 = tempCode.size();
+		int pl3 = pl2 + 40;
+
+		// poczatek WHILE
+		sprintf(temp, "JZERO 0 %d", pl3); // jesli warunek niespelniony, jump_poza_petle (WHILE)
+		addCodeLine(temp);
+		// poczatek IF	// w p.p. wykonaj cialo petli
+		generateModulo(b, "2");
+		int result = registerManager.getAccumulatorValue();
+		ss << result;
+		generateBoolOp(S_EQ, ss.str(), "1");
+		sprintf(temp, "JZERO 0 %d", pl3); 	// koniec IF
+		addCodeLine(temp);
+		sprintf(temp, "JUMP %d", pl3);
+		addCodeLine(temp);
+		// koniec IF
+
+		sprintf(temp, "SHL %d", reg_of_a);
+		addCodeLine(temp);
+		sprintf(temp, "SHR %d", reg_of_b);
+		addCodeLine(temp);
+		sprintf(temp, "JUMP %d", pl); 		// jump_do_sprawdzenia_warunku
+		addCodeLine(temp);
+		// koniec WHILE
+
+		registerManager.removeLastVariable();
+		return a_val * b_val;
+	}
+}
+
 
 
 void endOfProgram() {

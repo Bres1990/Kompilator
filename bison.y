@@ -53,10 +53,10 @@ program : 	|
 		} 
 ;
 
-vdeclarations : vdeclarations PIDENTIFIER
+vdeclarations : vdeclarations PIDENTIFIER  
 		{
 		    int result = declareVariable($<stru>2); 
-			switch (result) {   
+			switch (result) {      
 				case 1: 
 					{  
 					stri err = "Redeklaracja zmiennej ";
@@ -78,7 +78,7 @@ vdeclarations : vdeclarations PIDENTIFIER
 		}  
 		| vdeclarations PIDENTIFIER LBRACKET NUM RBRACKET  
 		{  
-		    int result = arrayManager.declareArray($<stru>2, $<numu>4);  
+		    int result = arrayManager.declareArray($<stru>2, $<stru>4);  
 			switch (result) {
 				case 1: 
 					{
@@ -94,10 +94,12 @@ vdeclarations : vdeclarations PIDENTIFIER
 					if (DEBUG) printf("\tUdana deklaracja tablicy\n");  
 					break; 
 				case -1: 
+					{
 					stri err = "Tablica ";
 					err += $<stru>2;
 					err += " musi miec nazwe\n";
 					catch_error(yylineno, err.c_str());
+					}
 					break;
 			}
 		}   
@@ -112,7 +114,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{  
 		if (arrayManager.findArray($<stru>1) == -1) { // check if array exists
 			stri err = "Niezadeklarowana tablica";
-			err += $<stru>1; 
+			err += $<stru>1;  
 			err += $<stru>2;
 			err += $<stru>3;
 			err += $<stru>4;
@@ -278,7 +280,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 	    int result = generateRead($<stru>2);
 		if (result != 0) {  
-			err(yylineno, result); //fixit   
+			err(yylineno, result);  
 		}
 	}
 
@@ -294,7 +296,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	{
 	    int result = generateRead($<stru>2);
 		if (result != 0) {
-			err(yylineno, result); //fixit      
+			err(yylineno, result);      
 		}
 	}
 
@@ -315,7 +317,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		}  
 	}
 
-	| SKIP SEMICOLON {} 
+	| SKIP SEMICOLON {}  
 ;
 	 
 expression: VALUE
@@ -325,10 +327,10 @@ expression: VALUE
 				int result = generateP_A($<stru>1);
 				if (result) { err(yylineno, result); }
 			}
-			| VALUE PLUS VALUE   
+			| VALUE PLUS VALUE       
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s + %s\n", $<stru>1, $<stru>3);
-				int result = generateArithOp("+", $<stru>1, $<stru>3); 
+				int result = generateAddition($<stru>1, $<stru>3); 
 				if (result == -1) { err(yylineno, result); } 
  
 				std::ostringstream os;
@@ -338,7 +340,7 @@ expression: VALUE
 			| VALUE MINUS VALUE  
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s - %s\n", $<stru>1, $<stru>3);
-				int result = generateArithOp("-", $<stru>1, $<stru>3);
+				int result = generateSubtraction($<stru>1, $<stru>3);
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
@@ -348,7 +350,7 @@ expression: VALUE
 			| VALUE MULT VALUE  
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s * %s\n", $<stru>1, $<stru>3);
-				int result = generateArithOp(S_MULT, $<stru>1, $<stru>3);
+				int result = generateMultiplication($<stru>1, $<stru>3);
 				if (result == -1) { err(yylineno, result); } 
 
 				std::ostringstream os;
@@ -358,7 +360,7 @@ expression: VALUE
 			| VALUE DIV VALUE
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s / %s\n", $<stru>1, $<stru>3);
-				int result = generateArithOp(S_DIV, $<stru>1, $<stru>3);
+				int result = generateDivision($<stru>1, $<stru>3);
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
@@ -368,7 +370,7 @@ expression: VALUE
 			| VALUE MOD VALUE 
 			{
 				if (DEBUG) printf("Operacja arytmetyczna %s % %s\n", $<stru>1, $<stru>3);
-				int result = generateArithOp(S_MOD, $<stru>1, $<stru>3);
+				int result = generateModulo($<stru>1, $<stru>3);
 				if (result == -1) { err(yylineno, result); }
 
 				std::ostringstream os;
@@ -418,8 +420,8 @@ condition :  VALUE
 		{ 
 			stri err = "Niezainicjalizowana zmienna ";
 			err += $<stru>1; 
-			catch_error(yylineno, err.c_str());
-		}
+			catch_error(yylineno, err.c_str()); 
+		} 
 
 		if (variableManager.getValueOfVariable($<stru>3) == "")
 		{
@@ -502,7 +504,7 @@ condition :  VALUE
 			err += $<stru>3;
 			catch_error(yylineno, err.c_str());
 		}
-
+ 
 		int result = generateBoolOp(S_GET, $<stru>1, $<stru>3);
 		if (result == -1) { err(yylineno, result); }
 
