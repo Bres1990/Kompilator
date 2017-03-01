@@ -4,9 +4,11 @@ VAR
 BEGIN
     n := 100-1;
     FOR i FROM n DOWNTO 2 DO
-        {sito[100] := 1;}
+        sito[i] := 1;
     ENDFOR
-    FOR i FROM 2 TO n DO
+    j := 1;
+    FOR i FROM j TO n DO
+        sito[i] := j
         IF sito[i] <> 0 THEN
             j := i + i;
             WHILE j <= n DO
@@ -19,3 +21,6 @@ BEGIN
         ENDIF
     ENDFOR
 END
+
+
+{dodac wąsy miedzy TO a DO}

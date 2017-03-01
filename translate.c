@@ -1,7 +1,7 @@
 #ifndef TRANSLATE_GUARD
 #define TRANSLATE_GUARD
 
-#define DEBUG 0
+#define DEBUG 1
 #define ERR 0
 #define LINECODE 0
 
@@ -57,81 +57,6 @@ int isNumber(stri name) {
    return 1;
 }
 
-class RegisterManager {
-
-	private:
-		vec<stri> registerVector;
-		vec<int> regValVector;
-	public:
-		int initializeAccumulator() {
-			registerVector.push_back("");
-			regValVector.push_back(-1);
-		}
-
-		int getValueFromRegister(int regnum) {
-			if (regValVector.at(regnum) != -1) {
-				return regValVector.at(regnum);
-			} return -1;
-		}
-
-		int setValueToRegister(stri value, int regnum) {
-			regValVector.at(regnum) = atoi(value.c_str());
-		}
-
-		int findFreeRegister() {
-			// zwroc indeks pierwszego pustego rejestru
-			int fullRegisters = registerVector.size();
-			if (fullRegisters == 5) {
-				return -1;
-			} else {
-				return fullRegisters;
-			}
-		}
-
-		int populateRegister(stri variable) {
-			registerVector.push_back(variable);
-			regValVector.push_back(-1);
-		}
-
-		int getRegisterOfVariable(stri varName) {
-			searchRegisterVector(varName);
-			if (findFreeRegister() != -1) {
-				populateRegister(varName);
-				int result = searchRegisterVector(varName);
-				return result;
-			} else {
-				return -5; // zrob STORE w pamieci zamiast COPY w rejestrze
-			}
-		}
-
-		int removeLastVariable() { 
-			registerVector.pop_back();
-			regValVector.pop_back();
-		}
-
-		int getAccumulatorValue() {
-			return getValueFromRegister(0);
-		}
-
-		int searchRegisterVector(stri varName) {
-			for (int i = 0; i < registerVector.size(); i++) {
-				if (varName == registerVector.at(i)) {
-					return i;
-				}
-			} return -1;
-		}
-
-		void removeFromRegister(int regnum) {
-			if (DEBUG) printf ("Removed variable from register %d", regnum);
-			registerVector.at(regnum) = "";
-			regValVector.at(regnum) = -1;
-		}
-
-};
-
-RegisterManager registerManager;
-
-
 class VariableManager {
 	private:
 		vec<stri> variableVector;
@@ -159,6 +84,7 @@ class VariableManager {
 				valueVector.at(varIndex) = "";
 				memoryVector.at(varIndex) = -1;
 			}
+			if (DEBUG) printf("Variable %s deleted\n", varName.c_str());
 		}
 		
 		int getItemIndex(stri varName) {
@@ -240,6 +166,95 @@ class VariableManager {
 };
 
 VariableManager variableManager;
+
+class RegisterManager {
+
+	private:
+		vec<stri> registerVector;
+		vec<int> regValVector;
+	public:
+		int initializeAccumulator() {
+			registerVector.push_back("");
+			regValVector.push_back(-1);
+		}
+
+		int getValueFromRegister(int regnum) {
+			if (regValVector.at(regnum) != -1) {
+				return regValVector.at(regnum);
+			} return -1;
+		}
+
+		int setValueToRegister(stri value, int regnum) {
+			if (DEBUG) printf("regValVector size: %d\n", regValVector.size());
+
+			if (!isNumber(value)) {
+				//if (DEBUG) printf("RegisterManager.setValueToRegister: value not a number\n");
+				regValVector.at(regnum) = atoi(variableManager.getValueOfVariable(value).c_str());
+				if (DEBUG) printf("RegisterManager: Set value %d to register %d\n", atoi(variableManager.getValueOfVariable(value).c_str()), regnum+1);
+			} 
+			else {
+				//if (DEBUG) printf("RegisterManager.setValueToRegister: value is a number\n");
+				//if (DEBUG) printf("RegisterManager.setValueToRegister: value equals %d\n", atoi(value.c_str()));
+				//if (DEBUG) printf("RegisterManager.setValueToRegister: regValVector size equals %d while regnum equals %d\n", regValVector.size(), regnum);
+				//if (atoi(value.c_str()) <= 0 || atoi(value.c_str()) > 0) printf("value jest intem\n");
+				regValVector.at(regnum) = atoi(value.c_str());
+				//if (DEBUG) printf("RegisterManager.setValueToRegister: regValVector.at(regnum) equals %d\n", regValVector.at(regnum));
+				if (DEBUG) printf("RegisterManager: Set value %d to register %d\n", atoi(value.c_str()), regnum+1);
+			}
+		}
+
+		int findFreeRegister() {
+			// zwroc indeks pierwszego pustego rejestru
+			int fullRegisters = registerVector.size();
+			if (fullRegisters == 5) {
+				return -1;
+			} else {
+				return fullRegisters;
+			}
+		}
+
+		int populateRegister(stri variable) {
+			registerVector.push_back(variable);
+			regValVector.push_back(-1);
+		}
+
+		int getRegisterOfVariable(stri varName) {
+			searchRegisterVector(varName);
+			if (findFreeRegister() != -1) {
+				populateRegister(varName);
+				int result = searchRegisterVector(varName);
+				return result;
+			} else {
+				return -5; // zrob STORE w pamieci zamiast COPY w rejestrze
+			}
+		}
+
+		int removeLastVariable() { 
+			registerVector.pop_back();
+			regValVector.pop_back();
+		}
+
+		int getAccumulatorValue() {
+			return getValueFromRegister(0);
+		}
+
+		int searchRegisterVector(stri varName) {
+			for (int i = 0; i < registerVector.size(); i++) {
+				if (varName == registerVector.at(i)) {
+					return i;
+				}
+			} return -1;
+		}
+
+		void removeFromRegister(int regnum) {
+			if (DEBUG) printf ("Removed variable from register %d\n", regnum);
+			registerVector.at(regnum) = "";
+			regValVector.at(regnum) = -1;
+		}
+
+};
+
+RegisterManager registerManager;
 
 class MemoryManager {
 	private:
@@ -397,6 +412,8 @@ int generateP_A(stri a) {
 		generateValue(a);
 	} else {
 		int AvarIndex = variableManager.getItemIndex(a);
+		printf("index of %s is %d\n", a.c_str(), AvarIndex);
+		printf("value of %s is %s\n", a.c_str(), variableManager.getValueOfVariable(a).c_str());
 		if (AvarIndex == -1) { 
 			if (ERR) printf("*******ARITH OP NIE ZNALEZIONO");
 				return -1;
@@ -405,7 +422,9 @@ int generateP_A(stri a) {
 			int reg = AvarIndex+1;
 			sprintf(temp, "LOAD %d", reg);
 			addCodeLine(temp);
-			registerManager.setValueToRegister(a, reg);
+			if (DEBUG) printf("generateP_A: Setting value %s to register %d\n", variableManager.getValueOfVariable(a).c_str(), reg);
+			registerManager.setValueToRegister(variableManager.getValueOfVariable(a), reg); // nie wychodze stad
+			if (DEBUG) printf("generateP_A: Exiting\n");
 		}
 	}
 
@@ -420,10 +439,13 @@ int generateP_A(stri a) {
 int generateP_AB(stri a, stri b) {
 	char temp[50];
 	int reg;
-	int ret = generateP_A(a);
+	int ret; 
+	ret = generateP_A(a);
+	//if (DEBUG) printf("generateP_AB: ret = %d\n", ret);
 	if (ret != 0) return ret;
 
 	if (isNumber(a)) {
+		//if (DEBUG) printf("generateP_AB: %s jest liczba\n", a.c_str());
 		reg = registerManager.findFreeRegister();
 		variableManager.setAddressOfVariable(a, registerManager.getAccumulatorValue());
 		sprintf(temp, "STORE %d", reg);
@@ -432,15 +454,18 @@ int generateP_AB(stri a, stri b) {
 	}
 	
 	ret = generateP_A(b);
+	//if (DEBUG) printf("generateP_AB: ret = %d\n", ret);
 	if (ret != 0) return ret;
 
 	if (isNumber(b)) {
+		//if (DEBUG) printf("generateP_AB: %s jest liczba\n", b.c_str());
 		reg = registerManager.findFreeRegister();
 		variableManager.setAddressOfVariable(b, registerManager.getAccumulatorValue());
 		sprintf(temp, "STORE %d", reg);
 		addCodeLine(temp); // r_i = pr_0
 		registerManager.removeLastVariable();
 	}
+	//if (DEBUG) printf("generateP_AB: Exiting\n");
 	return 0;
 }
 
@@ -540,6 +565,7 @@ int generateAddition(stri a, stri b) {
 }
 
 int generateSubtraction(stri a, stri b) {
+	if (DEBUG) printf("Zaczynam generateSubtraction: %s - %s\n", a.c_str(), b.c_str());
 	generateP_AB(a, b);
 
 	int a_val, b_val = 0;
@@ -587,7 +613,9 @@ int generateSubtraction(stri a, stri b) {
 }
 
 int generateBoolOp(stri op, stri a, stri b) {
+	if (DEBUG) printf("zaczynam %s dla %s i %s\n", op.c_str(), a.c_str(), b.c_str());
 	generateP_AB(a, b);
+	if (DEBUG) printf("koniec generateP_AB w generateBoolOp\n");
 
 	int a_val, b_val = 0;
 	if (isNumber(a)) {
@@ -613,7 +641,6 @@ int generateBoolOp(stri op, stri a, stri b) {
 
 	
 	if (op == S_GET) { // a >= b
-		
 		// a - b = 0  ==> return 1;
 		// a - b > 0  ==> return 0;
 		generateSubtraction(b, a);
@@ -780,13 +807,19 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 	printf("regOfIterator %s: %d\n", pid.c_str(), regOfIterator);
 
 	if (isNumber(from)) {
+		//if (DEBUG) printf("IsNumber(from)\n");
 		std::stringstream ss;
 		ss << atoi(from.c_str());
 		registerManager.setValueToRegister(ss.str(), regOfIterator-1); 
+		variableManager.setValueToVariable(pid, ss.str());
 		if (DEBUG) printf("Value %s set to register %d\n", from.c_str(), regOfIterator);
+		if (DEBUG) printf("Value %s set to variable %s\n", from.c_str(), pid.c_str());
 	} else {
-		registerManager.setValueToRegister(variableManager.getValueOfVariable(from).c_str(), regOfIterator);
+		if (DEBUG) printf("Setting value %s to register %d\n", variableManager.getValueOfVariable(from).c_str(), regOfIterator);
+		registerManager.setValueToRegister(variableManager.getValueOfVariable(from), regOfIterator-1);
+		variableManager.setValueToVariable(pid, variableManager.getValueOfVariable(from));
 		if (DEBUG) printf("Value %s set to register %d\n", variableManager.getValueOfVariable(from).c_str(), regOfIterator);
+		if (DEBUG) printf("Value %s set to variable %s\n", variableManager.getValueOfVariable(from).c_str(), pid.c_str());
 	}
 
 	sprintf(temp, "LOAD %d", regOfIterator);
@@ -799,18 +832,17 @@ int generateFor(stri pid, stri from, stri to, bool mode) {
 		sprintf(temp, "INC %d", regOfIterator); // i++
 		addCodeLine(temp);
 		std::stringstream ss;
-		ss << registerManager.getValueFromRegister(regOfIterator)+1;
-
-		registerManager.setValueToRegister(ss.str(), regOfIterator);
+		ss << registerManager.getValueFromRegister(regOfIterator-1);
+		registerManager.setValueToRegister(ss.str(), regOfIterator-1);
 	} else {
 		sprintf(temp, "DEC %d", regOfIterator); // i--
 		addCodeLine(temp);
 		std::stringstream ss;
-		ss << registerManager.getValueFromRegister(regOfIterator)+1;
+		ss << registerManager.getValueFromRegister(regOfIterator-1);
 
-		registerManager.setValueToRegister(ss.str(), regOfIterator);
+		registerManager.setValueToRegister(ss.str(), regOfIterator-1);
 	}
-	if (DEBUG) printf("iterator: %d\n", registerManager.getValueFromRegister(regOfIterator));
+	if (DEBUG) printf("iterator: %d\n", registerManager.getValueFromRegister(regOfIterator-1));
 	sprintf(temp, "JUMP %d", pl+5); // koniec petli for
 	addCodeLine(temp);
 

@@ -53,7 +53,7 @@ program : 	|
 		} 
 ;
 
-vdeclarations : vdeclarations PIDENTIFIER  
+vdeclarations : vdeclarations PIDENTIFIER   
 		{
 		    int result = declareVariable($<stru>2); 
 			switch (result) {      
@@ -135,6 +135,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 			err += $<stru>4;
 			catch_error(yylineno, err.c_str());
 		} else { 	// assign value to array index
+			if (DEBUG)
 			arrayManager.setArrayIndexValue($<stru>1, $<stru>3, $<stru>6);
 			if (DEBUG) printf("\tUdane przypisanie do indeksu tablicy");
 		}
@@ -191,13 +192,64 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	DO commands  
 	{	
 	    if (DEBUG)printf("Condition do while\n");  
-	} ENDWHILE {}
+	} ENDWHILE {} 
 
 	| FOR PIDENTIFIER 
-	{  
-		printf("iterator register: %d\n", getVariableRegister($<stru>2));  
+	{ 
+		if (variableManager.getItemIndex($<stru>2) == -1) {
+			declareVariable($<stru>2);  
+			registerManager.populateRegister($<stru>2); /////     
+			//printf("iterator variableManager index: %d\n", variableManager.getItemIndex($<stru>2));
+			//printf("iterator register: %d\n", getVariableRegister($<stru>2)); 
+			stri var = ""; 
+			var =+ $<stru>2;        
+			if (DEBUG) printf("FOR: Variable %s declared\n", var.c_str());
+			iteratorRegister = getVariableRegister($<stru>2);
+		} else {
+			stri err = "Uzycie zmiennej globalnej o tej samej nazwie co iterator w zakresie petli: <";
+			err += $<stru>2;
+			err += ">";
+			catch_error(yylineno, err.c_str());
+		} 
+	}
+	FROM VALUE DOWNTO VALUE {                    
+		stri val1 = "";
+		val1 += $<stru>5;
+		stri val2 = "";
+		val2 += $<stru>7;
+
+		//if (DEBUG) printf("values: %s %s\n", val1.c_str(), val2.c_str());
+
+		int result = variableManager.getItemIndex($<stru>2);
+		switch(result) {
+			case -1: 
+			{
+				stri err = "Niezadeklarowana zmienna ";
+				err += $<stru>2;
+				catch_error(yylineno, err.c_str());
+				break;
+			}
+			default:
+			{
+				if (DEBUG) printf("Obsluga for\n");
+				forPlaceholder = generateFor($<stru>2, $<stru>5, $<stru>7, false); //
+				if (DEBUG) printf("Skonczylem obsluge for\n");
+				break;
+			}
+		}
+	} 
+	DO commands
+	{ 
+		generateDowntoDo(forPlaceholder);
+		if (DEBUG) printf("Obsluga downto-do\n");
+	} ENDFOR { registerManager.removeFromRegister(iteratorRegister+1); variableManager.deleteVariable($<stru>2); iteratorRegister = -1; }
+
+	| FOR PIDENTIFIER 
+	{   
 		if (variableManager.getItemIndex($<stru>2) == -1) {
 			declareVariable($<stru>2);
+			printf("iterator variableManager index: %d\n", variableManager.getItemIndex($<stru>2));
+			//printf("iterator register: %d\n", getVariableRegister($<stru>2)); 
 			stri var = ""; 
 			var =+ $<stru>2;
 			if (DEBUG) printf("FOR: Variable %s declared\n", var.c_str());
@@ -213,6 +265,13 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 	FROM VALUE TO VALUE 
 	{
 		int result = variableManager.getItemIndex($<stru>2);
+
+		stri val1 = "";
+		val1 += $<stru>5;
+		stri val2 = "";
+		val2 += $<stru>7;  
+
+		//if (DEBUG) printf("values: %s %s\n", val1.c_str(), val2.c_str());
 		switch(result) {
 			case -1:
 			{
@@ -229,51 +288,11 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 			}
 		}
 	}  
-	DO commands
+	DO commands        
 	{
 		generateToDo(forPlaceholder);
-		if (DEBUG) printf("Obsluga to-do\n");  
+		if (DEBUG) printf("Obsluga to-do\n");
 	} ENDFOR { registerManager.removeFromRegister(iteratorRegister); variableManager.deleteVariable($<stru>2); iteratorRegister = -1; }
-
-	| FOR PIDENTIFIER 
-	{
-		printf("iterator register: %d\n", getVariableRegister($<stru>2));  
-		if (variableManager.getItemIndex($<stru>2) == -1) {
-			declareVariable($<stru>2);
-			stri var = ""; 
-			var =+ $<stru>2;
-			if (DEBUG) printf("FOR: Variable %s declared\n", var.c_str());
-			iteratorRegister = getVariableRegister($<stru>2);
-		} else {
-			stri err = "Uzycie zmiennej globalnej o tej samej nazwie co iterator w zakresie petli: <";
-			err += $<stru>2;
-			err += ">";
-			catch_error(yylineno, err.c_str());
-		} 
-	}
-	FROM VALUE DOWNTO VALUE {
-		int result = variableManager.getItemIndex($<stru>2);
-		switch(result) {
-			case -1: 
-			{
-				stri err = "Niezadeklarowana zmienna ";
-				err += $<stru>2;
-				catch_error(yylineno, err.c_str());
-				break;
-			}
-			default:
-			{
-				if (DEBUG) printf("Obsluga for\n");
-				forPlaceholder = generateFor($<stru>2, $<stru>5, $<stru>7, false);
-				break;
-			}
-		}
-	} 
-	DO commands
-	{ 
-		generateDowntoDo(forPlaceholder);
-		if (DEBUG) printf("Obsluga downto-do\n");
-	} ENDFOR {}
 
 
     | READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON
@@ -300,7 +319,7 @@ command : PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET ASSIGN expression SEMICOLON
 		}
 	}
 
-    | WRITE VALUE SEMICOLON 
+    | WRITE VALUE SEMICOLON  
 	{ 
 	    int result = generateWrite($<stru>2);
 		switch(result) { 

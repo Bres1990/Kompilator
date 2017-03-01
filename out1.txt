@@ -1,5 +1,101 @@
+
+
+****** BLOK DEKLARACJI ZMIENNYCH ******
+
+
+	Deklaracja zmiennej <n>
+Dodaje zmienna n o adresie -1
 Wolny rejestr nr 1 dla zmiennej n
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 1
+	Deklaracja zmiennej <j>
+Dodaje zmienna j o adresie -1
 Wolny rejestr nr 2 dla zmiennej j
-iterator register: -5
-Wolny rejestr nr -1 dla zmiennej i
-ERROR: Line 6 - syntax error
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 2
+	Udana deklaracja tablicy
+
+
+****** BLOK KOMENDY ******
+
+
+Operacja arytmetyczna 100 - 1
+Zaczynam generateSubtraction: 100 - 1
+Rejestr liczby 100 to 3
+regValVector size: 3
+RegisterManager: Set value 100 to register 1
+		*******tworze zmienna 100
+Dodaje zmienna 100 o adresie 100
+Rejestr liczby 1 to 2
+regValVector size: 2
+RegisterManager: Set value 1 to register 1
+		*******tworze zmienna 1
+Dodaje zmienna 1 o adresie 1
+n = 99	Przypisuje zmiennej <n> wartosc <99>
+Indeks zmiennej to 0
+	Udane przypisanie do zmiennej
+	Deklaracja zmiennej <i>
+Dodaje zmienna i o adresie 1
+Wolny rejestr nr 4 dla zmiennej i
+FOR: Variable i declared
+Obsluga for
+Generuje for w linii 19
+regOfIterator i: 5
+Setting value 99 to register 5
+regValVector size: 8
+RegisterManager: Set value 99 to register 5
+i = 99Value 99 set to register 5
+Value 99 set to variable i
+zaczynam >= dla i i 2
+index of i is 4
+value of i is 99
+generateP_A: Setting value 99 to register 5
+regValVector size: 8
+RegisterManager: Set value 99 to register 6
+generateP_A: Exiting
+Rejestr liczby 2 to 8
+regValVector size: 8
+RegisterManager: Set value 2 to register 1
+		*******tworze zmienna 2
+Dodaje zmienna 2 o adresie 2
+koniec generateP_AB w generateBoolOp
+Zaczynam generateSubtraction: 2 - i
+Rejestr liczby 2 to 11
+regValVector size: 11
+RegisterManager: Set value 2 to register 1
+index of i is 4
+value of i is 99
+generateP_A: Setting value 99 to register 5
+regValVector size: 10
+RegisterManager: Set value 99 to register 6
+generateP_A: Exiting
+regValVector size: 12
+RegisterManager: Set value 99 to register 5
+iterator: 99
+Koniec generateFor()
+Skonczylem obsluge for
+
+
+****** BLOK KOMENDY ******
+
+
+Generuje wartosc 1
+Rejestr liczby 1 to 12
+regValVector size: 12
+RegisterManager: Set value 1 to register 1
+	Udane przypisanie do indeksu tablicyGeneruje downto-do w linii 42
+Obsluga downto-do
+Removed variable from register 5
+Variable i deleted
+Generuje wartosc 1
+Rejestr liczby 1 to 12
+regValVector size: 12
+RegisterManager: Set value 1 to register 1
+j = 1	Przypisuje zmiennej <j> wartosc <1>
+Indeks zmiennej to 1
+	Udane przypisanie do zmiennej
+	Deklaracja zmiennej <i>
+Dodaje zmienna i o adresie 1
+Wolny rejestr nr 12 dla zmiennej i
+FOR: Variable i declared
+ERROR: Line 10 - syntax error

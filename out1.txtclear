@@ -1,0 +1,71 @@
+
+
+****** BLOK DEKLARACJI ZMIENNYCH ******
+
+
+	Deklaracja zmiennej <n>
+Dodaje zmienna n o adresie -1
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 1
+	Deklaracja zmiennej <j>
+Dodaje zmienna j o adresie -1
+	Udana deklaracja zmiennej
+	Zmienna przypisana do rejestru 2
+	Udana deklaracja tablicy
+
+
+****** BLOK KOMENDY ******
+
+
+Operacja arytmetyczna 100 - 1
+Rejestr liczby 100 to 3
+regValVector size: 3
+RegisterManager.setValueToRegister: value is a number
+RegisterManager.setValueToRegister: value equals 100
+RegisterManager.setValueToRegister: regValVector size equals 3 while regnum equals 0
+value jest intem
+RegisterManager.setValueToRegister: regValVector.at(regnum) equals 100
+RegisterManager: Set value 100 to register 1
+		*******tworze zmienna 100
+Dodaje zmienna 100 o adresie 100
+Rejestr liczby 1 to 2
+regValVector size: 2
+RegisterManager.setValueToRegister: value is a number
+RegisterManager.setValueToRegister: value equals 1
+RegisterManager.setValueToRegister: regValVector size equals 2 while regnum equals 0
+value jest intem
+RegisterManager.setValueToRegister: regValVector.at(regnum) equals 1
+RegisterManager: Set value 1 to register 1
+		*******tworze zmienna 1
+Dodaje zmienna 1 o adresie 1
+generateP_AB: Exiting
+n = 99	Przypisuje zmiennej <n> wartosc <99>
+Indeks zmiennej to 0
+	Udane przypisanie do zmiennej
+	Deklaracja zmiennej <i>
+Dodaje zmienna i o adresie 1
+iterator variableManager index: 4
+FOR: Variable i declared
+values: n 2
+Obsluga for
+Generuje for w linii 19
+regOfIterator i: 5
+Setting value 99 to register 5
+regValVector size: 5
+RegisterManager.setValueToRegister: value is a number
+RegisterManager.setValueToRegister: value equals 99
+RegisterManager.setValueToRegister: regValVector size equals 5 while regnum equals 4
+value jest intem
+RegisterManager.setValueToRegister: regValVector.at(regnum) equals 99
+RegisterManager: Set value 99 to register 5
+i = 99Value 99 set to register 5
+Value 99 set to variable i
+1
+index of i is 4
+value of i is 99
+generateP_A: Setting value 99 to register 5
+regValVector size: 5
+RegisterManager.setValueToRegister: value is a number
+RegisterManager.setValueToRegister: value equals 99
+RegisterManager.setValueToRegister: regValVector size equals 5 while regnum equals 5
+value jest intem

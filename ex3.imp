@@ -1,9 +1,8 @@
 VAR
 	a b
 BEGIN
-	{b := 0;}
-	FOR i FROM a TO 6 DO
-		b := i;
-		{WRITE b;}
-	ENDFOR
+	READ b;
+	IF b > 1 THEN WRITE b;
+		ELSE SKIP;
+	ENDIF
 END

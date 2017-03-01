@@ -51,7 +51,7 @@ Gramatyka
 
    20 $@8: %empty
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 DO commands $@8 ENDFOR
 
    22 $@9: %empty
 
@@ -59,7 +59,7 @@ Gramatyka
 
    24 $@11: %empty
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 DO commands $@11 ENDFOR
    26        | READ PIDENTIFIER LBRACKET PIDENTIFIER RBRACKET SEMICOLON
    27        | READ PIDENTIFIER LBRACKET NUM RBRACKET SEMICOLON
    28        | READ PIDENTIFIER SEMICOLON
@@ -107,8 +107,8 @@ DO (270) 17 21 25
 ENDWHILE (271) 17
 FOR (272) 21 25
 FROM (273) 21 25
-DOWNTO (274) 25
-TO (275) 21
+DOWNTO (274) 21
+TO (275) 25
 ENDFOR (276) 21 25
 READ (277) 26 27 28
 WRITE (278) 29
@@ -292,8 +292,8 @@ Stan 11
 
 Stan 12
 
-   21 command: FOR . PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 DO commands $@8 ENDFOR
-   25        | FOR . PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 DO commands $@11 ENDFOR
+   21 command: FOR . PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 DO commands $@8 ENDFOR
+   25        | FOR . PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 DO commands $@11 ENDFOR
 
     PIDENTIFIER  przesunięcie, i przejście do stanu 24
 
@@ -406,8 +406,8 @@ Stan 23
 
 Stan 24
 
-   21 command: FOR PIDENTIFIER . $@6 FROM VALUE TO VALUE $@7 DO commands $@8 ENDFOR
-   25        | FOR PIDENTIFIER . $@9 FROM VALUE DOWNTO VALUE $@10 DO commands $@11 ENDFOR
+   21 command: FOR PIDENTIFIER . $@6 FROM VALUE DOWNTO VALUE $@7 DO commands $@8 ENDFOR
+   25        | FOR PIDENTIFIER . $@9 FROM VALUE TO VALUE $@10 DO commands $@11 ENDFOR
 
     FROM         redukcja przy użyciu reguły 18 ($@6)
     FROM         [redukcja przy użyciu reguły 22 ($@9)]
@@ -553,14 +553,14 @@ Stan 39
 
 Stan 40
 
-   21 command: FOR PIDENTIFIER $@6 . FROM VALUE TO VALUE $@7 DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 . FROM VALUE DOWNTO VALUE $@7 DO commands $@8 ENDFOR
 
     FROM  przesunięcie, i przejście do stanu 59
 
 
 Stan 41
 
-   25 command: FOR PIDENTIFIER $@9 . FROM VALUE DOWNTO VALUE $@10 DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 . FROM VALUE TO VALUE $@10 DO commands $@11 ENDFOR
 
     FROM  przesunięcie, i przejście do stanu 60
 
@@ -703,7 +703,7 @@ Stan 58
 
 Stan 59
 
-   21 command: FOR PIDENTIFIER $@6 FROM . VALUE TO VALUE $@7 DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM . VALUE DOWNTO VALUE $@7 DO commands $@8 ENDFOR
 
     NUM          przesunięcie, i przejście do stanu 19
     PIDENTIFIER  przesunięcie, i przejście do stanu 20
@@ -713,7 +713,7 @@ Stan 59
 
 Stan 60
 
-   25 command: FOR PIDENTIFIER $@9 FROM . VALUE DOWNTO VALUE $@10 DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM . VALUE TO VALUE $@10 DO commands $@11 ENDFOR
 
     NUM          przesunięcie, i przejście do stanu 19
     PIDENTIFIER  przesunięcie, i przejście do stanu 20
@@ -860,16 +860,16 @@ Stan 74
 
 Stan 75
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE . TO VALUE $@7 DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE . DOWNTO VALUE $@7 DO commands $@8 ENDFOR
 
-    TO  przesunięcie, i przejście do stanu 88
+    DOWNTO  przesunięcie, i przejście do stanu 88
 
 
 Stan 76
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE . DOWNTO VALUE $@10 DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE . TO VALUE $@10 DO commands $@11 ENDFOR
 
-    DOWNTO  przesunięcie, i przejście do stanu 89
+    TO  przesunięcie, i przejście do stanu 89
 
 
 Stan 77
@@ -959,7 +959,7 @@ Stan 87
 
 Stan 88
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO . VALUE $@7 DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO . VALUE $@7 DO commands $@8 ENDFOR
 
     NUM          przesunięcie, i przejście do stanu 19
     PIDENTIFIER  przesunięcie, i przejście do stanu 20
@@ -969,7 +969,7 @@ Stan 88
 
 Stan 89
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO . VALUE $@10 DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO . VALUE $@10 DO commands $@11 ENDFOR
 
     NUM          przesunięcie, i przejście do stanu 19
     PIDENTIFIER  przesunięcie, i przejście do stanu 20
@@ -1023,7 +1023,7 @@ Stan 95
 
 Stan 96
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE . $@7 DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE . $@7 DO commands $@8 ENDFOR
 
     $domyślnie  redukcja przy użyciu reguły 19 ($@7)
 
@@ -1032,7 +1032,7 @@ Stan 96
 
 Stan 97
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE . $@10 DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE . $@10 DO commands $@11 ENDFOR
 
     $domyślnie  redukcja przy użyciu reguły 23 ($@10)
 
@@ -1074,14 +1074,14 @@ Stan 100
 
 Stan 101
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 . DO commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 . DO commands $@8 ENDFOR
 
     DO  przesunięcie, i przejście do stanu 104
 
 
 Stan 102
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 . DO commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 . DO commands $@11 ENDFOR
 
     DO  przesunięcie, i przejście do stanu 105
 
@@ -1095,7 +1095,7 @@ Stan 103
 
 Stan 104
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 DO . commands $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 DO . commands $@8 ENDFOR
 
     $domyślnie  redukcja przy użyciu reguły 7 (commands)
 
@@ -1104,7 +1104,7 @@ Stan 104
 
 Stan 105
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 DO . commands $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 DO . commands $@11 ENDFOR
 
     $domyślnie  redukcja przy użyciu reguły 7 (commands)
 
@@ -1121,7 +1121,7 @@ Stan 106
 Stan 107
 
     6 commands: commands . command
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 DO commands . $@8 ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 DO commands . $@8 ENDFOR
 
     IF           przesunięcie, i przejście do stanu 10
     WHILE        przesunięcie, i przejście do stanu 11
@@ -1140,7 +1140,7 @@ Stan 107
 Stan 108
 
     6 commands: commands . command
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 DO commands . $@11 ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 DO commands . $@11 ENDFOR
 
     IF           przesunięcie, i przejście do stanu 10
     WHILE        przesunięcie, i przejście do stanu 11
@@ -1158,27 +1158,27 @@ Stan 108
 
 Stan 109
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 DO commands $@8 . ENDFOR
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 DO commands $@8 . ENDFOR
 
     ENDFOR  przesunięcie, i przejście do stanu 111
 
 
 Stan 110
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 DO commands $@11 . ENDFOR
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 DO commands $@11 . ENDFOR
 
     ENDFOR  przesunięcie, i przejście do stanu 112
 
 
 Stan 111
 
-   21 command: FOR PIDENTIFIER $@6 FROM VALUE TO VALUE $@7 DO commands $@8 ENDFOR .
+   21 command: FOR PIDENTIFIER $@6 FROM VALUE DOWNTO VALUE $@7 DO commands $@8 ENDFOR .
 
     $domyślnie  redukcja przy użyciu reguły 21 (command)
 
 
 Stan 112
 
-   25 command: FOR PIDENTIFIER $@9 FROM VALUE DOWNTO VALUE $@10 DO commands $@11 ENDFOR .
+   25 command: FOR PIDENTIFIER $@9 FROM VALUE TO VALUE $@10 DO commands $@11 ENDFOR .
 
     $domyślnie  redukcja przy użyciu reguły 25 (command)
